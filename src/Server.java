@@ -2,8 +2,10 @@
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class Server {
   OutputStream out;
@@ -15,6 +17,15 @@ public class Server {
   public Server(String port, String directory) {
     this.port = Integer.parseInt(port);
     this.directory = directory;
+  }
+
+  public static void main(String[] args) throws UnsupportedEncodingException {
+
+    int portIndex = Arrays.asList(args).indexOf("-p");
+    int directoryIndex = Arrays.asList(args).indexOf("-d");
+
+    Server theServer = new Server(args[portIndex+1], args[directoryIndex+1]);
+    theServer.startServer();
   }
 
   public void startServer() {
@@ -40,16 +51,12 @@ public class Server {
         out.write(dataInBytes);
         out.flush();
 
-      }  //end 2nd while
-    }  //end 2nd try
+      }
+    }
 
     catch (IOException e) {
       System.err.println(e);
     }
-
-//    finally {
-//      if (theConnection != null) theConnection.close();
-//    }
 
   }
 
