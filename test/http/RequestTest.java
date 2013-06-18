@@ -20,13 +20,23 @@ public class RequestTest {
   }
 
   @Test
-  public void testParseRequest() {
-    request.parseRequest("GET /donaldduck.html?text_color=blue HTTP/1.0", "/Users/Kelly/Desktop/Java_HTTP_Server/public");
+  public void testParseRequestWithQueryString() {
+    request.parse("GET /donaldduck.html?text_color=blue HTTP/1.0", "/Users/Kelly/Desktop/Java_HTTP_Server/public");
     assertEquals(request.httpMethod, "GET");
     assertEquals(request.fullURL, "/Users/Kelly/Desktop/Java_HTTP_Server/public/donaldduck.html?text_color=blue");
     assertEquals(request.httpProtocol, "HTTP/1.0");
     assertEquals(request.baseURL, "/Users/Kelly/Desktop/Java_HTTP_Server/public/donaldduck.html");
     assertEquals(request.queryString, "text_color=blue");
+  }
+
+  @Test
+  public void testParseRequestWithNoQueryString() {
+    request.parse("GET /donaldduck.html HTTP/1.0", "/Users/Kelly/Desktop/Java_HTTP_Server/public");
+    assertEquals(request.httpMethod, "GET");
+    assertEquals(request.fullURL, "/Users/Kelly/Desktop/Java_HTTP_Server/public/donaldduck.html");
+    assertEquals(request.httpProtocol, "HTTP/1.0");
+    assertEquals(request.baseURL, "/Users/Kelly/Desktop/Java_HTTP_Server/public/donaldduck.html");
+    assertEquals(request.queryString, null);
   }
 
 }

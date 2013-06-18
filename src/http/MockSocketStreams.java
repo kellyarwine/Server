@@ -23,8 +23,8 @@ public class MockSocketStreams implements WebSocketStreams {
     return output;
   }
 
-  public byte[] getInput() {
-    return output.toByteArray();
-  }
+//  public byte[] getInput() {
+//    return output.toByteArray();
+//  }
 
 }

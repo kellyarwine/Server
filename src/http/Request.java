@@ -19,7 +19,7 @@ public class Request {
   }
 
   public void handleURL() {
-    if (fullURL.contains("\\?")) {
+    if (fullURL.contains("?")) {
       String[] urlArray = fullURL.split("\\?");
       baseURL = urlArray[0];
       queryString = urlArray[1];

@@ -23,7 +23,7 @@ import static junit.framework.Assert.assertEquals;
 
   @Test
   public void testReadRequest() throws IOException {
-    assertEquals(browser.readRequest(), "This is some text.");
+    assertEquals(browser.receiveRequest(), "This is some text.");
   }
 
 }

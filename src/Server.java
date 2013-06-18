@@ -9,9 +9,13 @@ public class Server {
   private String environment;
   private WebSocketStreams streams;
 
+
   private Request request = new Request();
-  private Body body = new Body();
+  private Router router = new Router();
   private Header header = new Header();
+  private Body body = new Body();
+
+
 
   public Server(int port, String publicdirectory) throws Exception {
     this.port = port;
@@ -28,10 +32,11 @@ public class Server {
 
     HTTPBrowser2 theHTTPBrowser = new HTTPBrowser2(streams, publicDirectory);
 
-    String receivedRequest = theHTTPBrowser.receiveRequest();
-    request.parse(receivedRequest, publicDirectory);
-    byte[] responseBody = body.get(request.baseURL, request.queryString);
-    byte[] responseHeader = header.get(request.baseURL, request.httpMethod, boolean URLExists, int contentLengthOfURL)
+//    String receivedRequest = theHTTPBrowser.receiveRequest();
+//    request.parse(receivedRequest, publicDirectory);
+//    String route = router.get(request.baseURL);
+//    String responseBody = body.get(route, request.queryString);
+//    String responseHeader = header.get(route, request.httpMethod, boolean URLExists, int contentLengthOfURL)
     //send Header + Body to HTTPBrowser out command
     //get remaining parameters
   }
