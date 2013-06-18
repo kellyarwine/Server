@@ -23,10 +23,10 @@ public class HeaderTest {
   @Test
   public void testHTMLHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
-                            + "\n" + new Date()
-                            + "\n" + "Server: NinjaServer 1.0"
-                            + "\n" + "Content-Type: text/html; charset=UTF-8"
-                            + "\n" + "Content-length: 107\n";
+        + "\n" + new Date()
+        + "\n" + "Server: NinjaServer 1.0"
+        + "\n" + "Content-Type: text/html; charset=UTF-8"
+        + "\n" + "Content-length: 107\n";
 
     assertEquals(header.get("localhost:5000/donaldduck.html", "GET", 107), expectedHeader);
   }
@@ -77,7 +77,7 @@ public class HeaderTest {
 
   @Test
   public void testPNGHeaderType() {
-     String expectedHeader = "HTTP/1.1 200 OK"
+    String expectedHeader = "HTTP/1.1 200 OK"
         + "\n" + new Date()
         + "\n" + "Server: NinjaServer 1.0"
         + "\n" + "Content-Type: image/png"
