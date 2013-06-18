@@ -1,6 +1,7 @@
 package http;
 
 import java.io.*;
+import java.net.Socket;
 
 public class MockSocketStreams implements WebSocketStreams {
   private InputStream data;
@@ -14,6 +15,11 @@ public class MockSocketStreams implements WebSocketStreams {
   }
 
   @Override
+  public Socket listen() {
+    null
+  }
+
+  @Override
   public InputStream in() {
     return data;
   }
@@ -22,9 +28,5 @@ public class MockSocketStreams implements WebSocketStreams {
   public OutputStream out() {
     return output;
   }
-
-//  public byte[] getInput() {
-//    return output.toByteArray();
-//  }
 
 }

@@ -31,27 +31,27 @@ public class RouterTest {
 
   @Test
   public void testRouteToIndex() {
-    assertEquals(router.get(publicDirectory + "/", publicDirectory), publicDirectory + "/index.html");
+    assertEquals(router.get("/", publicDirectory), publicDirectory + "/index.html");
   }
 
   @Test
   public void testRouteToHiEveryone() {
-    assertEquals(router.get(publicDirectory + "/hi", publicDirectory), publicDirectory + "/hi_everyone.html");
+    assertEquals(router.get("/hi", publicDirectory), publicDirectory + "/hi_everyone.html");
   }
 
   @Test
   public void testRouteToImage() {
-    assertEquals(router.get(publicDirectory + "/my_little_pony.png", publicDirectory), publicDirectory + "/my_little_pony.png");
+    assertEquals(router.get("/my_little_pony.png", publicDirectory), publicDirectory + "/my_little_pony.png");
   }
 
   @Test
   public void testRouteToText() {
-    assertEquals(router.get(publicDirectory + "/the_goal.txt", publicDirectory), publicDirectory + "/the_goal.txt");
+    assertEquals(router.get("/the_goal.txt", publicDirectory), publicDirectory + "/the_goal.txt");
   }
 
   @Test
   public void testRouteToInvalidFile() {
-    assertEquals(router.get(publicDirectory + "/donaldduck.html", publicDirectory), publicDirectory + "/404.html");
+    assertEquals(router.get("/donaldduck.html", publicDirectory), publicDirectory + "/404.html");
   }
 
 }

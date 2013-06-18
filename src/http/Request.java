@@ -1,5 +1,7 @@
 package http;
 
+import java.util.Arrays;
+
 public class Request {
 
   public String httpMethod;
@@ -8,11 +10,13 @@ public class Request {
   public String baseURL;
   public String queryString;
 
-  public void parse(String request, String publicDirectory) {
+  public void parse(String request) {
     String[] requestArray = request.split(" ");
+    System.out.print("\n");
+    System.out.print(Arrays.toString(requestArray));
 
     httpMethod = requestArray[0];
-    fullURL = publicDirectory + requestArray[1];
+    fullURL = requestArray[1];
     httpProtocol = requestArray[2];
 
     handleURL();

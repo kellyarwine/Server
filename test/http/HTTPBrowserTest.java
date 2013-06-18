@@ -26,4 +26,10 @@ import static org.junit.Assert.assertEquals;
     assertEquals(browser.receiveRequest(), "This is some text.");
   }
 
+  @Test
+  public void testSendResponse() throws IOException {
+    browser.sendResponse("This is some text.");
+    assertEquals(browser.streams.out().toString(), "This is some text.");
+  }
+
 }

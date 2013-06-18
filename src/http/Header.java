@@ -6,10 +6,10 @@ public class Header {
 
   public String get(String baseURL, String requestedHTTPMethod, int contentLengthOfURL) {
     return  httpProtocolVersion() + " " + httpMethod(requestedHTTPMethod, baseURL)
-            + "\n" + currentDate()
-            + "\n" + serverInfo()
-            + "\n" + contentType(baseURL)
-            + "\n" + contentLength(contentLengthOfURL);
+            + "\r\n" + currentDate()
+            + "\r\n" + serverInfo()
+            + "\r\n" + contentType(baseURL)
+            + "\r\n" + contentLength(contentLengthOfURL);
     }
 
   public String httpProtocolVersion() {
@@ -18,9 +18,10 @@ public class Header {
 
   public String httpMethod(String requestedHTTPMethod, String baseURL) {
     String method = null;
-
+    System.out.print(requestedHTTPMethod);
+    System.out.print(baseURL);
     if (baseURL.endsWith("/404.html")) method = "404 File Not Found";
-    else if (requestedHTTPMethod == "GET") method = "200 OK";
+    else if (requestedHTTPMethod.equals("GET")) method = "200 OK";
 
     return method;
   }
@@ -30,7 +31,7 @@ public class Header {
   }
 
   public String serverInfo() {
-    return "http.Server: NinjaServer 1.0";
+    return "Server: NinjaServer 1.0";
   }
 
   public String contentType(String baseURL) {
@@ -45,7 +46,7 @@ public class Header {
   }
 
   public String contentLength(int contentLengthOfURL) {
-    return "Content-length: " + contentLengthOfURL + "\n";
+    return "Content-length: " + contentLengthOfURL;
   }
 
 }

@@ -9,36 +9,40 @@ public class Server {
   private String environment;
   private WebSocketStreams streams;
 
-
   private Request request = new Request();
   private Router router = new Router();
   private Header header = new Header();
   private Body body = new Body();
 
-
-
-  public Server(int port, String publicdirectory) throws Exception {
+  public Server(int port, String publicDirectory) throws Exception {
     this.port = port;
     this.publicDirectory = publicDirectory;
-    this.environment = "Production";
+    this.environment = "production";
 
     ServerSocket theServerSocket = new ServerSocket(port);
-    System.out.println("http.Server is running on port " + port + ".");
+    System.out.println("HTTP Server is running on port " + port + ".");
 
-    if (environment == "Production")
+    if (environment == "production")
       streams = new SystemSocketStreams(theServerSocket);
     else
       streams = new MockSocketStreams("This is some text.");
 
-    HTTPBrowser theHTTPBrowser = new HTTPBrowser(streams, publicDirectory);
+    HTTPBrowser browser = new HTTPBrowser(streams, publicDirectory);
 
-//    String receivedRequest = theHTTPBrowser.receiveRequest();
-//    request.parse(receivedRequest, publicDirectory);
-//    String route = router.get(request.baseURL);
-//    String responseBody = body.get(route, request.queryString);
-//    String responseHeader = header.get(route, request.httpMethod, boolean URLExists, int contentLengthOfURL)
-    //send Header + Body to HTTPBrowser out command
-    //get remaining parameters
+    while (true) {
+      streams.listen();
+      String receivedRequest = browser.receiveRequest();
+      System.out.print("\n");
+      System.out.print("receivedRequest is: " + receivedRequest);
+
+      request.parse(receivedRequest);
+      String route = router.get(request.baseURL, publicDirectory);
+      String responseBody = body.get(route, request.queryString);
+      String responseHeader = header.get(route, request.httpMethod, body.contentLengthInBytes(responseBody));
+      String content = responseHeader + "\r\n\r\n" + responseBody;
+      browser.sendResponse(content);
+      // get remaining parameters
+    }
   }
 
   public static void main(String[] args) throws Exception {

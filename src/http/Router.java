@@ -5,12 +5,12 @@ import java.io.File;
 public class Router {
 
   public String get(String baseURL, String publicDirectory) {
-    String route;
+    String route = publicDirectory;
 
-    if (baseURL.equals(publicDirectory + "/"))         route = publicDirectory + "/index.html";
-    else if (baseURL.equals(publicDirectory + "/hi"))  route = (publicDirectory + "/hi_everyone.html");
-    else if (fileValid(baseURL))                       route = baseURL;
-    else                                               route = (publicDirectory + "/404.html");
+    if (baseURL.equals("/"))                           route += "/index.html";
+    else if (baseURL.equals("/hi"))                    route += "/hi_everyone.html";
+    else if (fileValid(publicDirectory + baseURL))     route += baseURL;
+    else                                               route += "/404.html";
     return route;
   }
 

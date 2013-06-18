@@ -23,10 +23,10 @@ public class HeaderTest {
   @Test
   public void testHTMLHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
-        + "\n" + new Date()
-        + "\n" + "http.Server: NinjaServer 1.0"
-        + "\n" + "Content-Type: text/html; charset=UTF-8"
-        + "\n" + "Content-length: 107\n";
+        + "\r\n" + new Date()
+        + "\r\n" + "Server: NinjaServer 1.0"
+        + "\r\n" + "Content-Type: text/html; charset=UTF-8"
+        + "\r\n" + "Content-length: 107";
 
     assertEquals(header.get("localhost:5000/donaldduck.html", "GET", 107), expectedHeader);
   }
@@ -34,10 +34,10 @@ public class HeaderTest {
   @Test
   public void testHTMHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
-        + "\n" + new Date()
-        + "\n" + "http.Server: NinjaServer 1.0"
-        + "\n" + "Content-Type: text/html; charset=UTF-8"
-        + "\n" + "Content-length: 107\n";
+        + "\r\n" + new Date()
+        + "\r\n" + "Server: NinjaServer 1.0"
+        + "\r\n" + "Content-Type: text/html; charset=UTF-8"
+        + "\r\n" + "Content-length: 107";
 
     assertEquals(header.get("localhost:5000/donaldduck.htm", "GET", 107), expectedHeader);
   }
@@ -45,10 +45,10 @@ public class HeaderTest {
   @Test
   public void testJPEGHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
-        + "\n" + new Date()
-        + "\n" + "http.Server: NinjaServer 1.0"
-        + "\n" + "Content-Type: image/jpeg"
-        + "\n" + "Content-length: 107\n";
+        + "\r\n" + new Date()
+        + "\r\n" + "Server: NinjaServer 1.0"
+        + "\r\n" + "Content-Type: image/jpeg"
+        + "\r\n" + "Content-length: 107";
 
     assertEquals(header.get("localhost:5000/donaldduck.jpeg", "GET", 107), expectedHeader);
   }
@@ -56,10 +56,10 @@ public class HeaderTest {
   @Test
   public void testJPGHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
-        + "\n" + new Date()
-        + "\n" + "http.Server: NinjaServer 1.0"
-        + "\n" + "Content-Type: image/jpeg"
-        + "\n" + "Content-length: 107\n";
+        + "\r\n" + new Date()
+        + "\r\n" + "Server: NinjaServer 1.0"
+        + "\r\n" + "Content-Type: image/jpeg"
+        + "\r\n" + "Content-length: 107";
 
     assertEquals(header.get("localhost:5000/donaldduck.jpg", "GET", 107), expectedHeader);
   }
@@ -67,10 +67,10 @@ public class HeaderTest {
   @Test
   public void testGIFHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
-        + "\n" + new Date()
-        + "\n" + "http.Server: NinjaServer 1.0"
-        + "\n" + "Content-Type: image/gif"
-        + "\n" + "Content-length: 107\n";
+        + "\r\n" + new Date()
+        + "\r\n" + "Server: NinjaServer 1.0"
+        + "\r\n" + "Content-Type: image/gif"
+        + "\r\n" + "Content-length: 107";
 
     assertEquals(header.get("localhost:5000/donaldduck.gif", "GET", 107), expectedHeader);
   }
@@ -78,10 +78,10 @@ public class HeaderTest {
   @Test
   public void testPNGHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
-        + "\n" + new Date()
-        + "\n" + "http.Server: NinjaServer 1.0"
-        + "\n" + "Content-Type: image/png"
-        + "\n" + "Content-length: 107\n";
+        + "\r\n" + new Date()
+        + "\r\n" + "Server: NinjaServer 1.0"
+        + "\r\n" + "Content-Type: image/png"
+        + "\r\n" + "Content-length: 107";
 
     assertEquals(header.get("localhost:5000/donaldduck.png", "GET", 107), expectedHeader);
   }
@@ -89,10 +89,10 @@ public class HeaderTest {
   @Test
   public void test404HeaderType() {
     String expectedHeader = "HTTP/1.1 404 File Not Found"
-        + "\n" + new Date()
-        + "\n" + "http.Server: NinjaServer 1.0"
-        + "\n" + "Content-Type: text/html; charset=UTF-8"
-        + "\n" + "Content-length: 107\n";
+        + "\r\n" + new Date()
+        + "\r\n" + "Server: NinjaServer 1.0"
+        + "\r\n" + "Content-Type: text/html; charset=UTF-8"
+        + "\r\n" + "Content-length: 107";
 
     assertEquals(header.get("localhost:5000/404.html", "GET", 107), expectedHeader);
   }

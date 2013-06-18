@@ -23,8 +23,12 @@ public class HTTPBrowser {
     return buffer.toString();
   }
 
-  public String sendResponse() {
-    return "okay";
+  public void sendResponse(String content) throws IOException {
+        byte[] contentInBytes = content.getBytes();
+    System.out.print(content);
+    System.out.print("\n");
+    streams.out().write(contentInBytes);
+        streams.out().flush();
   }
 
 }

@@ -57,4 +57,28 @@ public class BodyTest {
     assert(body.contentLengthInBytes(testString) == expectedLength);
   }
 
+  @Test
+  public void testContentLengthInBytes2() throws IOException {
+    String testString =
+    "<HTML>\n" +
+    "  <HEAD>\n" +
+    "    <TITLE>\n" +
+    "      Sample Form\n" +
+    "    </TITLE>\n" +
+    "  </HEAD>\n" +
+    "  <BODY>\n" +
+    "    <form name=\"color_picker\" action=\"/color_picker_result.html\" method=\"GET\">\n" +
+    "<br>\n" +
+    "    <p>I want to change the color of the text on the next webpage.</p>\n" +
+    "    <input type=\"radio\" name=\"text_color\" value=\"red\" checked>Red<br>\n" +
+    "    <input type=\"radio\" name=\"text_color\" value=\"blue\">Blue<br>\n" +
+    "    <input type=\"radio\" name=\"text_color\" value=\"green\">Green<br><br>\n" +
+    "    <INPUT TYPE = \"SUBMIT\">\n" +
+    "  </BODY>\n" +
+    "</HTML>";
+
+    int expectedLength = 482; //Validated using byte calculator here: http://mothereff.in/byte-counter
+
+    assert(body.contentLengthInBytes(testString) == expectedLength);
+  }
 }
