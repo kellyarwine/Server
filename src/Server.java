@@ -30,7 +30,7 @@ public class Server {
     else
       streams = new MockSocketStreams("This is some text.");
 
-    HTTPBrowser2 theHTTPBrowser = new HTTPBrowser2(streams, publicDirectory);
+    HTTPBrowser theHTTPBrowser = new HTTPBrowser(streams, publicDirectory);
 
 //    String receivedRequest = theHTTPBrowser.receiveRequest();
 //    request.parse(receivedRequest, publicDirectory);
