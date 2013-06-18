@@ -30,7 +30,7 @@ public class Header {
   }
 
   public String serverInfo() {
-    return "Server: NinjaServer 1.0";
+    return "http.Server: NinjaServer 1.0";
   }
 
   public String contentType(String baseURL) {

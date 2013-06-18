@@ -1,4 +1,4 @@
-import http.*;
+package http;
 
 import java.net.ServerSocket;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class Server {
     this.environment = "Production";
 
     ServerSocket theServerSocket = new ServerSocket(port);
-    System.out.println("Server is running on port " + port + ".");
+    System.out.println("http.Server is running on port " + port + ".");
 
     if (environment == "Production")
       streams = new SystemSocketStreams(theServerSocket);

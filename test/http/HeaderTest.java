@@ -24,7 +24,7 @@ public class HeaderTest {
   public void testHTMLHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
         + "\n" + new Date()
-        + "\n" + "Server: NinjaServer 1.0"
+        + "\n" + "http.Server: NinjaServer 1.0"
         + "\n" + "Content-Type: text/html; charset=UTF-8"
         + "\n" + "Content-length: 107\n";
 
@@ -35,7 +35,7 @@ public class HeaderTest {
   public void testHTMHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
         + "\n" + new Date()
-        + "\n" + "Server: NinjaServer 1.0"
+        + "\n" + "http.Server: NinjaServer 1.0"
         + "\n" + "Content-Type: text/html; charset=UTF-8"
         + "\n" + "Content-length: 107\n";
 
@@ -46,7 +46,7 @@ public class HeaderTest {
   public void testJPEGHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
         + "\n" + new Date()
-        + "\n" + "Server: NinjaServer 1.0"
+        + "\n" + "http.Server: NinjaServer 1.0"
         + "\n" + "Content-Type: image/jpeg"
         + "\n" + "Content-length: 107\n";
 
@@ -57,7 +57,7 @@ public class HeaderTest {
   public void testJPGHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
         + "\n" + new Date()
-        + "\n" + "Server: NinjaServer 1.0"
+        + "\n" + "http.Server: NinjaServer 1.0"
         + "\n" + "Content-Type: image/jpeg"
         + "\n" + "Content-length: 107\n";
 
@@ -68,7 +68,7 @@ public class HeaderTest {
   public void testGIFHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
         + "\n" + new Date()
-        + "\n" + "Server: NinjaServer 1.0"
+        + "\n" + "http.Server: NinjaServer 1.0"
         + "\n" + "Content-Type: image/gif"
         + "\n" + "Content-length: 107\n";
 
@@ -79,7 +79,7 @@ public class HeaderTest {
   public void testPNGHeaderType() {
     String expectedHeader = "HTTP/1.1 200 OK"
         + "\n" + new Date()
-        + "\n" + "Server: NinjaServer 1.0"
+        + "\n" + "http.Server: NinjaServer 1.0"
         + "\n" + "Content-Type: image/png"
         + "\n" + "Content-length: 107\n";
 
@@ -90,7 +90,7 @@ public class HeaderTest {
   public void test404HeaderType() {
     String expectedHeader = "HTTP/1.1 404 File Not Found"
         + "\n" + new Date()
-        + "\n" + "Server: NinjaServer 1.0"
+        + "\n" + "http.Server: NinjaServer 1.0"
         + "\n" + "Content-Type: text/html; charset=UTF-8"
         + "\n" + "Content-length: 107\n";
 
