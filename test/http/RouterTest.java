@@ -16,7 +16,7 @@ public class RouterTest {
 
   @Before
   public void setUp() {
-    routes = new HashMap();
+    routes = new DefaultHashMap(Router.NOT_FOUND);
     publicDirectory = "public";
   }
 

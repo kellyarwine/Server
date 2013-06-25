@@ -12,15 +12,14 @@ public class Router {
     this.publicDirectory = publicDirectory;
     this.routes = routes;
     this.routes.put("/", "/index.html");
+    this.routes.put(null, NOT_FOUND);
 	}
 
   public String get(String route) {
     if (fileValid(route))
       return publicDirectory + route;
-    else if(isDynamic(route))
-      return publicDirectory + routes.get(route);
     else
-      return publicDirectory + NOT_FOUND;
+      return publicDirectory + routes.get(route);
   }
 
   private boolean isDynamic(String route) {

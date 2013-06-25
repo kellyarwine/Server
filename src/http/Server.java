@@ -19,7 +19,7 @@ public class Server {
     this.port = port;
     this.publicDirectory = publicDirectory;
     this.environment = "production";
-    this.router = new Router(publicDirectory, new HashMap());
+    this.router = new Router(publicDirectory, new DefaultHashMap(Router.NOT_FOUND));
     ServerSocket theServerSocket = new ServerSocket(port);
     System.out.println("HTTP Server is running on port " + port + ".");
 
