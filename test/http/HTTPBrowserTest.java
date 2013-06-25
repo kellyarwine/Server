@@ -7,7 +7,7 @@ import org.junit.runners.JUnit4;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
   public class HTTPBrowserTest {
@@ -28,8 +28,10 @@ import static org.junit.Assert.assertEquals;
 
   @Test
   public void testSendResponse() throws IOException {
-    browser.sendResponse("This is some text.");
-    assertEquals(browser.streams.out().toString(), "This is some text.");
+    String responseString = "This is some text.";
+    byte[] responseInBytes = responseString.getBytes();
+    browser.sendResponse(responseInBytes);
+    assertEquals(browser.streams.out().toString(), responseString);
   }
 
 }

@@ -4,13 +4,20 @@ import java.util.Date;
 
 public class Header {
 
-  public String get(String baseURL, String requestedHTTPMethod, int contentLengthOfURL) {
-    return  httpProtocolVersion() + " " + httpMethod(requestedHTTPMethod, baseURL)
-            + "\r\n" + currentDate()
-            + "\r\n" + serverInfo()
-            + "\r\n" + contentType(baseURL)
-            + "\r\n" + contentLength(contentLengthOfURL);
+  public byte[] get(String baseURL, String requestedHTTPMethod, int contentLengthOfURL) {
+    String stringHeader = build(baseURL, requestedHTTPMethod, contentLengthOfURL);
+    return stringHeader.getBytes();
     }
+
+  public String build(String baseURL, String requestedHTTPMethod, int contentLengthOfURL) {
+    String stringHeader = httpProtocolVersion() + " " + httpMethod(requestedHTTPMethod, baseURL)
+        + "\r\n" + currentDate()
+        + "\r\n" + serverInfo()
+        + "\r\n" + contentType(baseURL)
+        + "\r\n" + contentLength(contentLengthOfURL)
+        + "\r\n\r\n";
+    return stringHeader;
+  }
 
   public String httpProtocolVersion() {
     return "HTTP/1.1";
@@ -18,8 +25,6 @@ public class Header {
 
   public String httpMethod(String requestedHTTPMethod, String baseURL) {
     String method = null;
-    System.out.print(requestedHTTPMethod);
-    System.out.print(baseURL);
     if (baseURL.endsWith("/404.html")) method = "404 File Not Found";
     else if (requestedHTTPMethod.equals("GET")) method = "200 OK";
 
@@ -42,7 +47,7 @@ public class Header {
     if (baseURL.endsWith(".gif")) contentTypeOfURL = "image/gif";
     if (baseURL.endsWith(".png")) contentTypeOfURL = "image/png";
 
-    return "Content-Type: " + contentTypeOfURL;
+    return "Content-type: " + contentTypeOfURL;
   }
 
   public String contentLength(int contentLengthOfURL) {

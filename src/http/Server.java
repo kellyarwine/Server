@@ -22,25 +22,36 @@ public class Server {
     ServerSocket theServerSocket = new ServerSocket(port);
     System.out.println("HTTP Server is running on port " + port + ".");
 
-    if (environment == "production")
-      streams = new SystemSocketStreams(theServerSocket);
-    else
-      streams = new MockSocketStreams("This is some text.");
-
-    HTTPBrowser browser = new HTTPBrowser(streams, publicDirectory);
+//    streams = new SystemSocketStreams(theServerSocket);
 
     while (true) {
-      streams.listen();
+//      streams = new SystemSocketStreams(theServerSocket);
+//      HTTPBrowser browser = new HTTPBrowser(streams, publicDirectory);
+
+      if (environment == "production")
+        streams = new SystemSocketStreams(theServerSocket);
+      else
+        streams = new MockSocketStreams("This is some text.");
+
+      HTTPBrowser browser = new HTTPBrowser(streams, publicDirectory);
+
       String receivedRequest = browser.receiveRequest();
+
       System.out.print("\n");
       System.out.print("receivedRequest is: " + receivedRequest);
+      System.out.print("\n");
 
       request.parse(receivedRequest);
       String route = router.get(request.baseURL, publicDirectory);
-      String responseBody = body.get(route, request.queryString);
-      String responseHeader = header.get(route, request.httpMethod, body.contentLengthInBytes(responseBody));
+      byte[] responseBody = body.get(route, request.queryString);
+      System.out.print("\nThis is query string:");
+      System.out.print(request.queryString);
+      System.out.print("\n");
+      byte[] responseHeader = header.get(route, request.httpMethod, responseBody.length);
       String content = responseHeader + "\r\n\r\n" + responseBody;
-      browser.sendResponse(content);
+      System.out.print(responseHeader);
+      browser.sendResponse(responseHeader);
+      browser.sendResponse(responseBody);
       // get remaining parameters
     }
   }

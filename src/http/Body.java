@@ -3,43 +3,52 @@ package http;
 import java.io.*;
 
 public class Body {
+  public String bodyString;
+  public byte[] bodyInBytes;
 
-  public String get(String baseURL, String queryString) throws IOException {
-    String stringBody = readFile(baseURL);
-    stringBody = handleQueryString(queryString, stringBody);
-
-    return stringBody;
+  public byte[] get(String route, String queryString) throws IOException {
+    readFileToBody(route);
+    handleQueryString(queryString);
+    return bodyInBytes;
   }
 
-  public String readFile(String baseURL) throws IOException {
-    InputStream fileIn = new FileInputStream(baseURL);
+  private void handleQueryString(String queryString) throws IOException {
+    if (queryString != null) {
+      convertBodyToString();
+      updateBodyWithQueryString(queryString);
+      convertBodyToBytes();
+    }
+  }
+
+  public void readFileToBody(String route) throws IOException {
+    InputStream fileIn = new FileInputStream(route);
     ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
     int b;
 
     while ( ( b = fileIn.read() ) != -1 ) fileOut.write(b);
-    return fileOut.toString();
+
+    bodyInBytes = fileOut.toByteArray();
   }
 
-  public String handleQueryString(String queryString, String stringBody) {
-    String updatedBody = null;
+  public void convertBodyToString() throws IOException {
+    bodyString = new String(bodyInBytes);
+  }
 
-    if (queryString != null) {
-      String[] queryStringArray = parseQueryString(queryString);
-      String key = queryStringArray[0];
-      String value = queryStringArray[1];
-      updatedBody = stringBody.replace(key, value);
-    }
-    else updatedBody = stringBody;
-
-    return updatedBody;
+  public void updateBodyWithQueryString(String queryString) {
+    String[] queryStringArray = parseQueryString(queryString);
+    findAndReplace(queryStringArray[0], queryStringArray[1]);
   }
 
   public String[] parseQueryString(String queryString) {
     return queryString.split("=");
   }
 
-  public int contentLengthInBytes(String content) {
-    return content.getBytes().length;
+  public void findAndReplace(String key, String value) {
+    bodyString = bodyString.replaceAll(key, value);
+  }
+
+  public void convertBodyToBytes() {
+    bodyInBytes = bodyString.getBytes();
   }
 
 }

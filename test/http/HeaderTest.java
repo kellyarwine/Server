@@ -21,79 +21,90 @@ public class HeaderTest {
   }
 
   @Test
-  public void testHTMLHeaderType() {
-    String expectedHeader = "HTTP/1.1 200 OK"
+  public void testHTML() {
+    String expectedHeaderString = "HTTP/1.1 200 OK"
         + "\r\n" + new Date()
         + "\r\n" + "Server: NinjaServer 1.0"
-        + "\r\n" + "Content-Type: text/html; charset=UTF-8"
-        + "\r\n" + "Content-length: 107";
-
-    assertEquals(header.get("localhost:5000/donaldduck.html", "GET", 107), expectedHeader);
+        + "\r\n" + "Content-type: text/html; charset=UTF-8"
+        + "\r\n" + "Content-length: 107"
+        + "\r\n\r\n";
+    String actualHeaderString = getActualHeaderString(header.get("localhost:5000/donaldduck.html", "GET", 107));
+    assertEquals(expectedHeaderString, actualHeaderString);
   }
 
   @Test
-  public void testHTMHeaderType() {
-    String expectedHeader = "HTTP/1.1 200 OK"
+  public void testHTM() {
+    String expectedHeaderString = "HTTP/1.1 200 OK"
         + "\r\n" + new Date()
         + "\r\n" + "Server: NinjaServer 1.0"
-        + "\r\n" + "Content-Type: text/html; charset=UTF-8"
-        + "\r\n" + "Content-length: 107";
-
-    assertEquals(header.get("localhost:5000/donaldduck.htm", "GET", 107), expectedHeader);
+        + "\r\n" + "Content-type: text/html; charset=UTF-8"
+        + "\r\n" + "Content-length: 107"
+        + "\r\n\r\n";
+    String actualHeaderString = getActualHeaderString(header.get("localhost:5000/donaldduck.htm", "GET", 107));
+    assertEquals(expectedHeaderString, actualHeaderString);
   }
 
   @Test
-  public void testJPEGHeaderType() {
-    String expectedHeader = "HTTP/1.1 200 OK"
+  public void testJPEG() {
+    String expectedHeaderString = "HTTP/1.1 200 OK"
         + "\r\n" + new Date()
         + "\r\n" + "Server: NinjaServer 1.0"
-        + "\r\n" + "Content-Type: image/jpeg"
-        + "\r\n" + "Content-length: 107";
-
-    assertEquals(header.get("localhost:5000/donaldduck.jpeg", "GET", 107), expectedHeader);
+        + "\r\n" + "Content-type: image/jpeg"
+        + "\r\n" + "Content-length: 107"
+        + "\r\n\r\n";
+    String actualHeaderString = getActualHeaderString(header.get("localhost:5000/donaldduck.jpeg", "GET", 107));
+    assertEquals(expectedHeaderString, actualHeaderString);
   }
 
   @Test
-  public void testJPGHeaderType() {
-    String expectedHeader = "HTTP/1.1 200 OK"
+  public void testJPG() {
+    String expectedHeaderString = "HTTP/1.1 200 OK"
         + "\r\n" + new Date()
         + "\r\n" + "Server: NinjaServer 1.0"
-        + "\r\n" + "Content-Type: image/jpeg"
-        + "\r\n" + "Content-length: 107";
-
-    assertEquals(header.get("localhost:5000/donaldduck.jpg", "GET", 107), expectedHeader);
+        + "\r\n" + "Content-type: image/jpeg"
+        + "\r\n" + "Content-length: 107"
+        + "\r\n\r\n";
+    String actualHeaderString = getActualHeaderString(header.get("localhost:5000/donaldduck.jpg", "GET", 107));
+    assertEquals(expectedHeaderString, actualHeaderString);
   }
 
   @Test
-  public void testGIFHeaderType() {
-    String expectedHeader = "HTTP/1.1 200 OK"
+  public void testGIF() {
+    String expectedHeaderString = "HTTP/1.1 200 OK"
         + "\r\n" + new Date()
         + "\r\n" + "Server: NinjaServer 1.0"
-        + "\r\n" + "Content-Type: image/gif"
-        + "\r\n" + "Content-length: 107";
-
-    assertEquals(header.get("localhost:5000/donaldduck.gif", "GET", 107), expectedHeader);
+        + "\r\n" + "Content-type: image/gif"
+        + "\r\n" + "Content-length: 107"
+        + "\r\n\r\n";
+    String actualHeaderString = getActualHeaderString(header.get("localhost:5000/donaldduck.gif", "GET", 107));
+    assertEquals(expectedHeaderString, actualHeaderString);
   }
 
   @Test
-  public void testPNGHeaderType() {
-    String expectedHeader = "HTTP/1.1 200 OK"
+  public void testPNG() {
+    String expectedHeaderString = "HTTP/1.1 200 OK"
         + "\r\n" + new Date()
         + "\r\n" + "Server: NinjaServer 1.0"
-        + "\r\n" + "Content-Type: image/png"
-        + "\r\n" + "Content-length: 107";
-
-    assertEquals(header.get("localhost:5000/donaldduck.png", "GET", 107), expectedHeader);
+        + "\r\n" + "Content-type: image/png"
+        + "\r\n" + "Content-length: 107"
+        + "\r\n\r\n";
+    String actualHeaderString = getActualHeaderString(header.get("localhost:5000/donaldduck.png", "GET", 107));
+    assertEquals(expectedHeaderString, actualHeaderString);
   }
 
   @Test
-  public void test404HeaderType() {
-    String expectedHeader = "HTTP/1.1 404 File Not Found"
+  public void test404() {
+    String expectedHeaderString = "HTTP/1.1 404 File Not Found"
         + "\r\n" + new Date()
         + "\r\n" + "Server: NinjaServer 1.0"
-        + "\r\n" + "Content-Type: text/html; charset=UTF-8"
-        + "\r\n" + "Content-length: 107";
+        + "\r\n" + "Content-type: text/html; charset=UTF-8"
+        + "\r\n" + "Content-length: 107"
+        + "\r\n\r\n";
+    String actualHeaderString = getActualHeaderString(header.get("localhost:5000/404.html", "GET", 107));
+    assertEquals(expectedHeaderString, actualHeaderString);
+  }
 
-    assertEquals(header.get("localhost:5000/404.html", "GET", 107), expectedHeader);
+  private String getActualHeaderString(byte[] actualHeader) {
+    return new String(actualHeader);
   }
 }
