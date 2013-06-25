@@ -2,6 +2,7 @@ package http;
 
 import java.net.ServerSocket;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Server {
   private int port;
@@ -10,7 +11,7 @@ public class Server {
   private WebSocketStreams streams;
 
   private Request request = new Request();
-  private Router router = new Router();
+  private Router router;
   private Header header = new Header();
   private Body body = new Body();
 
@@ -18,7 +19,7 @@ public class Server {
     this.port = port;
     this.publicDirectory = publicDirectory;
     this.environment = "production";
-
+    this.router = new Router(publicDirectory, new HashMap());
     ServerSocket theServerSocket = new ServerSocket(port);
     System.out.println("HTTP Server is running on port " + port + ".");
 
@@ -42,7 +43,7 @@ public class Server {
       System.out.print("\n");
 
       request.parse(receivedRequest);
-      String route = router.get(request.baseURL, publicDirectory);
+      String route = router.get(request.baseURL);
       byte[] responseBody = body.get(route, request.queryString);
       System.out.print("\nThis is query string:");
       System.out.print(request.queryString);

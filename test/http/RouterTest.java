@@ -5,53 +5,52 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
 public class RouterTest {
 
-  private Router router;
   private String publicDirectory;
+  private HashMap<String, String> routes;
 
   @Before
   public void setUp() {
-    router = new Router();
-    publicDirectory = "/Users/Kelly/Desktop/Java_HTTP_Server/public";
+    routes = new HashMap();
+    publicDirectory = "public";
   }
 
   @Test
-  public void testValidFile() {
-    assert(router.fileValid("/Users/Kelly/Desktop/Java_HTTP_Server/public/donaldduck.html") == false);
-  }
-
-  @Test
-  public void testInvalidFile() {
-    assert(router.fileValid("/Users/Kelly/Desktop/Java_HTTP_Server/public/hi_everyone.html") == true);
+  public void filenameToValidFileRoutesToFile() {
+    Router router = new Router(publicDirectory, routes);
+    assertEquals(publicDirectory + "/index.html", router.get("/index.html"));
   }
 
   @Test
   public void testRouteToIndex() {
-    assertEquals(router.get("/", publicDirectory), publicDirectory + "/index.html");
-  }
-
-  @Test
-  public void testRouteToHiEveryone() {
-    assertEquals(router.get("/hi", publicDirectory), publicDirectory + "/hi_everyone.html");
+    Router router = new Router(publicDirectory, routes);
+    assertEquals(publicDirectory + "/index.html", router.get("/"));
   }
 
   @Test
   public void testRouteToImage() {
-    assertEquals(router.get("/my_little_pony.png", publicDirectory), publicDirectory + "/my_little_pony.png");
+    routes.put("/my_little_pony.png", "/my_little_pony.png");
+    Router router = new Router(publicDirectory, routes);
+    assertEquals(publicDirectory + "/my_little_pony.png", router.get("/my_little_pony.png"));
   }
 
   @Test
   public void testRouteToText() {
-    assertEquals(router.get("/the_goal.txt", publicDirectory), publicDirectory + "/the_goal.txt");
+    routes.put("/the_goal.txt", "/the_goal.txt");
+    Router router = new Router(publicDirectory, routes);
+    assertEquals(publicDirectory + "/the_goal.txt", router.get("/the_goal.txt"));
   }
 
   @Test
   public void testRouteToInvalidFile() {
-    assertEquals(router.get("/donaldduck.html", publicDirectory), publicDirectory + "/404.html");
+    Router router = new Router(publicDirectory, routes);
+
+    assertEquals(publicDirectory + "/404.html", router.get("/donaldduck.html"));
   }
 
 }
