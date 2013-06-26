@@ -49,7 +49,6 @@ public class RouterTest {
   @Test
   public void testRouteToInvalidFile() {
     Router router = new Router(publicDirectory, routes);
-
     assertEquals(publicDirectory + "/404.html", router.get("/donaldduck.html"));
   }
 

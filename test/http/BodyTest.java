@@ -34,7 +34,7 @@ public class BodyTest {
                             + "    Hi, everyone!\n"
                             + "  </BODY>\n"
                             + "</HTML>";
-    byte[] actualResultInBytes = body.get("/Users/Kelly/Desktop/Java_HTTP_Server/public/hi_everyone.html", null);
+    byte[] actualResultInBytes = body.get("./public/hi_everyone.html", null);
     String actualResultString = new String(actualResultInBytes);
     assertEquals(expectedResult, actualResultString);
   }
@@ -49,10 +49,9 @@ public class BodyTest {
                             + "  </BODY>\n"
                             + "</HTML>";
 
-    byte[] actualResultInBytes = body.get("/Users/Kelly/Desktop/Java_HTTP_Server/public/hi_everyone.html", "everyone=someone");
+    byte[] actualResultInBytes = body.get("./public/hi_everyone.html", "everyone=someone");
     String actualResultString = new String(actualResultInBytes);
     assertEquals(expectedResult, actualResultString);
-//    assertEquals(body.get("/Users/Kelly/Desktop/Java_HTTP_Server/public/hi_everyone.html", "everyone=someone"), expectedResult);
   }
 
   @Test
@@ -61,6 +60,5 @@ public class BodyTest {
     String value = "B";
     assertEquals("BBBB", "AAAA".replaceAll(key, value));
   }
-
 
 }

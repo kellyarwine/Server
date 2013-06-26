@@ -8,11 +8,10 @@ public class Router {
   private String publicDirectory;
   private HashMap<String, String> routes;
 
-	public Router(String publicDirectory, HashMap routes) {
+	public Router(String publicDirectory, HashMap<String, String> routes) {
     this.publicDirectory = publicDirectory;
     this.routes = routes;
     this.routes.put("/", "/index.html");
-    this.routes.put(null, NOT_FOUND);
 	}
 
   public String get(String route) {
@@ -22,10 +21,6 @@ public class Router {
       return publicDirectory + routes.get(route);
   }
 
-  private boolean isDynamic(String route) {
-    return routes.containsKey(route);
-  }
-
   public boolean fileValid(String filename) {
     if(filename.equals("/"))
       return false;
@@ -33,6 +28,5 @@ public class Router {
 	  File theFile = new File(publicDirectory + filename);
 	  return theFile.canRead() ;
   }
-
 
 }

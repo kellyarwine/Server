@@ -18,7 +18,7 @@ import static junit.framework.Assert.assertEquals;
   @Before
   public void setUp() throws IOException {
     streams = new MockSocketStreams("This is some text.");
-    browser = new HTTPBrowser(streams, "/Users/Kelly/Desktop/Java_HTTP_Server/public");
+    browser = new HTTPBrowser(streams, "./public");
   }
 
   @Test
