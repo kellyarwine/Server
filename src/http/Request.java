@@ -9,6 +9,8 @@ public class Request {
   public String queryString;
 
   public void parse(String request) {
+    System.out.println(request);
+
     String[] requestArray = request.split(" ");
 
     httpMethod = requestArray[0];

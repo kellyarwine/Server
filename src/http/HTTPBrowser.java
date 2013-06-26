@@ -16,8 +16,11 @@ public class HTTPBrowser {
 
     while (true) {
       int chr = streams.in().read();
-      if (chr == -1 || chr == '\r' || chr == '\n') break;
-      buffer.append( (char) chr );
+
+      if (chr == -1)
+        break;
+
+      buffer.append(chr);
     }
 
     return buffer.toString();

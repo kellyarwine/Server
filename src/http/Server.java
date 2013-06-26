@@ -22,12 +22,7 @@ public class Server {
     ServerSocket theServerSocket = new ServerSocket(port);
     System.out.println("HTTP Server is running on port " + port + ".");
 
-//    streams = new SystemSocketStreams(theServerSocket);
-
     while (true) {
-//      streams = new SystemSocketStreams(theServerSocket);
-//      HTTPBrowser browser = new HTTPBrowser(streams, publicDirectory);
-
       if (environment == "production")
         streams = new SystemSocketStreams(theServerSocket);
       else
@@ -40,6 +35,9 @@ public class Server {
       String route = router.get(request.baseURL);
       byte[] responseBody = body.get(route, request.queryString);
       byte[] responseHeader = header.get(route, request.httpMethod, responseBody.length);
+
+      System.out.println(new String(responseHeader));;
+
       browser.sendResponse(responseHeader);
       browser.sendResponse(responseBody);
       // get remaining parameters

@@ -4,17 +4,23 @@ import java.util.Date;
 
 public class Header {
 
+  private String baseURL;
+  private String requestedHTTPMethod;
+  private int contentLengthOfURL;
+
   public byte[] get(String baseURL, String requestedHTTPMethod, int contentLengthOfURL) {
-    String stringHeader = build(baseURL, requestedHTTPMethod, contentLengthOfURL);
-    return stringHeader.getBytes();
+    this.baseURL = baseURL;
+    this.requestedHTTPMethod = requestedHTTPMethod;
+    this.contentLengthOfURL = contentLengthOfURL;
+    return build().getBytes();
     }
 
-  public String build(String baseURL, String requestedHTTPMethod, int contentLengthOfURL) {
-    String stringHeader = httpProtocolVersion() + " " + httpMethod(requestedHTTPMethod, baseURL)
+  public String build() {
+    String stringHeader = httpProtocolVersion() + " " + httpMethod()
         + "\r\n" + currentDate()
         + "\r\n" + serverInfo()
-        + "\r\n" + contentType(baseURL)
-        + "\r\n" + contentLength(contentLengthOfURL)
+        + "\r\n" + contentType()
+        + "\r\n" + contentLength()
         + "\r\n\r\n";
     return stringHeader;
   }
@@ -23,10 +29,12 @@ public class Header {
     return "HTTP/1.1";
   }
 
-  public String httpMethod(String requestedHTTPMethod, String baseURL) {
+  public String httpMethod() {
     String method = null;
+
     if (baseURL.endsWith("/404.html")) method = "404 File Not Found";
     else if (requestedHTTPMethod.equals("GET")) method = "200 OK";
+    else if (requestedHTTPMethod.equals("POST")) method = "something";
 
     return method;
   }
@@ -39,7 +47,7 @@ public class Header {
     return "Server: NinjaServer 1.0";
   }
 
-  public String contentType(String baseURL) {
+  public String contentType() {
     String contentTypeOfURL = "text/plain; charset=UTF-8";
 
     if (baseURL.endsWith(".html") || baseURL.endsWith(".htm")) contentTypeOfURL = "text/html; charset=UTF-8";
@@ -50,7 +58,7 @@ public class Header {
     return "Content-type: " + contentTypeOfURL;
   }
 
-  public String contentLength(int contentLengthOfURL) {
+  public String contentLength() {
     return "Content-length: " + contentLengthOfURL;
   }
 

@@ -6,22 +6,22 @@ import java.net.Socket;
 
 public class SystemSocketStreams implements WebSocketStreams {
   public Socket theConnection;
-  private InputStream in;
-  private OutputStream out;
+  private InputStream input;
+  private OutputStream output;
 
   public SystemSocketStreams(ServerSocket theServerSocket) throws IOException {
     theConnection = theServerSocket.accept();
-    in = new BufferedInputStream(theConnection.getInputStream());
-    out = new BufferedOutputStream(theConnection.getOutputStream());
+    input = new BufferedInputStream(theConnection.getInputStream());
+    output = new BufferedOutputStream(theConnection.getOutputStream());
   }
 
   @Override
   public InputStream in() throws IOException {
-    return in;
+    return input;
   }
 
   @Override
   public OutputStream out() throws IOException {
-    return out;
+    return output;
   }
 }
