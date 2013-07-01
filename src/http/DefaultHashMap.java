@@ -6,6 +6,7 @@ import java.util.HashMap;
 public class DefaultHashMap extends HashMap{
   private String defaultValue;
 
+
   public DefaultHashMap(String defaultValue){
     this.defaultValue = defaultValue;
   }
