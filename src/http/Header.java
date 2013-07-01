@@ -34,7 +34,6 @@ public class Header {
 
     if (baseURL.endsWith("/404.html")) method = "404 File Not Found";
     else if (requestedHTTPMethod.equals("GET")) method = "200 OK";
-    else if (requestedHTTPMethod.equals("POST")) method = "something";
 
     return method;
   }

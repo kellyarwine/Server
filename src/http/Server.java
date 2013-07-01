@@ -1,46 +1,35 @@
 package http;
 
-import java.net.ServerSocket;
 import java.util.Arrays;
 
 public class Server {
-  private int port;
-  private String publicDirectory;
-  private String environment;
-  private WebSocketStreams streams;
-
-  private Request request = new Request();
+  private Request request;
   private Router router;
-  private Header header = new Header();
-  private Body body = new Body();
+  private Header header;
+  private Body body;
+  private WebServerSocket theServerSocket;
 
   public Server(int port, String publicDirectory) throws Exception {
-    this.port = port;
-    this.publicDirectory = publicDirectory;
-    this.environment = "production";
+    request = new Request();
+    header = new Header();
+    body = new Body();
     this.router = new Router(publicDirectory, new DefaultHashMap(Router.NOT_FOUND));
-    ServerSocket theServerSocket = new ServerSocket(port);
+
+    ServerSocketFactory theServerSocketFactory = new ServerSocketFactory();
+    theServerSocket = theServerSocketFactory.get("production", port);
     System.out.println("HTTP Server is running on port " + port + ".");
 
     while (true) {
-      if (environment == "production")
-        streams = new SystemSocketStreams(theServerSocket);
-      else
-        streams = new MockSocketStreams("This is some text.");
-
-      HTTPBrowser browser = new HTTPBrowser(streams, publicDirectory);
-
-      String receivedRequest = browser.receiveRequest();
+      theServerSocket.connect();
+      RequestHandler requestHandler = new RequestHandler(theServerSocket);
+      String receivedRequest = requestHandler.receiveRequest();
       request.parse(receivedRequest);
       String route = router.get(request.baseURL);
       byte[] responseBody = body.get(route, request.queryString);
       byte[] responseHeader = header.get(route, request.httpMethod, responseBody.length);
-
-      System.out.println(new String(responseHeader));;
-
-      browser.sendResponse(responseHeader);
-      browser.sendResponse(responseBody);
-      // get remaining parameters
+      requestHandler.sendResponse(responseHeader);
+      requestHandler.sendResponse(responseBody);
+      theServerSocket.closeConnection();
     }
   }
 
@@ -51,6 +40,6 @@ public class Server {
       int publicDirectoryIndex = Arrays.asList(args).indexOf("-d");
       String publicDirectory = args[publicDirectoryIndex+1];
 
-      Server theServer = new Server(port, publicDirectory);
+      new Server(port, publicDirectory);
     }
 }

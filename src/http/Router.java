@@ -15,8 +15,9 @@ public class Router {
 	}
 
   public String get(String route) {
-    if (fileValid(route))
+    if (fileValid(route))  {
       return publicDirectory + route;
+    }
     else
       return publicDirectory + routes.get(route);
   }
