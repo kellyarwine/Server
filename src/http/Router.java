@@ -6,12 +6,13 @@ import java.util.HashMap;
 public class Router {
   public static final String NOT_FOUND = "/404.html";
   private String publicDirectory;
-  private HashMap<String, String> routes;
+  private HashMap routeMap;
 
-	public Router(String publicDirectory, HashMap<String, String> routes) {
+  public Router(String publicDirectory, HashMap<String, String> routes) {
     this.publicDirectory = publicDirectory;
-    this.routes = routes;
-    this.routes.put("/", "/index.html");
+    DefaultHashMapBuilder builder = new DefaultHashMapBuilder(NOT_FOUND);
+    this.routeMap = builder.buildFrom(routes);
+    this.routeMap.put("/", "/index.html");
 	}
 
   public String get(String route) {
@@ -19,7 +20,7 @@ public class Router {
       return publicDirectory + route;
     }
     else
-      return publicDirectory + routes.get(route);
+      return publicDirectory + routeMap.get(route);
   }
 
   public boolean fileValid(String filename) {

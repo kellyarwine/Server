@@ -16,7 +16,7 @@ public class RouterTest {
 
   @Before
   public void setUp() {
-    routes = new DefaultHashMap(Router.NOT_FOUND);
+    routes = new HashMap();
     publicDirectory = "public";
   }
 
@@ -50,6 +50,12 @@ public class RouterTest {
   public void testRouteToInvalidFile() {
     Router router = new Router(publicDirectory, routes);
     assertEquals(publicDirectory + "/404.html", router.get("/donaldduck.html"));
+  }
+
+  @Test
+  public void testDefaultRoute() throws Exception{
+    Router router = new Router(publicDirectory, routes);
+    assertEquals(publicDirectory + "/404.html", router.get("/something_weird"));
   }
 
 }

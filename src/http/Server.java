@@ -1,6 +1,6 @@
 package http;
 
-import java.util.Arrays;
+import java.io.IOException;
 
 public class Server {
   private Request request;
@@ -8,15 +8,20 @@ public class Server {
   private Header header;
   private Body body;
   private WebServerSocket theServerSocket;
+  private int port;
 
   public Server(int port, String publicDirectory) throws Exception {
     request = new Request();
     header = new Header();
     body = new Body();
+    this.port = port;
     this.router = new Router(publicDirectory, new DefaultHashMap(Router.NOT_FOUND));
+  }
 
+  public void run() throws IOException {
     ServerSocketFactory theServerSocketFactory = new ServerSocketFactory();
     theServerSocket = theServerSocketFactory.get("production", port);
+
     System.out.println("HTTP Server is running on port " + port + ".");
 
     while (true) {
@@ -34,13 +39,4 @@ public class Server {
     }
   }
 
-  public static void main(String[] args) throws Exception {
-      int portIndex = Arrays.asList(args).indexOf("-p");
-      Integer port = Integer.parseInt(args[portIndex+1]);
-
-      int publicDirectoryIndex = Arrays.asList(args).indexOf("-d");
-      String publicDirectory = args[publicDirectoryIndex+1];
-
-      new Server(port, publicDirectory);
-    }
 }
