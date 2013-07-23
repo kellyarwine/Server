@@ -4,7 +4,7 @@ import java.io.*;
 
 public class MockServerSocket implements WebServerSocket {
   private String dataString;
-  public InputStream in;
+  public BufferedReader in;
   public OutputStream out;
 
   public MockServerSocket(String dataString) {
@@ -13,11 +13,11 @@ public class MockServerSocket implements WebServerSocket {
 
   public void connect() {
     byte[] dataBytes = dataString.getBytes();
-    in = new BufferedInputStream(new ByteArrayInputStream(dataBytes));
+    in = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(dataBytes)));
     out = new ByteArrayOutputStream();
   }
 
-  public InputStream in() {
+  public BufferedReader in() {
     return in;
   }
 

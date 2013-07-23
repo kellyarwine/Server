@@ -22,8 +22,9 @@ public class Server {
     while (true) {
       theServerSocket.connect();
       RequestHandler requestHandler = new RequestHandler(theServerSocket);
-      String receivedRequest = requestHandler.receiveRequest();
-      request.parse(receivedRequest);
+      String receivedRequest = requestHandler.receive();
+      System.out.println("receivedRequest = " + receivedRequest);
+      request.parseHeader(receivedRequest);
       String route = router.get(request.baseURL);
       byte[] responseBody = body.get(route, request.queryString);
       byte[] responseHeader = header.get(route, request.httpMethod, responseBody.length);

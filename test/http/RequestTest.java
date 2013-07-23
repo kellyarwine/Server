@@ -21,7 +21,7 @@ public class RequestTest {
 
   @Test
   public void testParseRequestWithQueryString() {
-    request.parse("GET /donaldduck.html?text_color=blue HTTP/1.0");
+    request.parseHeader("GET /donaldduck.html?text_color=blue HTTP/1.0");
     assertEquals(request.httpMethod, "GET");
     assertEquals(request.fullURL, "/donaldduck.html?text_color=blue");
     assertEquals(request.httpProtocol, "HTTP/1.0");
@@ -31,12 +31,18 @@ public class RequestTest {
 
   @Test
   public void testParseRequestWithNoQueryString() {
-    request.parse("GET /donaldduck.html HTTP/1.0");
+    request.parseHeader("GET /donaldduck.html HTTP/1.0");
     assertEquals(request.httpMethod, "GET");
     assertEquals(request.fullURL, "/donaldduck.html");
     assertEquals(request.httpProtocol, "HTTP/1.0");
     assertEquals(request.baseURL, "/donaldduck.html");
     assertEquals(request.queryString, null);
+  }
+
+  @Test
+  public void testParseBody() {
+    request.parseBody("text_color=blue");
+    assertEquals(request.queryString, "text_color=blue");
   }
 
 }

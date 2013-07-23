@@ -8,8 +8,8 @@ public class Request {
   public String baseURL;
   public String queryString;
 
-  public void parse(String request) {
-    String[] requestArray = request.split(" ");
+  public void parseHeader(String header) {
+    String[] requestArray = header.split(" ");
     httpMethod = requestArray[0];
     fullURL = requestArray[1];
     httpProtocol = requestArray[2];
@@ -26,4 +26,7 @@ public class Request {
       baseURL = fullURL;
   }
 
+  public void parseBody(String body) {
+    queryString = body;
+  }
 }
