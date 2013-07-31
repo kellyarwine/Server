@@ -1,32 +1,46 @@
 package http;
 
 public class Request {
-
   public String httpMethod;
   public String fullURL;
   public String httpProtocol;
   public String baseURL;
   public String queryString;
 
-  public void parseHeader(String header) {
-    String[] requestArray = header.split(" ");
-    httpMethod = requestArray[0];
-    fullURL = requestArray[1];
-    httpProtocol = requestArray[2];
-    getBaseURLAndQueryString();
+  public void parseMessage(String message) {
+    if (message.startsWith("GET")) {
+      parseMessageHeader(message);
+      handleGetQueryString();
+    }
+    else if (message.startsWith("POST")) {
+      String[] messageParts = parseMessageParts(message);
+      parseMessageHeader(messageParts[0]);
+      handlePostQueryString(messageParts[1]);
+    }
   }
 
-  public void getBaseURLAndQueryString() {
+  private void parseMessageHeader(String header) {
+    String[] headerArray = header.split(" ");
+    httpMethod = headerArray[0];
+    fullURL = headerArray[1];
+    httpProtocol = headerArray[2];
+    baseURL = fullURL;
+    queryString = null;
+  }
+
+  private void handleGetQueryString() {
     if (fullURL.contains("?")) {
       String[] urlArray = fullURL.split("\\?");
       baseURL = urlArray[0];
       queryString = urlArray[1];
     }
-    else
-      baseURL = fullURL;
   }
 
-  public void parseBody(String body) {
-    queryString = body;
+  private String[] parseMessageParts(String message) {
+    return message.split("\r\n\r\n");
+  }
+
+  private void handlePostQueryString(String queryString) {
+    this.queryString = queryString;
   }
 }
