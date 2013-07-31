@@ -8,19 +8,19 @@ IFS=' ' read -a ARGUMENTS_ARRAY <<< "$@"
 #if no arguments are passed in
 if [ $# == 0 ]
   then
-    java -jar build/jar/server.jar -p 5000 -d "public/" -e production &echo $! > ./program.pid
+    java -jar build/jar/server.jar -p 5000 -d "test/public/" -e production &echo $! > ./program.pid
 fi
 
 #if arguments are passed in, we need to check the public directory
 if [ $# != 0 ]
   then
     #if the public folder is the relative folder
-    if [ ${ARGUMENTS_ARRAY[3]} == "/public" ]
+    if [ ${ARGUMENTS_ARRAY[3]} == "test/public" ]
       then
         java -jar build/jar/server.jar ${ARGUMENTS_ARRAY[0]} ${ARGUMENTS_ARRAY[1]} ${ARGUMENTS_ARRAY[2]} "public/" -e production &echo $! > ./program.pid
     fi
     #if arguments are passed in and the public folder is the full path to the public folder
-    if [ ${ARGUMENTS_ARRAY[3]} != "/public" ]
+    if [ ${ARGUMENTS_ARRAY[3]} != "test/public" ]
       then
         java -jar build/jar/server.jar "$@" -e production &echo $! > ./program.pid
     fi

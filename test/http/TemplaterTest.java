@@ -18,7 +18,7 @@ public class TemplaterTest {
   @Before
   public void setUp() {
     workingDirectory = System.getProperty("user.dir");
-    publicDirectory = "public/";
+    publicDirectory = "test/public/";
     publicDirectoryFullPath = new File(workingDirectory, publicDirectory);
     templater = new Templater(publicDirectoryFullPath);
   }

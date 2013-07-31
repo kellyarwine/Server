@@ -14,14 +14,14 @@ import static org.junit.Assert.assertEquals;
 public class RouterTest {
 
   private String publicDirectory;
-  private String publicDirectoryFullPath;
+  private File publicDirectoryFullPath;
   private HashMap<String, String> routes;
 
   @Before
   public void setUp() {
     String workingDirectory = System.getProperty("user.dir");
-    publicDirectory = "public/";
-    publicDirectoryFullPath = workingDirectory + "/public/";
+    publicDirectory = "test/public/";
+    publicDirectoryFullPath = new File(workingDirectory, publicDirectory);
     routes = new HashMap();
   }
 
@@ -31,13 +31,6 @@ public class RouterTest {
     File expectedResult = new File(publicDirectoryFullPath, "index.html");
     assertEquals(expectedResult, router.get("/index.html"));
   }
-
-//  @Test
-//  public void testRouteToIndex() {
-//    Router router = new Router(publicDirectory, routes);
-//    File expectedResult = new File(publicDirectoryFullPath, "index.html");
-//    assertEquals(expectedResult, router.get("/"));
-//  }
 
   @Test
   public void testRouteToImage() {

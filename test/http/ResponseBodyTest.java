@@ -22,7 +22,7 @@ public class ResponseBodyTest {
   @Before
   public void setUp() throws IOException {
     workingDirectory = System.getProperty("user.dir");
-    publicDirectory = "public/";
+    publicDirectory = "test/public/";
     publicDirectoryFullPath = new File(workingDirectory, publicDirectory);
     responseBody = new ResponseBody(publicDirectoryFullPath);
   }
@@ -41,6 +41,7 @@ public class ResponseBodyTest {
                             + "    Hi, everyone!\n"
                             + "  </BODY>\n"
                             + "</HTML>";
+
     File routeFile = new File(publicDirectoryFullPath + "/hi_everyone.html");
     byte[] actualResultInBytes = responseBody.get(routeFile, null);
     String actualResult = new String(actualResultInBytes);
@@ -102,5 +103,16 @@ public class ResponseBodyTest {
 
     return outputStream.toByteArray();
   }
+
+  public String readInputStreamToString(InputStream inputStream) throws IOException {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    int chr;
+
+    while ((chr = inputStream.read()) != -1)
+      outputStream.write(chr);
+
+    return outputStream.toString();
+  }
+
 
 }
