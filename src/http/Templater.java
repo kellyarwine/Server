@@ -1,7 +1,10 @@
 package http;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class Templater {
   public File publicDirectoryFullPath;
@@ -33,15 +36,13 @@ public class Templater {
   }
 
   public String getFileDirectoryTemplate(File routeFile) throws IOException {
-    File templateFile = new File(publicDirectoryFullPath, "file_directory.html");
-    String templateString = readFile(templateFile);
-    HashMap templateElements = getFileDirectoryTemplateElements(routeFile);
+    String templateString = readInputStreamToString(this.getClass().getResourceAsStream("/http/templates/file_directory.html"));
+      HashMap templateElements = getFileDirectoryTemplateElements(routeFile);
     return updateTemplateWithKeyValuePairs(templateString, templateElements);
   }
 
   public String getFourOhFourTemplate() throws IOException {
-    File templateFile = new File(publicDirectoryFullPath, "404.html");
-    return readFile(templateFile);
+    return readInputStreamToString(this.getClass().getResourceAsStream("/http/templates/404.html"));
   }
 
   private HashMap getFileDirectoryTemplateElements(File routeFile) throws IOException {
@@ -94,6 +95,16 @@ public class Templater {
 
   public String readFile(File templateFile) throws IOException {
     InputStream inputStream = new FileInputStream(templateFile);
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    int chr;
+
+    while ((chr = inputStream.read()) != -1)
+      outputStream.write(chr);
+
+    return outputStream.toString();
+  }
+
+  public String readInputStreamToString(InputStream inputStream) throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     int chr;
 

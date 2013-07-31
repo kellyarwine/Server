@@ -81,7 +81,7 @@ public class ResponseBodyTest {
   public void testDirectoryRoute() throws IOException {
     File routeFile = publicDirectoryFullPath;
     responseBody.get(routeFile, "");
-    assertTrue(responseBody.bodyString.contains("/404.html"));
+    assertTrue(responseBody.bodyString.contains("/celebrate.gif"));
   }
 
   @Test
