@@ -1,10 +1,14 @@
 package http;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 
 public class RequestHandler {
   public String receivedRequest;
   public WebServerSocket theServerSocket;
+  private String NEWLINE = "\r\n";
+  private ByteBuffer bodyBuffer;
 
   public RequestHandler(WebServerSocket theServerSocket) throws IOException {
     this.theServerSocket = theServerSocket;
@@ -12,19 +16,16 @@ public class RequestHandler {
 
   public String receive() throws  IOException {
     receiveHeader();
-//    System.out.println("receivedHeader = " + receivedRequest);
     handleBody();
-//    System.out.println("receivedBody = " + receivedRequest);
-
     return receivedRequest;
   }
 
   public void receiveHeader() throws IOException {
     StringBuffer buffer = new StringBuffer(100);
-    String chrs;
+    String line;
 
-    while ( !(chrs = theServerSocket.in().readLine()).equals("") ) {
-        buffer.append(chrs);
+    while ( !(line = theServerSocket.in().readLine()).equals("") ) {
+        buffer.append(line);
         buffer.append("\r\n");
     }
 
@@ -33,27 +34,32 @@ public class RequestHandler {
 
   public void handleBody() throws IOException {
     if (receivedRequest.startsWith("POST")) {
+      receivedRequest += NEWLINE;
       receiveBody();
     }
   }
 
   public void receiveBody() throws IOException {
-    int contentLength = getContentLength();
-    StringBuffer buffer = new StringBuffer(contentLength);
-    String remainingChrs = "";
+    readRequestBodyToBuffer();
+    readBufferToReceivedRequest();
+  }
 
-    buffer.append("\r\n");
+  private void readBufferToReceivedRequest() throws UnsupportedEncodingException {
+    bodyBuffer.position(0);
+    byte[] bufferInBytes = new byte[bodyBuffer.remaining()];
+    bodyBuffer.get(bufferInBytes);
 
-    while ( buffer.length() < contentLength ) {
-      remainingChrs = theServerSocket.in().readLine();
+    receivedRequest += new String(bufferInBytes, "UTF-8");
+  }
 
-      System.out.println("Did I get here?");
+  private void readRequestBodyToBuffer() throws IOException {
+    bodyBuffer = ByteBuffer.allocate(requestContentLength());
+    int remainingChrs;
 
-      buffer.append(remainingChrs);
-      buffer.append("\r\n");
+    while ( bodyBuffer.remaining() > 0 ) {
+      remainingChrs = theServerSocket.in().read();
+      bodyBuffer.put( (byte) remainingChrs);
     }
-
-    receivedRequest += buffer.toString();
   }
 
   public void sendResponse(byte[] content) throws IOException {
@@ -61,8 +67,8 @@ public class RequestHandler {
     theServerSocket.out().flush();
   }
 
-  public int getContentLength() {
-    String[] requestArray = receivedRequest.split("\r\n");
+  public int requestContentLength() {
+    String[] requestArray = receivedRequest.split(NEWLINE);
     String[] contentLengthArray = new String[3];
 
     for(int i=0; i<requestArray.length; i++) {
@@ -71,5 +77,4 @@ public class RequestHandler {
     }
     return Integer.parseInt(contentLengthArray[1]);
   }
-
 }

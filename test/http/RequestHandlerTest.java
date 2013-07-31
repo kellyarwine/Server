@@ -64,7 +64,7 @@ import static junit.framework.Assert.assertEquals;
     requestHandler = new RequestHandler(theServerSocket);
     theServerSocket.connect();
     requestHandler.receiveHeader();
-    assertEquals(15, requestHandler.getContentLength());
+    assertEquals(15, requestHandler.requestContentLength());
   }
 
   @Test
@@ -79,13 +79,11 @@ import static junit.framework.Assert.assertEquals;
         + "Accept-Encoding: gzip,deflate,sdch\r\n"
         + "Accept-Language: en-US,en;q=0.8\r\n"
         + "Cookie: textwrapon=false; wysiwyg=textarea\r\n";
-    String requestBody     = "text_color=blue\r\n";
+    String requestBody     = "text_color=blue";
     theServerSocket = new MockServerSocket(requestHeader + NEWLINE + requestBody + "\r\n");
     requestHandler = new RequestHandler(theServerSocket);
     theServerSocket.connect();
-    requestHandler.receiveHeader();
-    assertEquals(requestHeader, requestHandler.receivedRequest);
-    requestHandler.receiveBody();
+    requestHandler.receive();
     assertEquals(requestHeader + NEWLINE + requestBody, requestHandler.receivedRequest);
   }
 
