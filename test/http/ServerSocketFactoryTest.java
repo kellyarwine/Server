@@ -17,12 +17,12 @@ public class ServerSocketFactoryTest {
 
   @Test
   public void testSystemServerSocket() throws IOException {
-    assertTrue(serverSocketFactory.get("production", 5001) instanceof SystemServerSocket);
+    assertTrue(serverSocketFactory.get(6000, "production") instanceof SystemServerSocket);
   }
 
   @Test
   public void testMockServerSocket() throws IOException {
-    assertTrue(serverSocketFactory.get("test", 5001) instanceof MockServerSocket);
+    assertTrue(serverSocketFactory.get(6000, "test") instanceof MockServerSocket);
   }
 
 }
