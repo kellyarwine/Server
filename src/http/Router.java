@@ -5,30 +5,26 @@ import java.util.HashMap;
 
 public class Router {
   public static final String NOT_FOUND = "/404.html";
-  private String publicDirectory;
+  private File publicDirectoryFolder;
   private HashMap routeMap;
 
   public Router(String publicDirectory, HashMap<String, String> routes) {
-    this.publicDirectory = publicDirectory;
+    File workingDirectory = new File(System.getProperty("user.dir"));
+    this.publicDirectoryFolder = new File(workingDirectory, publicDirectory);
     DefaultHashMapBuilder builder = new DefaultHashMapBuilder(NOT_FOUND);
     this.routeMap = builder.buildFrom(routes);
-    this.routeMap.put("/", "/index.html");
 	}
 
-  public String get(String route) {
-    if (fileValid(route))  {
-      return publicDirectory + route;
+  public File get(String route) {
+    File routeFile = new File(publicDirectoryFolder, route);
+    if (fileValid(routeFile))  {
+      return routeFile;
     }
-    else
-      return publicDirectory + routeMap.get(route);
+    else;
+      return new File(publicDirectoryFolder, (String) routeMap.get(route));
   }
 
-  public boolean fileValid(String filename) {
-    if(filename.equals("/"))
-      return false;
-
-	  File theFile = new File(publicDirectory + filename);
-	  return theFile.canRead() ;
+  public boolean fileValid(File routeFile) {
+	  return routeFile.canRead() ;
   }
-
 }
