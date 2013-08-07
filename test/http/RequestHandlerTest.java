@@ -30,19 +30,6 @@ import static junit.framework.Assert.assertEquals;
     assertEquals(request + NEWLINE, requestHandler.receive());
   }
 
-
-//  @Test
-//  public void testSingleLineGetWithNullBufferedReader() throws IOException {
-//    String request = "GET /donaldduck.html HTTP/1.1\r\n";
-//    StringReader reader = new StringReader(request);
-//
-//    theServerSocket = new MockServerSocket(request + NEWLINE);
-//    ((MockServerSocket)theServerSocket).in = new NullBufferedReader(new BufferedReader(reader));
-//    requestHandler = new RequestHandler(theServerSocket);
-//
-//    assertEquals("", requestHandler.receive());
-//  }
-
   @Test
   public void testMultiLineGet() throws IOException {
     String request =   "GET /color_picker.html HTTP/1.1\r\n"
@@ -77,7 +64,7 @@ import static junit.framework.Assert.assertEquals;
     requestHandler = new RequestHandler(theServerSocket);
     theServerSocket.connect();
     requestHandler.receive();
-    assertEquals(requestHeader + NEWLINE + requestBody, requestHandler.receivedRequest);
+    assertEquals(requestHeader + NEWLINE + requestBody, requestHandler.receive());
   }
 
   @Test
@@ -90,7 +77,7 @@ import static junit.framework.Assert.assertEquals;
     requestHandler = new RequestHandler(theServerSocket);
     theServerSocket.connect();
     requestHandler.receive();
-    assertEquals(requestHeader + NEWLINE + requestBody, requestHandler.receivedRequest);
+    assertEquals(requestHeader + NEWLINE + requestBody, requestHandler.receive());
   }
 
   @Test
@@ -110,7 +97,7 @@ import static junit.framework.Assert.assertEquals;
     requestHandler = new RequestHandler(theServerSocket);
     theServerSocket.connect();
     requestHandler.receive();
-    assertEquals(requestHeader + NEWLINE + requestBody, requestHandler.receivedRequest);
+    assertEquals(requestHeader + NEWLINE + requestBody, requestHandler.receive());
   }
 
   @Test
@@ -125,12 +112,4 @@ import static junit.framework.Assert.assertEquals;
     String actualResponse = theServerSocket.out().toString();
     assertEquals(expectedResponse, actualResponse);
   }
-
-//  @Test
-//  public void test() {
-//    int var = 3;
-//    while ((var += 1) < 7 && var < 6) {
-//      System.out.println("Hi");
-//    }
-//  }
 }
