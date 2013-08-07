@@ -13,6 +13,7 @@ public class ConsoleLogger implements SystemLogger {
 
   @Override
   public void out(String message) {
-    System.out.println(currentDateAndTime() + " - " + message);
+    System.out.println(currentDateAndTime() + " - ");
+    System.out.println(message + "\r\n");
   }
 }
