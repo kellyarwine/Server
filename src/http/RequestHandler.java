@@ -16,24 +16,23 @@ public class RequestHandler {
 
   public String receive() throws  IOException {
     receiveHeader();
-    handleBody();
     return receivedRequest;
   }
 
-  public void receiveHeader() throws IOException {
-    StringBuffer buffer = new StringBuffer(100);
-    String line;
 
-    while ( !(line = theServerSocket.in().readLine()).equals("") ) {
-        buffer.append(line);
-        buffer.append("\r\n");
+  public void receiveHeader() throws IOException {
+    StringBuffer buffer = new StringBuffer();
+    int chr;
+
+    while ( (chr = theServerSocket.in().read()) != -1) {
+      buffer.append((char) chr);
     }
 
     receivedRequest = buffer.toString();
   }
 
   public void handleBody() throws IOException {
-    if (receivedRequest.startsWith("POST")) {
+    if (receivedRequest.startsWith("POST") || receivedRequest.startsWith("PUT")) {
       receivedRequest += NEWLINE;
       receiveBody();
     }
@@ -44,14 +43,6 @@ public class RequestHandler {
     readBufferToReceivedRequest();
   }
 
-  private void readBufferToReceivedRequest() throws UnsupportedEncodingException {
-    bodyBuffer.position(0);
-    byte[] bufferInBytes = new byte[bodyBuffer.remaining()];
-    bodyBuffer.get(bufferInBytes);
-
-    receivedRequest += new String(bufferInBytes, "UTF-8");
-  }
-
   private void readRequestBodyToBuffer() throws IOException {
     bodyBuffer = ByteBuffer.allocate(requestContentLength());
     int remainingChrs;
@@ -60,6 +51,14 @@ public class RequestHandler {
       remainingChrs = theServerSocket.in().read();
       bodyBuffer.put( (byte) remainingChrs);
     }
+  }
+
+  private void readBufferToReceivedRequest() throws UnsupportedEncodingException {
+    bodyBuffer.position(0);
+    byte[] bufferInBytes = new byte[bodyBuffer.remaining()];
+    bodyBuffer.get(bufferInBytes);
+
+    receivedRequest += new String(bufferInBytes, "UTF-8");
   }
 
   public void sendResponse(byte[] content) throws IOException {
