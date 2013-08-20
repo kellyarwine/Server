@@ -2,4 +2,5 @@
 /my_little_pony, /my_little_pony.png
 /punky, /punky_brewster.jpg
 /rainbow, /rainbow_brite.jpeg
-/parameters, /parameters.html
+/parameters, /templates/parameters.html
+/form, /templates/form.html
