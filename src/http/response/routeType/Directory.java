@@ -32,7 +32,7 @@ public class Directory implements RouteType {
 
     for(int i = 0; i < fileList.length; i++) {
       stringBuilder.append("<a href=\"");
-      stringBuilder.append(request.get("url"));
+      stringBuilder.append(getRootFolder((String) request.get("url")));
       stringBuilder.append("/" + fileList[i].getName());
       stringBuilder.append("\">");
       stringBuilder.append("/" + fileList[i].getName());
@@ -40,5 +40,12 @@ public class Directory implements RouteType {
     }
 
     return stringBuilder.toString();
+  }
+
+  private String getRootFolder(String url) {
+    if (url.equals("/"))
+        return "";
+    else
+      return url;
   }
 }
