@@ -18,7 +18,7 @@ public class FourHundredFourTest {
   @Before
   public void setUp() throws IOException {
     File workingDirectory = new File(System.getProperty("user.dir"));
-    File publicDirectoryFullPath = new File(workingDirectory, "test/public/");
+    publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     Templater templater = new Templater(publicDirectoryFullPath);
     templater.createTemplate("404.html");
   }
@@ -29,7 +29,7 @@ public class FourHundredFourTest {
   }
 
   @Test
-  public void build() throws IOException, IOException {
+  public void build() throws IOException {
     String workingDirectory = System.getProperty("user.dir");
     File publicDirectoryFullPath = new File(workingDirectory, "test/public/");
 
@@ -75,7 +75,7 @@ public class FourHundredFourTest {
     return outputStream.toByteArray();
   }
 
-  private void deleteDirectory(File directory) {
+  public void deleteDirectory(File directory) {
     if (directory.isDirectory()) {
       String[] children = directory.list();
       for (int i=0; i<children.length; i++) {

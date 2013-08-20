@@ -29,8 +29,6 @@ public class RouterMapBuilderTest {
     deleteDirectory(new File(publicDirectoryFullPath, "/templates"));
     RouterMapBuilder routerMapBuilder = new RouterMapBuilder();
     actualResult = routerMapBuilder.buildFrom("test/public/", "routes.csv", ".htaccess");
-    Templater templater = new Templater(publicDirectoryFullPath);
-    templater.createTemplate("404.html");
   }
 
   @After

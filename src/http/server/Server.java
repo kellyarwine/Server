@@ -9,7 +9,6 @@ import http.server.serverSocket.ServerSocketFactory;
 import http.server.serverSocket.WebServerSocket;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,14 +19,8 @@ public class Server {
 
   public Server(int port, String publicDirectory, String env, String routesFilePath, String htAccessFilePath) throws Exception {
     workingDirectory = new File(System.getProperty("user.dir"));
-    ServerSocketFactory theServerSocketFactory = new ServerSocketFactory();
-    theServerSocket = theServerSocketFactory.get(port, env);
-    run(theServerSocket, port, publicDirectory, env, routesFilePath, htAccessFilePath);
-  }
-
-  public void run(WebServerSocket theServerSocket, int port, String publicDirectory, String env, String routesFilePath, String htAccessFilePath) throws IOException {
-    SystemLoggerFactory theSystemLoggerFactory = new SystemLoggerFactory();
-    SystemLogger logger = theSystemLoggerFactory.get(env);
+    theServerSocket = new ServerSocketFactory().get(port, env);
+    SystemLogger logger = new SystemLoggerFactory().get(env);
 
     Request request = new Request();
     Router router = new Router(publicDirectory, routesFilePath, htAccessFilePath);
