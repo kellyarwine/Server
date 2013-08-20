@@ -39,7 +39,7 @@ public class DirectoryTest {
         + new Date() + "\r\n"
         + "Server: NinjaServer 1.0" + "\r\n"
         + "Content-type: text/html; charset=UTF-8" + "\r\n"
-        + "Content-length: 227\r\n";
+        + "Content-length: 231\r\n";
     String expectedBody   = "<HTML>\n"
                           + "  <HEAD>\n"
                           + "    <TITLE>\n"

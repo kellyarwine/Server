@@ -33,9 +33,9 @@ public class Directory implements RouteType {
     for(int i = 0; i < fileList.length; i++) {
       stringBuilder.append("<a href=\"");
       stringBuilder.append(request.get("url"));
-      stringBuilder.append(fileList[i].getName());
+      stringBuilder.append("/" + fileList[i].getName());
       stringBuilder.append("\">");
-      stringBuilder.append(fileList[i].getName());
+      stringBuilder.append("/" + fileList[i].getName());
       stringBuilder.append("</a><br>");
     }
 

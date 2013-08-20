@@ -36,9 +36,9 @@ public class Server {
     logger.logMessage("Ninja Server is running.  WOOT!");
     logger.logMessage("Port: "                   + port);
     logger.logMessage("Environment: "            + env);
-    logger.logMessage("Now serving files from: " + new File(workingDirectory + publicDirectory).toString());
-    logger.logMessage("Routes Filename: "        + new File(workingDirectory + routesFilePath).toString());
-    logger.logMessage("htaccess Filename: "      + new File(workingDirectory + htAccessFilePath).toString());
+    logger.logMessage("Now serving files from: " + new File(workingDirectory, publicDirectory).toString());
+    logger.logMessage("Routes Filename: "        + new File(workingDirectory, routesFilePath).toString());
+    logger.logMessage("htaccess Filename: "      + new File(workingDirectory, htAccessFilePath).toString());
 
     while (true) {
       theServerSocket.connect();
