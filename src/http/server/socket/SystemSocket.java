@@ -5,16 +5,16 @@
 
     public class SystemSocket implements WebSocket {
       private Socket theConnection;
-      private InputStream in;
+      private BufferedReader in;
       private OutputStream out;
 
       public SystemSocket(Socket theConnection) throws IOException {
         this.theConnection = theConnection;
-        in = theConnection.getInputStream();
+        in = new BufferedReader(new InputStreamReader((theConnection.getInputStream())));
         out = new BufferedOutputStream(theConnection.getOutputStream());
       }
 
-      public InputStream in() throws IOException {
+      public BufferedReader in() throws IOException {
         return in;
       }
 

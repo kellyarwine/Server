@@ -3,16 +3,16 @@ package http.server.socket;
 import java.io.*;
 
 public class MockSocket implements WebSocket {
-  private InputStream in;
+  private BufferedReader in;
   private OutputStream out;
 
   public MockSocket(String requestString) {
     byte[] request = requestString.getBytes();
-    in = new ByteArrayInputStream(request);
+    in = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(request)));
     out = new ByteArrayOutputStream();
   }
 
-  public InputStream in() {
+  public BufferedReader in() {
     return in;
   }
 
