@@ -6,7 +6,6 @@ import java.util.HashMap;
 public class DefaultHashMap extends HashMap{
   private ArrayList defaultValues;
 
-
   public DefaultHashMap(ArrayList defaultValues){
     this.defaultValues = defaultValues;
   }
@@ -21,5 +20,4 @@ public class DefaultHashMap extends HashMap{
   private boolean hasNoKey(Object o) {
     return super.get(o) == null;
   }
-
 }

@@ -6,7 +6,6 @@ import http.response.code.TwoHundred;
 import java.util.HashMap;
 
 public class TemplateMapBuilder {
-
   public HashMap build() {
     HashMap templateMap = new HashMap();
     templateMap.put(true,  new TwoHundred());

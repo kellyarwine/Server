@@ -16,15 +16,12 @@ public abstract class CsvMapBuilder {
     return createMap(csvLines);
   }
 
-  //  TODO:  this code is starting to be duplicated in multiple places.  Need to fix.
   private String toBytes(File csvFileName) throws IOException {
     InputStream inputStream = new FileInputStream(csvFileName);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     int chr;
-
     while ((chr = inputStream.read()) != -1)
       outputStream.write(chr);
-
     return outputStream.toString();
   }
 

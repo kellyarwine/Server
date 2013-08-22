@@ -1,56 +1,29 @@
 package http.server;
 
-import http.request.Request;
-import http.response.Response;
-import http.router.Router;
+import http.server.logger.ConsoleLogger;
 import http.server.logger.SystemLogger;
-import http.server.logger.SystemLoggerFactory;
-import http.server.serverSocket.ServerSocketFactory;
+import http.server.serverSocket.SystemServerSocket;
 import http.server.serverSocket.WebServerSocket;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class Server {
-  public File workingDirectory;
-  public WebServerSocket theServerSocket;
-
-  public Server(int port, String publicDirectory, String env, String routesFilePath, String htAccessFilePath) throws Exception {
-    workingDirectory = new File(System.getProperty("user.dir"));
-    theServerSocket = new ServerSocketFactory().get(port, env);
-    SystemLogger logger = new SystemLoggerFactory().get(env);
-
-    Request request = new Request();
-    Router router = new Router(publicDirectory, routesFilePath, htAccessFilePath);
-    Response response = new Response();
+  public Server(WebServerSocket serverSocket, SystemLogger logger, String workingDirectoryPath, String publicDirectory, String routesFilePath, String htAccessFilePath) throws Exception {
+    File workingDirectory = new File(workingDirectoryPath);
 
     logger.logMessage("Ninja Server is running.  WOOT!");
-    logger.logMessage("Port: "                   + port);
-    logger.logMessage("Environment: "            + env);
     logger.logMessage("Now serving files from: " + new File(workingDirectory, publicDirectory).toString());
     logger.logMessage("Routes Filename: "        + new File(workingDirectory, routesFilePath).toString());
     logger.logMessage("htaccess Filename: "      + new File(workingDirectory, htAccessFilePath).toString());
 
     while (true) {
-      theServerSocket.connect();
-
-      HashMap receivedRequest = request.get(theServerSocket);
-      logger.logMessage("REQUEST: http://" + receivedRequest.get("Host") + receivedRequest.get("url"));
-
-      ArrayList routeInfo = router.getRouteInfo(receivedRequest);
-
-      response.send(theServerSocket, receivedRequest, routeInfo);
-      File routeFile = (File)routeInfo.get(0);
-      String routeFilePath = routeFile.getAbsolutePath();
-      logger.logMessage("RENDERED: http://" + receivedRequest.get("Host") + "/" + subtractPath(routeFilePath, new File(workingDirectory + publicDirectory)));
-
-      theServerSocket.closeConnection();
+      new ServerThread(serverSocket.accept(), logger, publicDirectory, routesFilePath, htAccessFilePath, workingDirectory).start();
     }
   }
 
   public static void main(String[] args) throws Exception {
+    args = new String[] {"-p", "5000", "-d", "test/public/", "-e", "production", "-r", "routes.csv", "-h", ".htaccess", "-w", "/Users/Kelly/Desktop/Java_HTTP_Server"};
     int portIndex = Arrays.asList(args).indexOf("-p");
     Integer port = Integer.parseInt(args[portIndex + 1]);
 
@@ -66,10 +39,11 @@ public class Server {
     int htAccessFileIndex = Arrays.asList(args).indexOf("-h");
     String htAccessFilePath = args[htAccessFileIndex + 1];
 
-    new Server(port, publicDirectory, env, routesFilePath, htAccessFilePath);
-  }
+    int workingDirectoryIndex = Arrays.asList(args).indexOf("-w");
+    String workingDirectoryPath = args[workingDirectoryIndex + 1];
 
-  private String subtractPath(String routeFilePath, File publicDirectoryFullPath) {
-    return routeFilePath.replace(publicDirectoryFullPath.toString(), "");
+    WebServerSocket serverSocket = new SystemServerSocket(port);
+    SystemLogger logger = new ConsoleLogger();
+    new Server(serverSocket, logger, workingDirectoryPath, publicDirectory, routesFilePath, htAccessFilePath);
   }
 }

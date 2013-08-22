@@ -17,9 +17,9 @@ public class FileLoggerTest {
 
   @Before
   public void setUp() throws IOException {
-    String workingDirectory = System.getProperty("user.dir");
-    logFile = new File(workingDirectory + "/server.log");
-    logger = new FileLogger();
+    File workingDirectory = new File(System.getProperty("user.dir"));
+    logger = new FileLogger(workingDirectory);
+    logFile = new File(workingDirectory, "server.log");
   }
 
   @After

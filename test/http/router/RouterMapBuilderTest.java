@@ -24,11 +24,11 @@ public class RouterMapBuilderTest {
 
   @Before
   public void setUp() throws IOException {
-    String workingDirectory = System.getProperty("user.dir");
+    File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     deleteDirectory(new File(publicDirectoryFullPath, "/templates"));
     RouterMapBuilder routerMapBuilder = new RouterMapBuilder();
-    actualResult = routerMapBuilder.buildFrom("test/public/", "routes.csv", ".htaccess");
+    actualResult = routerMapBuilder.buildFrom(workingDirectory, "test/public/", "routes.csv", ".htaccess");
   }
 
   @After

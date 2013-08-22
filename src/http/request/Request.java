@@ -1,35 +1,49 @@
 package http.request;
 
-import http.server.serverSocket.WebServerSocket;
+import http.server.socket.WebSocket;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 public class Request {
-  public HashMap<String, String> requestHash;
-  private WebServerSocket theServerSocket;
+  private HashMap<String, String> requestHash;
   private QueryStringRepository queryStringRepository;
 
   public Request() {
     queryStringRepository = new QueryStringRepository();
   }
 
-  public HashMap get(WebServerSocket theServerSocket) throws IOException {
-    String requestString = receive(theServerSocket);
+  public HashMap get(WebSocket webSocket) throws IOException {
+    String requestString = receive(webSocket);
     requestHash = new Parser().parse(requestString);
     savePostOrPutQueryString();
     updateGetQueryStringWithRepositoryData();
     return requestHash;
   }
 
-  private String receive(WebServerSocket theServerSocket) throws IOException {
-    int chr;
-    StringBuffer buffer = new StringBuffer();
-    while ( (chr = theServerSocket.in().read()) != -1) {
-      buffer.append((char) chr);
-      if (!theServerSocket.in().ready()) break;
+    private String receive(WebSocket webSocket) throws IOException {
+      int chr;
+      System.out.println("Receiving!");
+      System.out.println("webSocket.in().available() = " + webSocket.in().available());
+      StringBuffer buffer = new StringBuffer();
+
+      while ( webSocket.in().available() > 0 ) {
+        chr = readNextChar(webSocket);
+        buffer.append((char) chr);
+      }
+      System.out.println("buffer.length() = " + buffer.length());
+      return buffer.toString();
     }
-    return buffer.toString();
+
+  private int readNextChar(WebSocket webSocket) {
+    try {
+      if ( webSocket.in().available () > 0 )
+        return webSocket.in().read();
+      else return -1;
+    }
+    catch (IOException e) {
+      return -1;
+    }
   }
 
   private void savePostOrPutQueryString() {

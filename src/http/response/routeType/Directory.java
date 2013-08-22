@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class Directory implements RouteType {
-  File publicDirectoryFullPath;
+  private File publicDirectoryFullPath;
 
   public Directory(File publicDirectoryFullPath) {
     this.publicDirectoryFullPath = publicDirectoryFullPath;
@@ -19,14 +19,14 @@ public class Directory implements RouteType {
     return twoHundred.build(routeFile, modifiedRequest);
   }
 
-  public HashMap addDirectoryToQueryString(HashMap request) {
+  private HashMap addDirectoryToQueryString(HashMap request) {
     String folderName = (String)request.get("url");
     String fileList = createFileList(new File(publicDirectoryFullPath, folderName), request);
     request.put("queryString", "folder_name=" + folderName + "&file_list=" + fileList);
     return request;
   }
 
-  public String createFileList(File directory, HashMap request) {
+  private String createFileList(File directory, HashMap request) {
     File[] fileList = directory.listFiles();
     StringBuilder stringBuilder = new StringBuilder();
 

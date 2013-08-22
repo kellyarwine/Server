@@ -1,31 +1,26 @@
 package http.server.serverSocket;
 
-import java.io.*;
+import http.server.socket.MockSocket;
+import http.server.socket.WebSocket;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MockServerSocket implements WebServerSocket {
-  private String dataString;
-  public BufferedReader in;
-  public OutputStream out;
+  List<String> requests;
 
-  public MockServerSocket(String dataString) {
-    this.dataString = dataString;
+  public MockServerSocket(ArrayList requests) throws IOException {
+    this.requests = requests;
   }
 
-  public void connect() {
-    byte[] dataBytes = dataString.getBytes();
-    in = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(dataBytes)));
-    out = new ByteArrayOutputStream();
-  }
-
-  public BufferedReader in() {
-    return in;
-  }
-
-  public OutputStream out() {
-    return out;
-  }
-
-  public void closeConnection() {
+  public WebSocket accept() throws IOException {
+    if (!requests.isEmpty()) {
+      String request = requests.remove(0);
+      return new MockSocket(request);
+    }
+    String eof = new String(new byte[] {-1});
+    return new MockSocket(eof);
   }
 
 }

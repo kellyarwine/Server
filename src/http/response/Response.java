@@ -1,18 +1,18 @@
 package http.response;
 
 import http.response.routeType.RouteType;
-import http.server.serverSocket.WebServerSocket;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Response {
-  public void send(WebServerSocket theServerSocket, HashMap request, ArrayList routeInfo) throws IOException {
+  public void send(OutputStream out, HashMap request, ArrayList routeInfo) throws IOException {
     byte[] response = build(request, routeInfo);
-    theServerSocket.out().write(response);
-    theServerSocket.out().flush();
+    out.write(response);
+    out.flush();
   }
 
   public byte[] build(HashMap request, ArrayList routeInfo) throws IOException {

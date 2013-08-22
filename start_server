@@ -8,7 +8,7 @@ IFS=' ' read -a ARGUMENTS_ARRAY <<< "$@"
 #if no arguments are passed in
 if [ $# == 0 ]
   then
-    java -jar build/jar/server.jar -p 5000 -d "test/public/" -e production &echo $! > ./program.pid
+    java -jar build/jar/server.jar -p 5000 -d "test/public/" -e production -r routes.csv -h .htaccess &echo $! > ./program.pid
 fi
 
 #if arguments are passed in, we need to check the public directory

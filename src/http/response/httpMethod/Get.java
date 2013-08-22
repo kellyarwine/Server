@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class Get implements HttpMethod {
-  HashMap partialContentMap;
+  private HashMap partialContentMap;
 
   public Get() {
     partialContentMap = new PartialContentMapBuilder().build();

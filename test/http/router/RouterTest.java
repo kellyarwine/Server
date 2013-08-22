@@ -5,7 +5,7 @@ import http.response.routeType.Directory;
 import http.response.routeType.FileNotFound;
 import http.response.routeType.Public;
 import http.response.routeType.Redirect;
-import http.server.serverSocket.WebServerSocket;
+import http.server.socket.WebSocket;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,14 +27,14 @@ public class RouterTest {
   private String NEW_LINE = "\r\n";
   private File publicDirectoryFullPath;
   private Request request;
-  private WebServerSocket theServerSocket;
+  private WebSocket theServerSocket;
   private Router router;
 
   @Before
   public void setUp() throws IOException, URISyntaxException {
-    String workingDirectory = System.getProperty("user.dir");
+    File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    router = new Router("test/public/", "routes.csv", ".htaccess");
+    router = new Router(workingDirectory, "test/public/", "routes.csv", ".htaccess");
   }
 
   @Test

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class Public implements RouteType {
-  HashMap httpMethodMap;
+  private HashMap httpMethodMap;
 
   public Public() {
     httpMethodMap = new HttpMethodMapBuilder().build();

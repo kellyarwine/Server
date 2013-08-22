@@ -7,10 +7,6 @@ import java.util.regex.Pattern;
 public class QueryString {
   private HashMap queryStringHash;
 
-  public QueryString() {
-    queryStringHash = new HashMap();
-  }
-
   public byte[] updateBody(byte[] responseBody, HashMap request) {
     String queryString = (String) request.get("queryString");
     if (queryString != null) {
@@ -23,6 +19,7 @@ public class QueryString {
   }
 
   private void toHash(String queryString) {
+    queryStringHash = new HashMap();
     String[] keyValuePairs = queryString.split("&");
     for(int i=0; i<keyValuePairs.length; i++) {
       String[] keyValuePair = keyValuePairs[i].split("=", 2);

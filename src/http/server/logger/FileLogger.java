@@ -3,6 +3,13 @@ package http.server.logger;
 import java.io.*;
 
 public class FileLogger extends SystemLogger {
+  private File workingDirectory;
+  private String SERVER_LOG = "server.log";
+
+  public FileLogger(File workingDirectory) {
+    this.workingDirectory = workingDirectory;
+  }
+
   public void out(String message) throws IOException {
     File logFile = findOrCreateLogFile();
     FileOutputStream fos = new FileOutputStream(logFile, true);
@@ -13,8 +20,7 @@ public class FileLogger extends SystemLogger {
   }
 
   private File findOrCreateLogFile() throws IOException {
-    String workingDirectory = System.getProperty("user.dir");
-    File logFile = new File(workingDirectory + "/server.log");
+    File logFile = new File(workingDirectory, SERVER_LOG);
     if (!logFile.exists()) {
       logFile.createNewFile();
     }

@@ -13,19 +13,19 @@ public class ResponseHeader {
     return header.getBytes();
   }
 
-  public String httpProtocolVersion() {
+  private String httpProtocolVersion() {
     return "HTTP/1.1";
   }
 
-  public Date currentDate() {
+  private Date currentDate() {
     return new Date();
   }
 
-  public String serverInfo() {
+  private String serverInfo() {
     return "Server: NinjaServer 1.0";
   }
 
-  public String contentType(File routeFile) {
+  private String contentType(File routeFile) {
     String contentTypeOfURL;
 
     if (match(routeFile, "jpg") || match(routeFile, "jpeg")) contentTypeOfURL = "image/jpeg";
@@ -41,7 +41,7 @@ public class ResponseHeader {
     return routeFile.toString().endsWith(extensionToMatch);
   }
 
-  public String contentLength(int bodyContentLength) {
+  private String contentLength(int bodyContentLength) {
     return "Content-length: " + bodyContentLength;
   }
 }

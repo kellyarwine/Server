@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 //TODO:  I'm not handling deleting the templates once I'm done.
-//May need to find tests that call the templater and delete templates in teardown.
 public class RouterMapBuilder {
   private String FOUR_HUNDRED_FOUR_TEMPLATE = "404.html";
   private String FILE_DIRECTORY_TEMPLATE = "file_directory.html";
@@ -20,8 +19,7 @@ public class RouterMapBuilder {
   private File publicDirectoryFullPath;
   private DefaultHashMap routerMap;
 
-  public DefaultHashMap buildFrom(String publicDirectory, String routesFilePath, String htAccessFilePath) throws IOException {
-    File workingDirectory = new File(System.getProperty("user.dir"));
+  public DefaultHashMap buildFrom(File workingDirectory, String publicDirectory, String routesFilePath, String htAccessFilePath) throws IOException {
     publicDirectoryFullPath = new File(workingDirectory, publicDirectory);
     File routesFile = new File(workingDirectory, routesFilePath);
     File htAccessFile = new File(workingDirectory, htAccessFilePath);
@@ -41,7 +39,7 @@ public class RouterMapBuilder {
     templater.createTemplate(PARAMETERS_TEMPLATE);
   }
 
-  public DefaultHashMap getDefaultHashMap() throws IOException {
+  private DefaultHashMap getDefaultHashMap() throws IOException {
     ArrayList arrayList = new ArrayList();
     arrayList.add(new File(publicDirectoryFullPath, "/templates/404.html"));
     arrayList.add(new FileNotFound());

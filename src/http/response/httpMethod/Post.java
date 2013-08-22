@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.HashMap;
 
 public class Post implements HttpMethod {
-  HashMap templateMap;
+  private HashMap templateMap;
 
   public Post() {
     templateMap = new TemplateMapBuilder().build();

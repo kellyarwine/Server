@@ -8,6 +8,7 @@ public class Templater {
   public Templater(File publicDirectoryFullPath) {
     this.publicDirectoryFullPath = publicDirectoryFullPath;
   }
+
   public void createTemplate(String name) throws IOException {
     File templateDirectory = createTemplateDirectory();
     File newTemplate = createTemplate(name, templateDirectory);

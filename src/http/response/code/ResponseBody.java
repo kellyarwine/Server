@@ -3,7 +3,6 @@ package http.response.code;
 import java.io.*;
 
 public class ResponseBody {
-
   public byte[] build(File routeFile) throws IOException {
       return toBytes(routeFile);
   }

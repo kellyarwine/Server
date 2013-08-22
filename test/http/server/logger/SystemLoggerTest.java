@@ -9,12 +9,13 @@ import java.io.*;
 import static junit.framework.Assert.assertEquals;
 
 public class SystemLoggerTest {
+  private File workingDirectory;
   private File logFile;
   private File consoleFile;
 
   @Before
   public void setUp() throws IOException {
-    String workingDirectory = System.getProperty("user.dir");
+    workingDirectory = new File(System.getProperty("user.dir"));
     logFile = new File(workingDirectory + "/server.log");
     consoleFile = new File(workingDirectory + "/console.txt");
   }
@@ -27,7 +28,7 @@ public class SystemLoggerTest {
 
   @Test
   public void printMultipleMessagesToFile() throws IOException {
-    SystemLogger logger = new FileLogger();
+    SystemLogger logger = new FileLogger(workingDirectory);
     logger.logMessage("This message should be printed to the server log.");
     logger.logMessage("This message should also be printed to the server log.");
     String expectedResult = "[" + logger.currentDateAndTime() + "] This message should be printed to the server log.\n"

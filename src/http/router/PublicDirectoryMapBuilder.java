@@ -20,7 +20,7 @@ public class PublicDirectoryMapBuilder {
     return publicDirectoryMap;
   }
 
-  public void populatePublicDirectoryMap(File publicDirectoryFullPath, String directoryName){
+  private void populatePublicDirectoryMap(File publicDirectoryFullPath, String directoryName){
     File directory = new File(directoryName);
     File[] fileList = directory.listFiles();
     for (File file : fileList){
