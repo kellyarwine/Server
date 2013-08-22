@@ -1,5 +1,6 @@
 package http.request;
 
+import http.EmptyRequestException;
 import http.server.socket.WebSocket;
 
 import java.io.IOException;
@@ -13,14 +14,13 @@ public class Request {
     queryStringRepository = new QueryStringRepository();
   }
 
-  public HashMap get(WebSocket webSocket) throws IOException {
+  public HashMap get(WebSocket webSocket) throws IOException, EmptyRequestException {
     String requestString = new RequestHandler().receive(webSocket);
     requestHash = new Parser().parse(requestString);
     savePostOrPutQueryString();
     updateGetQueryStringWithRepositoryData();
     return requestHash;
   }
-
 
   private void savePostOrPutQueryString() {
     String url         = requestHash.get("url");

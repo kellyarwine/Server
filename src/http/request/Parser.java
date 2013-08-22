@@ -15,7 +15,6 @@ public class Parser {
   }
 
   private void splitRequest(String requestString) {
-    System.out.println("REQUEST STRING = " + requestString);
     request = requestString.split("\r\n");
   }
 

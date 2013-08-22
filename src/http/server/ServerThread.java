@@ -1,5 +1,6 @@
 package http.server;
 
+import http.EmptyRequestException;
 import http.request.Request;
 import http.response.Response;
 import http.router.Router;
@@ -35,7 +36,6 @@ public class ServerThread extends Thread {
       Router router = new Router(workingDirectory, publicDirectory, routesFilePath, htAccessFilePath);
       Response response = new Response();
 
-      logger.logMessage("Did I get here?");
       HashMap receivedRequest = request.get(webSocket);
       logger.logMessage("REQUEST: http://" + receivedRequest.get("Host") + receivedRequest.get("url"));
 
@@ -50,6 +50,9 @@ public class ServerThread extends Thread {
     }
     catch (IOException e) {
       e.printStackTrace();
+    }
+    catch (EmptyRequestException e) {
+      System.err.println("No request received.");;
     }
   }
 

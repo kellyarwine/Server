@@ -1,5 +1,6 @@
 package http.request;
 
+import http.EmptyRequestException;
 import http.server.socket.WebSocket;
 
 import java.io.IOException;
@@ -11,24 +12,25 @@ public class RequestHandler {
   private String request;
   private ByteBuffer bodyBuffer;
 
-  public String receive(WebSocket webSocket) throws IOException {
+  public String receive(WebSocket webSocket) throws IOException, EmptyRequestException {
     receiveHeader(webSocket);
     handleBody(webSocket);
     return request;
   }
 
-  private void receiveHeader(WebSocket webSocket) throws IOException {
-    String line;
-    System.out.println("Receiving!");
-    StringBuffer buffer = new StringBuffer();
+  private void receiveHeader(WebSocket webSocket) throws IOException, EmptyRequestException {
+    try {
+      String line;
+      StringBuffer buffer = new StringBuffer();
 
-    while ( !(line = webSocket.in().readLine() ).equals("") ) {
-      buffer.append(line);
-      buffer.append("\r\n");
-//      if ( !webSocket.in().r)
-//        break;
+      while ( !(line = webSocket.in().readLine() ).equals("") ) {
+        buffer.append(line);
+        buffer.append("\r\n");
+      }
+      request = buffer.toString();
+    } catch (NullPointerException e) {
+      throw new EmptyRequestException();
     }
-    request = buffer.toString();
   }
 
   public void handleBody(WebSocket webSocket) throws IOException {
