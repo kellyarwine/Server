@@ -6,10 +6,10 @@ import http.server.socket.WebSocket;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-public class SystemServerSocket implements WebServerSocket {
+public class SystemHttpServerSocket implements HttpServerSocket {
   ServerSocket theServerSocket;
 
-  public SystemServerSocket(int port) throws IOException {
+  public SystemHttpServerSocket(int port) throws IOException {
     theServerSocket = new ServerSocket(port);
   }
   public WebSocket accept() throws IOException {

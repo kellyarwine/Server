@@ -1,49 +1,144 @@
 package http.server;
 
-import http.server.logger.ConsoleLogger;
+import http.request.QueryStringRepository;
 import http.server.logger.SystemLogger;
-import http.server.serverSocket.SystemServerSocket;
-import http.server.serverSocket.WebServerSocket;
+import http.server.logger.SystemLoggerFactory;
+import http.server.serverSocket.HttpServerSocket;
+import http.server.serverSocket.SystemHttpServerSocket;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
-  public Server(WebServerSocket serverSocket, SystemLogger logger, String workingDirectoryPath, String publicDirectory, String routesFilePath, String htAccessFilePath) throws Exception {
-    File workingDirectory = new File(workingDirectoryPath);
+  private static String DEFAULT_PORT = "5000";
+  private static String DEFAULT_PUBLIC_DIRECTORY_PATH = "test/public/";
+  private static String DEFAULT_ENV = "production";
+  private static String DEFAULT_ROUTES_FILE_PATH = "routes.csv";
+  private static String DEFAULT_HTACCESS_FILE_PATH = ".htaccess";
+  private static String DEFAULT_WORKING_DIRECTORY_PATH = new File(System.getProperty("user.dir")).toString();
+  private static String COBSPEC_PUBLIC_DIRECTORY_PATH = "public/";
+  private static String COBSPEC_WORKING_DIRECTORY_PATH = new File(new File(System.getProperty("user.dir")).getParent(), "cob_spec").toString();
+  public ServerThread serverThread;
+  public HttpServerSocket serverSocket;
 
-    logger.logMessage("Ninja Server is running.  WOOT!");
-    logger.logMessage("Now serving files from: " + new File(workingDirectory, publicDirectory).toString());
-    logger.logMessage("Routes Filename: "        + new File(workingDirectory, routesFilePath).toString());
-    logger.logMessage("htaccess Filename: "      + new File(workingDirectory, htAccessFilePath).toString());
+  public Server(Map serverConfig, HttpServerSocket serverSocket, SystemLogger logger) throws Exception {
+    this.serverSocket = serverSocket;
+
+    logger.logMessage("Ninja Server is running in " + serverConfig.get("env").toString().toUpperCase() + " mode on port " + serverConfig.get("port") + ".  WOOT!");
+    logger.logMessage("Now serving files from: " + serverConfig.get("publicDirectoryPath").toString());
+    logger.logMessage("Working directory: " + serverConfig.get("workingDirectoryPath"));
+    logger.logMessage("Routes Filename: " + serverConfig.get("routesFilePath").toString());
+    logger.logMessage(".htaccess Filename: " + serverConfig.get("htAccessFilePath").toString() + "\n");
+
+    QueryStringRepository queryStringRepository = new QueryStringRepository();
+
+    int cores = Runtime.getRuntime().availableProcessors();
+    ExecutorService threadPool = Executors.newFixedThreadPool(cores);
 
     while (true) {
-      new ServerThread(serverSocket.accept(), logger, publicDirectory, routesFilePath, htAccessFilePath, workingDirectory).start();
+      ServerThreadFactory serverThreadFactory = new ServerThreadFactory();
+      serverThread = serverThreadFactory.build(serverConfig, logger, this.serverSocket.accept(), queryStringRepository);
+      threadPool.submit((Runnable)serverThread);
     }
   }
 
   public static void main(String[] args) throws Exception {
-    args = new String[] {"-p", "5000", "-d", "test/public/", "-e", "production", "-r", "routes.csv", "-h", ".htaccess", "-w", "/Users/Kelly/Desktop/Java_HTTP_Server"};
-    int portIndex = Arrays.asList(args).indexOf("-p");
-    Integer port = Integer.parseInt(args[portIndex + 1]);
+    Scanner input = new Scanner(System.in);
 
-    int publicDirectoryIndex = Arrays.asList(args).indexOf("-d");
-    String publicDirectory = args[publicDirectoryIndex + 1];
+    System.out.println("Type \"help\" to see a full list of server commands.");
 
-    int envIndex = Arrays.asList(args).indexOf("-e");
-    String env = args[envIndex + 1];
+    while (input.hasNext()) {
+      String command = input.nextLine();
 
-    int routesFileIndex = Arrays.asList(args).indexOf("-r");
-    String routesFilePath = args[routesFileIndex + 1];
+      if (command.contains("start server")) {
+        Map<String, String> serverConfig = parseSettings(command);
+        startServer(serverConfig);
+        }
+      else if (command.contains("start cob_spec"))
+        startServer(cobSpecSettings());
+      else if (command.contains("help"))
+        helpText();
+      else if (command.contains("stop server")) {
+        stopServer();
+        break;
+      }
+      else
+        helpText();
+    }
+  }
 
-    int htAccessFileIndex = Arrays.asList(args).indexOf("-h");
-    String htAccessFilePath = args[htAccessFileIndex + 1];
+  private static void stopServer() {
+    System.out.println("Ninja Server has stopped running.");
+    System.exit(1);
+  }
 
-    int workingDirectoryIndex = Arrays.asList(args).indexOf("-w");
-    String workingDirectoryPath = args[workingDirectoryIndex + 1];
+  private static Map parseSettings(String serverConfigString) {
+    String[] serverConfigArray = serverConfigString.split(" ");
+    Map<String, String> serverConfig = new HashMap<String, String>();
 
-    WebServerSocket serverSocket = new SystemServerSocket(port);
-    SystemLogger logger = new ConsoleLogger();
-    new Server(serverSocket, logger, workingDirectoryPath, publicDirectory, routesFilePath, htAccessFilePath);
+    int portIndex = Arrays.asList(serverConfigArray).indexOf("-p");
+    String port = (portIndex == -1) ? DEFAULT_PORT : serverConfigArray[portIndex + 1];
+    serverConfig.put("port", port);
+
+    int publicDirectoryPathIndex = Arrays.asList(serverConfigArray).indexOf("-d");
+    String publicDirectoryPath = (publicDirectoryPathIndex == -1) ? DEFAULT_PUBLIC_DIRECTORY_PATH : serverConfigArray[publicDirectoryPathIndex + 1];
+    serverConfig.put("publicDirectoryPath", publicDirectoryPath);
+
+    int envIndex = Arrays.asList(serverConfigArray).indexOf("-e");
+    String env = (envIndex == -1) ? DEFAULT_ENV : serverConfigArray[envIndex + 1];
+    serverConfig.put("env", env);
+
+    int routesFileIndex = Arrays.asList(serverConfigArray).indexOf("-r");
+    String routesFilePath = (routesFileIndex == -1) ? DEFAULT_ROUTES_FILE_PATH : serverConfigArray[routesFileIndex + 1];
+    serverConfig.put("routesFilePath", routesFilePath);
+
+    int htAccessFileIndex = Arrays.asList(serverConfigArray).indexOf("-h");
+    String htAccessFilePath = (htAccessFileIndex == -1) ? DEFAULT_HTACCESS_FILE_PATH : serverConfigArray[htAccessFileIndex + 1];
+    serverConfig.put("htAccessFilePath", htAccessFilePath);
+
+    int workingDirectoryPathIndex = Arrays.asList(serverConfigArray).indexOf("-w");
+    String workingDirectoryPath = (workingDirectoryPathIndex == -1) ? DEFAULT_WORKING_DIRECTORY_PATH : serverConfigArray[workingDirectoryPathIndex + 1];
+    serverConfig.put("workingDirectoryPath", workingDirectoryPath);
+
+    return serverConfig;
+  }
+
+  private static Map cobSpecSettings() {
+    Map<String, String> serverConfig = new HashMap<String, String>();
+    serverConfig.put("port", DEFAULT_PORT);
+    serverConfig.put("publicDirectoryPath", COBSPEC_PUBLIC_DIRECTORY_PATH);
+    serverConfig.put("env", DEFAULT_ENV);
+    serverConfig.put("routesFilePath", DEFAULT_ROUTES_FILE_PATH);
+    serverConfig.put("htAccessFilePath", DEFAULT_HTACCESS_FILE_PATH);
+    serverConfig.put("workingDirectoryPath", COBSPEC_WORKING_DIRECTORY_PATH);
+    return serverConfig;
+  }
+
+  private static void startServer(Map<String, String> settingsMap) throws Exception {
+    String port = settingsMap.get("port");
+    int portNumber = Integer.parseInt(port);
+    HttpServerSocket serverSocket = new SystemHttpServerSocket(portNumber);
+    SystemLogger logger = SystemLoggerFactory.build(settingsMap.get("env"));
+    new Server(settingsMap, serverSocket, logger);
+  }
+
+  private static void helpText() {
+    System.out.println( "");
+    System.out.println( "Ninja Server Functions:");
+    System.out.println( "   start server    Starts the server.");
+    System.out.println( "   usage:          start server [=<-p " + DEFAULT_PORT + ">]\n" +
+                        "                                [=<-d " + DEFAULT_PUBLIC_DIRECTORY_PATH + ">]\n" +
+                        "                                [=<-e " + DEFAULT_ENV + ">]\n" +
+                        "                                [=<-r " + DEFAULT_ROUTES_FILE_PATH + ">]\n" +
+                        "                                [=<-h " + DEFAULT_HTACCESS_FILE_PATH + ">]\n" +
+                        "                                [=<-w " + DEFAULT_WORKING_DIRECTORY_PATH + ">]");
+    System.out.println( "   start cob_spec  Starts the server with cob_spec configurations.");
+    System.out.println( "   stop server     Stops the server.");
+    System.out.println( "   help            Provides detailed information for each command.");
   }
 }

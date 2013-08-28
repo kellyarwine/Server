@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
 public class ParserTest {
-
   private Parser parser;
   private String NEWLINE = "\r\n";
 

@@ -35,7 +35,7 @@ public class Directory implements RouteType {
       stringBuilder.append(getRootFolder((String) request.get("url")));
       stringBuilder.append("/" + fileList[i].getName());
       stringBuilder.append("\">");
-      stringBuilder.append("/" + fileList[i].getName());
+      stringBuilder.append(fileList[i].getName());
       stringBuilder.append("</a><br>");
     }
 

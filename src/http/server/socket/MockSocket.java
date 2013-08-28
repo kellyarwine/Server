@@ -6,8 +6,9 @@ public class MockSocket implements WebSocket {
   private BufferedReader in;
   private OutputStream out;
 
-  public MockSocket(String requestString) {
-    byte[] request = requestString.getBytes();
+  public MockSocket() {
+    System.out.println("Socket was made.");
+    byte[] request = "".getBytes();
     in = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(request)));
     out = new ByteArrayOutputStream();
   }
@@ -23,9 +24,5 @@ public class MockSocket implements WebSocket {
   public void close() throws IOException {
     in.close();
     out.close();
-  }
-
-  public boolean isClosed() {
-    return false;
   }
 }

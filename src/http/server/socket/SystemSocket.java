@@ -1,34 +1,30 @@
-    package http.server.socket;
+package http.server.socket;
 
-    import java.io.*;
-    import java.net.Socket;
+import java.io.*;
+import java.net.Socket;
 
-    public class SystemSocket implements WebSocket {
-      private Socket theConnection;
-      private BufferedReader in;
-      private OutputStream out;
+public class SystemSocket implements WebSocket {
+  private Socket socket;
+  private BufferedReader in;
+  private OutputStream out;
 
-      public SystemSocket(Socket theConnection) throws IOException {
-        this.theConnection = theConnection;
-        in = new BufferedReader(new InputStreamReader((theConnection.getInputStream())));
-        out = new BufferedOutputStream(theConnection.getOutputStream());
-      }
+  public SystemSocket(Socket socket) throws IOException {
+    this.socket = socket;
+    in = new BufferedReader(new InputStreamReader((socket.getInputStream())));
+    out = new BufferedOutputStream(socket.getOutputStream());
+  }
 
-      public BufferedReader in() throws IOException {
-        return in;
-      }
+  public BufferedReader in() throws IOException {
+    return in;
+  }
 
-      public OutputStream out() throws IOException {
-        return out;
-      }
+  public OutputStream out() throws IOException {
+    return out;
+  }
 
-      public void close() throws IOException {
-        in.close();
-        out.close();
-        theConnection.close();
-      }
-
-      public boolean isClosed() throws IOException {
-        return theConnection.isClosed();
-      }
-    }
+  public void close() throws IOException {
+    in.close();
+    out.close();
+    socket.close();
+  }
+}

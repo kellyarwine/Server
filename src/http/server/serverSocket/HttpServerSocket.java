@@ -4,6 +4,6 @@ import http.server.socket.WebSocket;
 
 import java.io.IOException;
 
-public interface WebServerSocket {
+public interface HttpServerSocket {
   WebSocket accept()     throws IOException;
 }
