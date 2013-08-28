@@ -7,6 +7,7 @@ import http.server.serverSocket.HttpServerSocket;
 import http.server.serverSocket.SystemHttpServerSocket;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +27,35 @@ public class Server {
   public ServerThread serverThread;
   public HttpServerSocket serverSocket;
 
-  public Server(Map serverConfig, HttpServerSocket serverSocket, SystemLogger logger) throws Exception {
-    this.serverSocket = serverSocket;
+  public void initialize() throws Exception {
+    Scanner input = new Scanner(System.in);
+
+    System.out.println("Type \"help\" to see a full list of server commands.");
+
+    while (input.hasNext()) {
+        String command = input.nextLine();
+        if (command.contains("start server")) {
+          Map<String, String> serverConfig = getServerConfig(command);
+          run(serverConfig);
+        }
+        else if (command.contains("start cob_spec"))
+          run(cobSpecSettings());
+        else if (command.contains("help"))
+          helpText();
+        else if (command.contains("stop server")) {
+          stop();
+          break;
+        }
+        else
+          helpText();
+    }
+  }
+
+  public void run(Map<String, String> serverConfig) throws IOException {
+    String port = serverConfig.get("port");
+    int portNumber = Integer.parseInt(port);
+    HttpServerSocket serverSocket = new SystemHttpServerSocket(portNumber);
+    SystemLogger logger = SystemLoggerFactory.build(serverConfig.get("env"));
 
     logger.logMessage("Ninja Server is running in " + serverConfig.get("env").toString().toUpperCase() + " mode on port " + serverConfig.get("port") + ".  WOOT!");
     logger.logMessage("Now serving files from: " + serverConfig.get("publicDirectoryPath").toString());
@@ -42,42 +70,17 @@ public class Server {
 
     while (true) {
       ServerThreadFactory serverThreadFactory = new ServerThreadFactory();
-      serverThread = serverThreadFactory.build(serverConfig, logger, this.serverSocket.accept(), queryStringRepository);
+      serverThread = serverThreadFactory.build(serverConfig, logger, serverSocket.accept(), queryStringRepository);
       threadPool.submit((Runnable)serverThread);
     }
   }
 
-  public static void main(String[] args) throws Exception {
-    Scanner input = new Scanner(System.in);
-
-    System.out.println("Type \"help\" to see a full list of server commands.");
-
-    while (input.hasNext()) {
-      String command = input.nextLine();
-
-      if (command.contains("start server")) {
-        Map<String, String> serverConfig = parseSettings(command);
-        startServer(serverConfig);
-        }
-      else if (command.contains("start cob_spec"))
-        startServer(cobSpecSettings());
-      else if (command.contains("help"))
-        helpText();
-      else if (command.contains("stop server")) {
-        stopServer();
-        break;
-      }
-      else
-        helpText();
-    }
-  }
-
-  private static void stopServer() {
+  private static void stop() {
     System.out.println("Ninja Server has stopped running.");
     System.exit(1);
   }
 
-  private static Map parseSettings(String serverConfigString) {
+  private static Map getServerConfig(String serverConfigString) {
     String[] serverConfigArray = serverConfigString.split(" ");
     Map<String, String> serverConfig = new HashMap<String, String>();
 
@@ -108,7 +111,7 @@ public class Server {
     return serverConfig;
   }
 
-  private static Map cobSpecSettings() {
+  private Map cobSpecSettings() {
     Map<String, String> serverConfig = new HashMap<String, String>();
     serverConfig.put("port", DEFAULT_PORT);
     serverConfig.put("publicDirectoryPath", COBSPEC_PUBLIC_DIRECTORY_PATH);
@@ -119,26 +122,22 @@ public class Server {
     return serverConfig;
   }
 
-  private static void startServer(Map<String, String> settingsMap) throws Exception {
-    String port = settingsMap.get("port");
-    int portNumber = Integer.parseInt(port);
-    HttpServerSocket serverSocket = new SystemHttpServerSocket(portNumber);
-    SystemLogger logger = SystemLoggerFactory.build(settingsMap.get("env"));
-    new Server(settingsMap, serverSocket, logger);
-  }
-
-  private static void helpText() {
+  private void helpText() {
     System.out.println( "");
     System.out.println( "Ninja Server Functions:");
     System.out.println( "   start server    Starts the server.");
     System.out.println( "   usage:          start server [=<-p " + DEFAULT_PORT + ">]\n" +
-                        "                                [=<-d " + DEFAULT_PUBLIC_DIRECTORY_PATH + ">]\n" +
-                        "                                [=<-e " + DEFAULT_ENV + ">]\n" +
-                        "                                [=<-r " + DEFAULT_ROUTES_FILE_PATH + ">]\n" +
-                        "                                [=<-h " + DEFAULT_HTACCESS_FILE_PATH + ">]\n" +
-                        "                                [=<-w " + DEFAULT_WORKING_DIRECTORY_PATH + ">]");
+        "                                [=<-d " + DEFAULT_PUBLIC_DIRECTORY_PATH + ">]\n" +
+        "                                [=<-e " + DEFAULT_ENV + ">]\n" +
+        "                                [=<-r " + DEFAULT_ROUTES_FILE_PATH + ">]\n" +
+        "                                [=<-h " + DEFAULT_HTACCESS_FILE_PATH + ">]\n" +
+        "                                [=<-w " + DEFAULT_WORKING_DIRECTORY_PATH + ">]");
     System.out.println( "   start cob_spec  Starts the server with cob_spec configurations.");
     System.out.println( "   stop server     Stops the server.");
     System.out.println( "   help            Provides detailed information for each command.");
+  }
+
+  public static void main(String[] args) throws Exception {
+    new Server().initialize();
   }
 }

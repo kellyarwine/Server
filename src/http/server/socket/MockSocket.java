@@ -6,9 +6,8 @@ public class MockSocket implements WebSocket {
   private BufferedReader in;
   private OutputStream out;
 
-  public MockSocket() {
-    System.out.println("Socket was made.");
-    byte[] request = "".getBytes();
+  public MockSocket(String requestString) {
+    byte[] request = requestString.getBytes();
     in = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(request)));
     out = new ByteArrayOutputStream();
   }

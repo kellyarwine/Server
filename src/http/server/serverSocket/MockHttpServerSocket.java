@@ -14,17 +14,14 @@ public class MockHttpServerSocket implements HttpServerSocket {
   }
 
   public WebSocket accept() throws IOException {
-//    if (!requests.isEmpty()) {
-//      String request = requests.remove(0);
-//      System.out.println(request);
-//      return new MockSocket(request);
-//    }
-//    else {
-//      String eOF = new String(new byte[] { -1 });
-//      System.out.println("I am returning eof.");
-//      return new MockSocket(eOF);
-//    }
-//    String request = requests.remove(0);
-    return new MockSocket();
+    if (!requests.isEmpty()) {
+      String request = requests.remove(0);
+      System.out.println(request);
+      return new MockSocket(request);
+    }
+    else {
+      String eOF = new String(new byte[] { -1 });
+      return new MockSocket(eOF);
+    }
   }
 }
