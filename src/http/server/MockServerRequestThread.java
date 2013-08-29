@@ -1,8 +1,6 @@
-package http.server.serverSocket;
+package http.server;
 
-import http.server.ServerThread;
-
-public class MockServerThread implements Runnable, ServerThread {
+public class MockServerRequestThread implements Runnable, ServerRequestThread {
   public boolean didRun;
 
   @Override

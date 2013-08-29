@@ -24,4 +24,16 @@ public class MockHttpServerSocket implements HttpServerSocket {
       return new MockSocket(eOF);
     }
   }
+
+  public void close() {
+
+  }
+
+  public boolean isClosed() {
+    return false;
+  }
+
+  public boolean isBound() {
+    return false;
+  }
 }

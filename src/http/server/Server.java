@@ -1,19 +1,8 @@
 package http.server;
 
-import http.request.QueryStringRepository;
-import http.server.logger.SystemLogger;
-import http.server.logger.SystemLoggerFactory;
-import http.server.serverSocket.HttpServerSocket;
-import http.server.serverSocket.SystemHttpServerSocket;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
 
 public class Server {
   private static String DEFAULT_PORT = "5000";
@@ -25,62 +14,68 @@ public class Server {
   private static String COBSPEC_PUBLIC_DIRECTORY_PATH = "public/";
   private static String COBSPEC_WORKING_DIRECTORY_PATH = new File(new File(System.getProperty("user.dir")).getParent(), "cob_spec").toString();
   public ServerThread serverThread;
-  public HttpServerSocket serverSocket;
+  private Map serverConfig;
 
   public void initialize() throws Exception {
     Scanner input = new Scanner(System.in);
 
-    System.out.println("Type \"help\" to see a full list of server commands.");
+    System.out.println("Ninja Server Menu");
+    System.out.println("----------------------");
+    System.out.println("Type \"help\" to see a list of available commands.");
 
-    while (input.hasNext()) {
+    while (true) {
         String command = input.nextLine();
         if (command.contains("start server")) {
-          Map<String, String> serverConfig = getServerConfig(command);
-          run(serverConfig);
+          serverConfig = getServerConfig(command);
+          startServerThread();
         }
-        else if (command.contains("start cob_spec"))
-          run(cobSpecSettings());
+        else if (command.contains("start cob_spec")) {
+          serverConfig = getCobSpecServerConfig();
+          startServerThread();
+        }
+        else if (command.contains("status"))
+          serverStatus();
         else if (command.contains("help"))
           helpText();
         else if (command.contains("stop server")) {
-          stop();
-          break;
+          closeServerSocket();
+        }
+        else if (command.contains("exit")) {
+          closeServerSocket();
+          System.exit(1);
         }
         else
           helpText();
     }
   }
 
-  public void run(Map<String, String> serverConfig) throws IOException {
-    String port = serverConfig.get("port");
-    int portNumber = Integer.parseInt(port);
-    HttpServerSocket serverSocket = new SystemHttpServerSocket(portNumber);
-    SystemLogger logger = SystemLoggerFactory.build(serverConfig.get("env"));
+  private void serverStatus() throws IOException {
+    if (serverThread == null || serverThread.httpServerSocket.isClosed())
+      System.out.println("Ninja Server is not running.");
+    else
+      System.out.println("Ninja Server is running on port " + serverConfig.get("port") + ".");
+  }
 
-    logger.logMessage("Ninja Server is running in " + serverConfig.get("env").toString().toUpperCase() + " mode on port " + serverConfig.get("port") + ".  WOOT!");
-    logger.logMessage("Now serving files from: " + serverConfig.get("publicDirectoryPath").toString());
-    logger.logMessage("Working directory: " + serverConfig.get("workingDirectoryPath"));
-    logger.logMessage("Routes Filename: " + serverConfig.get("routesFilePath").toString());
-    logger.logMessage(".htaccess Filename: " + serverConfig.get("htAccessFilePath").toString() + "\n");
-
-    QueryStringRepository queryStringRepository = new QueryStringRepository();
-
-    int cores = Runtime.getRuntime().availableProcessors();
-    ExecutorService threadPool = Executors.newFixedThreadPool(cores);
-
-    while (true) {
-      ServerThreadFactory serverThreadFactory = new ServerThreadFactory();
-      serverThread = serverThreadFactory.build(serverConfig, logger, serverSocket.accept(), queryStringRepository);
-      threadPool.submit((Runnable)serverThread);
+  private void startServerThread() throws IOException {
+    if (serverThread == null || serverThread.httpServerSocket.isClosed() == true) {
+      serverThread = new ServerThread(serverConfig);
+      new Thread(serverThread).start();
+    }
+    else {
+      System.out.println("Ninja Server is already running!");
     }
   }
 
-  private static void stop() {
-    System.out.println("Ninja Server has stopped running.");
-    System.exit(1);
+  private void closeServerSocket() throws IOException {
+    if (serverThread.httpServerSocket.isClosed() == false) {
+      System.out.println("Ninja Server has been shut down.");
+      serverThread.closeServerSocket();
+    }
+    else
+    System.out.println("Ninja Server is not currently running.");
   }
 
-  private static Map getServerConfig(String serverConfigString) {
+  private Map getServerConfig(String serverConfigString) {
     String[] serverConfigArray = serverConfigString.split(" ");
     Map<String, String> serverConfig = new HashMap<String, String>();
 
@@ -111,15 +106,15 @@ public class Server {
     return serverConfig;
   }
 
-  private Map cobSpecSettings() {
-    Map<String, String> serverConfig = new HashMap<String, String>();
-    serverConfig.put("port", DEFAULT_PORT);
-    serverConfig.put("publicDirectoryPath", COBSPEC_PUBLIC_DIRECTORY_PATH);
-    serverConfig.put("env", DEFAULT_ENV);
-    serverConfig.put("routesFilePath", DEFAULT_ROUTES_FILE_PATH);
-    serverConfig.put("htAccessFilePath", DEFAULT_HTACCESS_FILE_PATH);
-    serverConfig.put("workingDirectoryPath", COBSPEC_WORKING_DIRECTORY_PATH);
-    return serverConfig;
+  private Map getCobSpecServerConfig() {
+    Map<String, String> cobSpecServerConfig = new HashMap<String, String>();
+    cobSpecServerConfig.put("port", DEFAULT_PORT);
+    cobSpecServerConfig.put("publicDirectoryPath", COBSPEC_PUBLIC_DIRECTORY_PATH);
+    cobSpecServerConfig.put("env", DEFAULT_ENV);
+    cobSpecServerConfig.put("routesFilePath", DEFAULT_ROUTES_FILE_PATH);
+    cobSpecServerConfig.put("htAccessFilePath", DEFAULT_HTACCESS_FILE_PATH);
+    cobSpecServerConfig.put("workingDirectoryPath", COBSPEC_WORKING_DIRECTORY_PATH);
+    return cobSpecServerConfig;
   }
 
   private void helpText() {
@@ -133,8 +128,10 @@ public class Server {
         "                                [=<-h " + DEFAULT_HTACCESS_FILE_PATH + ">]\n" +
         "                                [=<-w " + DEFAULT_WORKING_DIRECTORY_PATH + ">]");
     System.out.println( "   start cob_spec  Starts the server with cob_spec configurations.");
+    System.out.println( "   status          Lists the status of the server.");
     System.out.println( "   stop server     Stops the server.");
-    System.out.println( "   help            Provides detailed information for each command.");
+    System.out.println( "   exit            Exits the application.");
+    System.out.println( "   help            Lists detailed information for each command.");
   }
 
   public static void main(String[] args) throws Exception {

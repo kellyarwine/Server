@@ -45,7 +45,7 @@
 //    requests.add(publicRequest());
 //    requests.add(directoryRequest());
 //    WebSocket webSocket = getWebSocket(requests);
-//    SystemServerThread systemServerThread = new SystemServerThread(serverConfig, new FileLogger(workingDirectory), webSocket, new QueryStringRepository());
+//    SystemServerRequestThread systemServerThread = new SystemServerRequestThread(serverConfig, new FileLogger(workingDirectory), webSocket, new QueryStringRepository());
 //    systemServerThread.run();
 //    String actualResult = webSocket.out().toString();
 //

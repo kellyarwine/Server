@@ -24,7 +24,7 @@ public class ServerTest {
 //    requests.add(simpleRootRequest());
 //    HttpServerSocket httpServerSocket = new MockHttpServerSocket(requests);
 //    server = new Server("test", workingDirectory.toString(), publicDirectory, "routes.csv", ".htaccess", httpServerSocket, new FileLogger(workingDirectory));
-//    assertTrue(server.serverThread.getDidRun());
+//    assertTrue(server.serverRequestThread.getDidRun());
 //  }
 
   public String simpleRootRequest() {

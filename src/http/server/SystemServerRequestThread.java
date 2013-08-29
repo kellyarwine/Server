@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SystemServerThread implements Runnable, ServerThread {
+public class SystemServerRequestThread implements Runnable, ServerRequestThread {
   public boolean didRun;
   public WebSocket webSocket;
   private SystemLogger logger;
@@ -23,7 +23,7 @@ public class SystemServerThread implements Runnable, ServerThread {
   private File workingDirectory;
   private QueryStringRepository queryStringRepository;
 
-  public SystemServerThread(Map serverConfig, SystemLogger logger, WebSocket webSocket, QueryStringRepository queryStringRepository){
+  public SystemServerRequestThread(Map serverConfig, SystemLogger logger, WebSocket webSocket, QueryStringRepository queryStringRepository){
     this.webSocket = webSocket;
     this.logger = logger;
     this.publicDirectoryPath = (String)serverConfig.get("publicDirectoryPath");
