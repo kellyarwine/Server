@@ -2,7 +2,13 @@ package http.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.net.ServerSocket;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
   private static String DEFAULT_PORT = "5000";
@@ -57,17 +63,96 @@ public class Server {
   }
 
   private void startServerThread() throws IOException {
-    if (serverThread == null || serverThread.httpServerSocket.isClosed() == true) {
+    if (validateServerConfig(serverConfig) == true) {
+      int cores = Runtime.getRuntime().availableProcessors();
+      ExecutorService serverThreadPool = Executors.newFixedThreadPool(cores);
       serverThread = new ServerThread(serverConfig);
-      new Thread(serverThread).start();
+      serverThreadPool.submit(serverThread);
     }
+  }
+
+  private boolean validateServerConfig(Map<String, String> serverConfig) throws IOException {
+    return
+      checkPortAvailability() &&
+      validateEnv() &&
+      validateWorkingDirectoryPath() &&
+      validatePublicDirectoryPath() &&
+      validateRoutesFilePath() &&
+      validateHtAccessFilePath();
+  }
+
+  private boolean checkPortAvailability() throws IOException {
+    int port = Integer.parseInt((String)serverConfig.get("port"));
+    try {
+      ServerSocket serverSocket = new ServerSocket(port);
+      serverSocket.close();
+      return true;
+    }
+    catch (IOException e) {
+      System.out.println("Port " + port + " is already in use.  Please try again.");
+      return false;
+    }
+    catch (IllegalArgumentException e) {
+      System.out.println("Port " + port + " is not a valid port.  Please try again.");
+      return false;
+    }
+  }
+
+  private boolean validateEnv() {
+    String env = (String)serverConfig.get("env");
+    if (env.equals("production") || env.equals("test"))
+      return true;
     else {
-      System.out.println("Ninja Server is already running!");
+      System.out.println("Invalid \"Env\" setting.");
+      return false;
+    }
+  }
+
+  private boolean validateWorkingDirectoryPath() {
+    String workingDirectoryPath = (String)serverConfig.get("workingDirectoryPath");
+    if (new File(workingDirectoryPath).exists())
+      return true;
+    else {
+      System.out.println("Working directory does not exist.");
+      return false;
+    }
+  }
+
+  private boolean validatePublicDirectoryPath() {
+    String workingDirectoryPath = (String)serverConfig.get("workingDirectoryPath");
+    String publicDirectoryPath = (String)serverConfig.get("publicDirectoryPath");
+    if (new File(workingDirectoryPath, publicDirectoryPath).exists())
+      return true;
+    else {
+      System.out.println("Public directory does not exist.");
+      return false;
+    }
+  }
+
+  private boolean validateRoutesFilePath() {
+    String workingDirectoryPath = (String)serverConfig.get("workingDirectoryPath");
+    String routesFilePath = (String)serverConfig.get("routesFilePath");
+    if (new File(workingDirectoryPath, routesFilePath).exists())
+      return true;
+    else {
+      System.out.println("Routes file does not exist.");
+      return false;
+    }
+  }
+
+  private boolean validateHtAccessFilePath() {
+    String workingDirectoryPath = (String)serverConfig.get("workingDirectoryPath");
+    String htAccessFilePath = (String)serverConfig.get("htAccessFilePath");
+    if (new File(workingDirectoryPath, htAccessFilePath).exists())
+      return true;
+    else {
+      System.out.println(".htaccess file does not exist.");
+      return false;
     }
   }
 
   private void closeServerSocket() throws IOException {
-    if (serverThread.httpServerSocket.isClosed() == false) {
+    if (serverThread != null && serverThread.httpServerSocket.isClosed() == false) {
       System.out.println("Ninja Server has been shut down.");
       serverThread.closeServerSocket();
     }
@@ -119,19 +204,30 @@ public class Server {
 
   private void helpText() {
     System.out.println( "");
-    System.out.println( "Ninja Server Functions:");
-    System.out.println( "   start server    Starts the server.");
-    System.out.println( "   usage:          start server [=<-p " + DEFAULT_PORT + ">]\n" +
-        "                                [=<-d " + DEFAULT_PUBLIC_DIRECTORY_PATH + ">]\n" +
-        "                                [=<-e " + DEFAULT_ENV + ">]\n" +
-        "                                [=<-r " + DEFAULT_ROUTES_FILE_PATH + ">]\n" +
-        "                                [=<-h " + DEFAULT_HTACCESS_FILE_PATH + ">]\n" +
-        "                                [=<-w " + DEFAULT_WORKING_DIRECTORY_PATH + ">]");
-    System.out.println( "   start cob_spec  Starts the server with cob_spec configurations.");
-    System.out.println( "   status          Lists the status of the server.");
-    System.out.println( "   stop server     Stops the server.");
-    System.out.println( "   exit            Exits the application.");
-    System.out.println( "   help            Lists detailed information for each command.");
+    System.out.println( "Ninja Server Help Menu");
+    System.out.println( "-------------------------");
+    System.out.println( "Available Commands:");
+    System.out.println( " start cob_spec  Starts the server with cob_spec configurations.");
+    System.out.println( " status          Lists the status of the server.");
+    System.out.println( " stop server     Stops the server.");
+    System.out.println( " exit            Exits the application.");
+    System.out.println( " help            Provides instructions and detailed information for each command.");
+    System.out.println("");
+    System.out.println( "Starting the Server:");
+    System.out.println( " start server    Starts the server.  The application takes six optional parameters:");
+    System.out.println( "                 an environment setting; \"test\" or \"production\" (denoted by the \"-e\" flag)");
+    System.out.println( "                 a port number (denoted by the \"-p\" flag)");
+    System.out.println( "                 the absolute path to the working directory (denoted by the \"-w\" flag)");
+    System.out.println( "                 the relative path to the public directory (denoted by the \"-d\" flag)");
+    System.out.println( "                 the Routes filename; file must exist in the root working directory (denoted by the \"-r\" flag)");
+    System.out.println( "                 the .htaccess filename; file must exist in the root working directory (denoted by the \"-h\" flag)");
+    System.out.println( "Default Server Configurations:");
+    System.out.println( " start server    [=<-e " + DEFAULT_ENV + ">]\n" +
+                        "                 [=<-p " + DEFAULT_PORT + ">]\n" +
+                        "                 [=<-w " + DEFAULT_WORKING_DIRECTORY_PATH + ">]\n" +
+                        "                 [=<-d " + DEFAULT_PUBLIC_DIRECTORY_PATH + ">]\n" +
+                        "                 [=<-r " + DEFAULT_ROUTES_FILE_PATH + ">]\n" +
+                        "                 [=<-h " + DEFAULT_HTACCESS_FILE_PATH + ">]");
   }
 
   public static void main(String[] args) throws Exception {

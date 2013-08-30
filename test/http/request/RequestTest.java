@@ -35,7 +35,8 @@ public class RequestTest {
         + "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36\r\n"
         + "Accept-Encoding: gzip,deflate,sdch\r\n"
         + "Accept-Language: en-US,en;q=0.8\r\n"
-        + "Cookie: textwrapon=false; wysiwyg=textarea\r\n";
+        + "Cookie: textwrapon=false; wysiwyg=textarea\r\n"
+        + NEW_LINE;
     ArrayList requests = new ArrayList();
     requests.add(requestString);
     WebSocket webSocket = getWebSocket(requests);
@@ -58,9 +59,11 @@ public class RequestTest {
   @Test
   public void multipleRequests() throws IOException {
     String requestString1  = "GET /color_picker_result.html HTTP/1.1\r\n"
-        + "Host: localhost:5000\r\n";
+        + "Host: localhost:5000\r\n"
+        + NEW_LINE;
     String requestString2  = "GET /color_picker_post.html HTTP/1.1\r\n"
-        + "Host: localhost:5000\r\n";
+        + "Host: localhost:5000\r\n"
+        + NEW_LINE;
     ArrayList requests = new ArrayList();
     requests.add(requestString1);
     requests.add(requestString2);
@@ -79,9 +82,10 @@ public class RequestTest {
   }
 
   @Test
-  public void SetGetQueryStringToSavedPostData() throws IOException {
+  public void setGetQueryStringToSavedPostData() throws IOException {
     String requestHeader  = "POST /color_picker_post.html HTTP/1.1\r\n"
-                          + "Host: localhost:5000\r\n";
+                          + "Host: localhost:5000\r\n"
+                          + "Content-Length: 51\r\n";
     String requestBody    = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString  = requestHeader + NEW_LINE + requestBody;
     ArrayList requests = new ArrayList();
@@ -103,10 +107,10 @@ public class RequestTest {
   }
 
   @Test
-  public void SetGetQueryStringToSavedPutData() throws IOException {
+  public void setGetQueryStringToSavedPutData() throws IOException {
     String requestHeader  = "PUT /color_picker_post.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n"
-                          + NEW_LINE;
+                          + "Content-Length: 51\r\n";
     String requestBody    = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString  = requestHeader + NEW_LINE + requestBody;
     ArrayList requests = new ArrayList();
@@ -128,9 +132,10 @@ public class RequestTest {
   }
 
   @Test
-  public void SetPostQueryStringToItsQueryString() throws IOException {
+  public void setPostQueryStringToItsQueryString() throws IOException {
     String requestHeader  = "POST /color_picker_post.html HTTP/1.1\r\n"
-                          + "Host: localhost:5000\r\n";
+                          + "Host: localhost:5000\r\n"
+                          + "Content-Length: 51\r\n";
     String requestBody    = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString  = requestHeader + NEW_LINE + requestBody;
     ArrayList requests = new ArrayList();
@@ -141,7 +146,8 @@ public class RequestTest {
     assertEquals(requestBody, actualResult.get("queryString"));
 
            requestHeader  = "POST /color_picker_post.html HTTP/1.1\r\n"
-                          + "Host: localhost:5000\r\n";
+                          + "Host: localhost:5000\r\n"
+                          + "Content-Length: 19\r\n";
            requestBody    = "text_color4=magenta";
            requestString  = requestHeader + NEW_LINE + requestBody;
               requests = new ArrayList();
@@ -153,9 +159,10 @@ public class RequestTest {
   }
 
   @Test
-  public void SetPutQueryStringToItsQueryString() throws IOException {
+  public void setPutQueryStringToItsQueryString() throws IOException {
     String requestHeader = "PUT /color_picker_post.html HTTP/1.1\r\n"
-                         + "Host: localhost:5000\r\n";
+                         + "Host: localhost:5000\r\n"
+                         + "Content-Length: 51\r\n";
     String requestBody   = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString = requestHeader + NEW_LINE + requestBody;
     ArrayList requests = new ArrayList();
@@ -167,7 +174,8 @@ public class RequestTest {
     assertEquals(requestBody, actualResult.get("queryString"));
 
            requestHeader = "POST /color_picker_post.html HTTP/1.1\r\n"
-                         + "Host: localhost:5000\r\n";
+                         + "Host: localhost:5000\r\n"
+                         + "Content-Length: 19\r\n";
            requestBody   = "text_color4=magenta";
            requestString = requestHeader + NEW_LINE + requestBody;
               requests = new ArrayList();
@@ -179,9 +187,10 @@ public class RequestTest {
   }
 
   @Test
-  public void DoNotSetGetQueryStringForNewRoute() throws IOException {
+  public void doNotSetGetQueryStringForNewRoute() throws IOException {
     String requestHeader  = "PUT /color_picker_post.html HTTP/1.1\r\n"
-                          + "Host: localhost:5000\r\n";
+                          + "Host: localhost:5000\r\n"
+                          + "Content-Length: 51\r\n";
     String requestBody    = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString  = requestHeader + NEW_LINE + requestBody;
     ArrayList requests = new ArrayList();
@@ -201,6 +210,20 @@ public class RequestTest {
 
     assertEquals(null, actualResult.get("queryString"));
   }
+
+  @Test
+  public void handlePutWithNoRequestBody() throws IOException {
+    String requestHeader  = "PUT /color_picker_post.html HTTP/1.1\r\n"
+        + "Host: localhost:5000\r\n";
+    String requestString  = requestHeader + NEW_LINE;
+    ArrayList requests = new ArrayList();
+    requests.add(requestString);
+    WebSocket webSocket = getWebSocket(requests);
+    HashMap actualResult  = request.get(webSocket);
+
+    assertEquals(null, actualResult.get("queryString"));
+  }
+
 
   public WebSocket getWebSocket(ArrayList requests) throws IOException {
     HttpServerSocket httpServerSocket = new MockHttpServerSocket(requests);
