@@ -1,18 +1,21 @@
 package http.router;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class Templater {
   private File publicDirectoryFullPath;
 
-  public Templater(File publicDirectoryFullPath) {
+  public void copyTemplatesToDisk(String resourcesPath, File publicDirectoryFullPath) throws IOException, URISyntaxException {
     this.publicDirectoryFullPath = publicDirectoryFullPath;
-  }
-
-  public void createTemplate(String name) throws IOException {
     File templateDirectory = createTemplateDirectory();
-    File newTemplate = createTemplate(name, templateDirectory);
-    readResourceToNewTemplate(name, newTemplate);
+    URL resources = getClass().getResource(resourcesPath);
+    File jarTemplates = new File(resources.toURI());
+
+    for (File nextFile : jarTemplates.listFiles()) {
+      createTemplate(nextFile, templateDirectory);
+    }
   }
 
   private File createTemplateDirectory(){
@@ -21,15 +24,15 @@ public class Templater {
     return templateDirectory;
   }
 
-  private File createTemplate(String name, File templateDirectory) throws IOException {
-    File newTemplate = new File(templateDirectory, name);
+  private void createTemplate(File resource, File templateDirectory) throws IOException {
+    File newTemplate = new File(templateDirectory, resource.getName());
     newTemplate.createNewFile();
-    return newTemplate;
+    readResourceToNewTemplate(resource, newTemplate);
   }
 
-  private void readResourceToNewTemplate(String name, File temp) throws IOException {
-    InputStream inputStream = getClass().getResourceAsStream("/http/templates/" + name);
-    OutputStream fileOutputStream = new FileOutputStream(temp);
+  private void readResourceToNewTemplate(File resource, File newTemplate) throws IOException {
+    InputStream inputStream = new FileInputStream(resource);
+    OutputStream fileOutputStream = new FileOutputStream(newTemplate);
     int length;
     byte[] buffer = new byte[1024];
     while((length = inputStream.read(buffer)) > -1) {

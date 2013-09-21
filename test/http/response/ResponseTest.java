@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,13 +35,11 @@ public class ResponseTest {
   private Response response;
 
   @Before
-  public void setUp() throws IOException {
+  public void setUp() throws IOException, URISyntaxException {
     workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     response = new Response();
-    Templater templater = new Templater(publicDirectoryFullPath);
-    templater.createTemplate("404.html");
-    templater.createTemplate("file_directory.html");
+    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
   }
 
   @After

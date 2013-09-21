@@ -6,24 +6,20 @@ import http.router.csvMapBuilder.RouteMapBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 //TODO:  I'm not handling deleting the templates once I'm done.
 public class RouterMapBuilder {
-  private String FOUR_HUNDRED_FOUR_TEMPLATE = "404.html";
-  private String FILE_DIRECTORY_TEMPLATE = "file_directory.html";
-  private String FORM_TEMPLATE = "form.html";
-  private String PARAMETERS_TEMPLATE = "parameters.html";
   private File publicDirectoryFullPath;
   private DefaultHashMap routerMap;
 
-  public DefaultHashMap buildFrom(File workingDirectory, String publicDirectory, String routesFilePath, String htAccessFilePath) throws IOException {
+  public DefaultHashMap buildFrom(File workingDirectory, String publicDirectory, String routesFilePath, String htAccessFilePath) throws IOException, URISyntaxException {
     publicDirectoryFullPath = new File(workingDirectory, publicDirectory);
     File routesFile = new File(workingDirectory, routesFilePath);
     File htAccessFile = new File(workingDirectory, htAccessFilePath);
-    createTemplates();
     routerMap = getDefaultHashMap();
     putPublicDirectoryFiles(publicDirectoryFullPath);
     putRoutes(routesFile);
@@ -31,13 +27,6 @@ public class RouterMapBuilder {
     return routerMap;
   }
 
-  private void createTemplates() throws IOException {
-    Templater templater = new Templater(publicDirectoryFullPath);
-    templater.createTemplate(FOUR_HUNDRED_FOUR_TEMPLATE);
-    templater.createTemplate(FILE_DIRECTORY_TEMPLATE);
-    templater.createTemplate(FORM_TEMPLATE);
-    templater.createTemplate(PARAMETERS_TEMPLATE);
-  }
 
   private DefaultHashMap getDefaultHashMap() throws IOException {
     ArrayList arrayList = new ArrayList();

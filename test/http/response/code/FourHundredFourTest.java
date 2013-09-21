@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -16,11 +17,10 @@ public class FourHundredFourTest {
   private File publicDirectoryFullPath;
 
   @Before
-  public void setUp() throws IOException {
+  public void setUp() throws IOException, URISyntaxException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    Templater templater = new Templater(publicDirectoryFullPath);
-    templater.createTemplate("404.html");
+    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
   }
 
   @After

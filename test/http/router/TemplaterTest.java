@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
+import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -14,10 +15,10 @@ public class TemplaterTest {
   Templater templater;
 
   @Before
-  public void setUp() throws IOException {
+  public void setUp() throws IOException, URISyntaxException {
     workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    templater = new Templater(publicDirectoryFullPath);
+    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
   }
 
   @After
@@ -26,8 +27,7 @@ public class TemplaterTest {
   }
 
   @Test
-  public void FourHundredFourTemplate() throws IOException {
-    templater.createTemplate("404.html");
+  public void FourHundredFourTemplate() throws IOException, URISyntaxException {
     byte[] actualResult = toBytes(new File(publicDirectoryFullPath, "templates/404.html"));
     byte[] expectedResult = toBytes(new File(workingDirectory, "src/http/templates/404.html"));
     assertArrayEquals(expectedResult, actualResult);
@@ -35,7 +35,6 @@ public class TemplaterTest {
 
   @Test
   public void FileDirectoryTemplate() throws IOException {
-    templater.createTemplate("file_directory.html");
     byte[] actualResult = toBytes(new File(publicDirectoryFullPath, "templates/file_directory.html"));
     byte[] expectedResult = toBytes(new File(workingDirectory, "src/http/templates/file_directory.html"));
     assertArrayEquals(expectedResult, actualResult);
@@ -43,7 +42,6 @@ public class TemplaterTest {
 
   @Test
   public void FormTemplate() throws IOException {
-    templater.createTemplate("form.html");
     byte[] actualResult = toBytes(new File(publicDirectoryFullPath, "templates/form.html"));
     byte[] expectedResult = toBytes(new File(workingDirectory, "src/http/templates/form.html"));
     assertArrayEquals(expectedResult, actualResult);
@@ -51,7 +49,6 @@ public class TemplaterTest {
 
   @Test
   public void ParametersTemplate() throws IOException {
-    templater.createTemplate("parameters.html");
     byte[] actualResult = toBytes(new File(publicDirectoryFullPath, "templates/parameters.html"));
     byte[] expectedResult = toBytes(new File(workingDirectory, "src/http/templates/parameters.html"));
     assertArrayEquals(expectedResult, actualResult);
