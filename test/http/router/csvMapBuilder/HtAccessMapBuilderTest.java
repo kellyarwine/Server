@@ -16,7 +16,7 @@ public class HtAccessMapBuilderTest {
   @Test
   public void buildsHashMap() throws IOException {
     String workingDirectory = System.getProperty("user.dir");
-    File htAccessFile = new File(workingDirectory, ".htaccess");
+    File htAccessFile = new File(workingDirectory, "test/.htaccess");
     File publicDirectoryFullPath = new File(workingDirectory, "/test/public/");
     HtAccessMapBuilder htAccessMapBuilder = new HtAccessMapBuilder(publicDirectoryFullPath);
     HashMap actualResult = htAccessMapBuilder.get(htAccessFile);

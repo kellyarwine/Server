@@ -17,7 +17,7 @@ public class RouteMapBuilderTest {
   @Test
   public void buildsHashMap() throws IOException {
     String workingDirectory = System.getProperty("user.dir");
-    File routesFile = new File(workingDirectory, "routes.csv");
+    File routesFile = new File(workingDirectory, "test/routes.csv");
     File publicDirectoryFullPath = new File(workingDirectory, "/test/public/");
     RouteMapBuilder routeMapBuilder = new RouteMapBuilder(publicDirectoryFullPath);
     HashMap actualResult = routeMapBuilder.get(routesFile);

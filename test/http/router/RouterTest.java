@@ -34,7 +34,7 @@ public class RouterTest {
   public void setUp() throws IOException, URISyntaxException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    router = new Router(workingDirectory, "test/public/", "routes.csv", ".htaccess");
+    router = new Router(workingDirectory, "test/public/", "test/routes.csv", "test/.htaccess");
   }
 
   @Test
