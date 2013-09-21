@@ -15,11 +15,13 @@ public class Server {
   private static String DEFAULT_PORT = "5000";
   private static String DEFAULT_PUBLIC_DIRECTORY_PATH = "test/public/";
   private static String DEFAULT_ENV = "production";
-  private static String DEFAULT_ROUTES_FILE_PATH = "routes.csv";
-  private static String DEFAULT_HTACCESS_FILE_PATH = ".htaccess";
+  private static String DEFAULT_ROUTES_FILE_PATH = "test/routes.csv";
+  private static String DEFAULT_HTACCESS_FILE_PATH = "test/.htaccess";
   private static String DEFAULT_WORKING_DIRECTORY_PATH = new File(System.getProperty("user.dir")).toString();
   private static String COBSPEC_PUBLIC_DIRECTORY_PATH = "public/";
   private static String COBSPEC_WORKING_DIRECTORY_PATH = new File(new File(System.getProperty("user.dir")).getParent(), "cob_spec").toString();
+  private static String COBSPEC_ROUTES_FILE_PATH = "routes.csv";
+  private static String COBSPEC_HTACCESS_FILE_PATH = ".htaccess";
   public ServerRunnable serverRunnable;
   private Map serverConfig;
 
@@ -197,8 +199,8 @@ public class Server {
     cobSpecServerConfig.put("port", DEFAULT_PORT);
     cobSpecServerConfig.put("publicDirectoryPath", COBSPEC_PUBLIC_DIRECTORY_PATH);
     cobSpecServerConfig.put("env", DEFAULT_ENV);
-    cobSpecServerConfig.put("routesFilePath", DEFAULT_ROUTES_FILE_PATH);
-    cobSpecServerConfig.put("htAccessFilePath", DEFAULT_HTACCESS_FILE_PATH);
+    cobSpecServerConfig.put("routesFilePath", COBSPEC_ROUTES_FILE_PATH);
+    cobSpecServerConfig.put("htAccessFilePath", COBSPEC_HTACCESS_FILE_PATH);
     cobSpecServerConfig.put("workingDirectoryPath", COBSPEC_WORKING_DIRECTORY_PATH);
     return cobSpecServerConfig;
   }
