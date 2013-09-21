@@ -23,7 +23,7 @@ public class ServerRequestThread implements Runnable {
   private File workingDirectory;
   private QueryStringRepository queryStringRepository;
 
-  public ServerRequestThread(Map serverConfig, SystemLogger logger, WebSocket webSocket, QueryStringRepository queryStringRepository){
+  public ServerRequestThread(Map serverConfig, Logger logger, WebSocket webSocket, QueryStringRepository queryStringRepository){
     this.webSocket = webSocket;
     this.logger = logger;
     this.publicDirectoryPath = (String)serverConfig.get("publicDirectoryPath");
