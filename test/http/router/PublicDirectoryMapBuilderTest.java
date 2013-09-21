@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,15 +20,10 @@ public class PublicDirectoryMapBuilderTest {
   File publicDirectoryFullPath;
 
   @Before
-  public void setUp() throws IOException {
+  public void setUp() throws IOException, URISyntaxException {
     String workingDirectory = System.getProperty("user.dir");
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    Templater templater = new Templater(publicDirectoryFullPath);
-    templater.createTemplate("404.html");
-    templater.createTemplate("file_directory.html");
-    templater.createTemplate("form.html");
-    templater.createTemplate("parameters.html");
-  }
+    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);  }
 
   @After
   public void tearDown() {
@@ -58,15 +54,14 @@ public class PublicDirectoryMapBuilderTest {
     ArrayList actualRouteInfo18 = (ArrayList)actualResult.get("/the_goal.txt");
     ArrayList actualRouteInfo19 = (ArrayList)actualResult.get("/images/404.png");
     ArrayList actualRouteInfo20 = (ArrayList)actualResult.get("/stylesheets/stylesheet.css");
-    ArrayList actualRouteInfo21 = (ArrayList)actualResult.get("/stylesheets/.DS_Store");
-    ArrayList actualRouteInfo22 = (ArrayList)actualResult.get("/templates/404.html");
-    ArrayList actualRouteInfo23 = (ArrayList)actualResult.get("/templates/file_directory.html");
-    ArrayList actualRouteInfo24 = (ArrayList)actualResult.get("/templates/form.html");
-    ArrayList actualRouteInfo25 = (ArrayList)actualResult.get("/templates/parameters.html");
-    ArrayList actualRouteInfo26 = (ArrayList)actualResult.get("/partial_content.txt");
-    ArrayList actualRouteInfo27 = (ArrayList)actualResult.get("/templates/file_directory.html");
-    ArrayList actualRouteInfo28 = (ArrayList)actualResult.get("/images/another_404.png");
-    ArrayList actualRouteInfo29 = (ArrayList)actualResult.get("/");
+    ArrayList actualRouteInfo21 = (ArrayList)actualResult.get("/templates/404.html");
+    ArrayList actualRouteInfo22 = (ArrayList)actualResult.get("/templates/file_directory.html");
+    ArrayList actualRouteInfo23 = (ArrayList)actualResult.get("/templates/form.html");
+    ArrayList actualRouteInfo24 = (ArrayList)actualResult.get("/templates/parameters.html");
+    ArrayList actualRouteInfo25 = (ArrayList)actualResult.get("/partial_content.txt");
+    ArrayList actualRouteInfo26 = (ArrayList)actualResult.get("/templates/file_directory.html");
+    ArrayList actualRouteInfo27 = (ArrayList)actualResult.get("/images/another_404.png");
+    ArrayList actualRouteInfo28 = (ArrayList)actualResult.get("/");
 
     HashMap expectedResult = new HashMap();
     ArrayList expectedRouteInfo1 = new ArrayList();
@@ -150,41 +145,37 @@ public class PublicDirectoryMapBuilderTest {
     expectedRouteInfo20.add(new Public());
     expectedResult.put("/stylesheets/stylesheet.css", expectedRouteInfo20);
     ArrayList expectedRouteInfo21 = new ArrayList();
-    expectedRouteInfo21.add(new File(publicDirectoryFullPath, "/stylesheets/.DS_Store"));
+    expectedRouteInfo21.add(new File(publicDirectoryFullPath, "/templates/404.html"));
     expectedRouteInfo21.add(new Public());
-    expectedResult.put("/stylesheets/.DS_Store", expectedRouteInfo21);
+    expectedResult.put("/templates/404.html", expectedRouteInfo21);
     ArrayList expectedRouteInfo22 = new ArrayList();
-    expectedRouteInfo22.add(new File(publicDirectoryFullPath, "/templates/404.html"));
+    expectedRouteInfo22.add(new File(publicDirectoryFullPath, "/templates/file_directory.html"));
     expectedRouteInfo22.add(new Public());
-    expectedResult.put("/templates/404.html", expectedRouteInfo22);
+    expectedResult.put("/templates/file_directory.html", expectedRouteInfo22);
     ArrayList expectedRouteInfo23 = new ArrayList();
-    expectedRouteInfo23.add(new File(publicDirectoryFullPath, "/templates/file_directory.html"));
+    expectedRouteInfo23.add(new File(publicDirectoryFullPath, "/templates/form.html"));
     expectedRouteInfo23.add(new Public());
-    expectedResult.put("/templates/file_directory.html", expectedRouteInfo23);
+    expectedResult.put("/templates/form.html", expectedRouteInfo23);
     ArrayList expectedRouteInfo24 = new ArrayList();
-    expectedRouteInfo24.add(new File(publicDirectoryFullPath, "/templates/form.html"));
+    expectedRouteInfo24.add(new File(publicDirectoryFullPath, "/templates/parameters.html"));
     expectedRouteInfo24.add(new Public());
-    expectedResult.put("/templates/form.html", expectedRouteInfo24);
+    expectedResult.put("/templates/parameters.html", expectedRouteInfo24);
     ArrayList expectedRouteInfo25 = new ArrayList();
-    expectedRouteInfo25.add(new File(publicDirectoryFullPath, "/templates/parameters.html"));
+    expectedRouteInfo25.add(new File(publicDirectoryFullPath, "/partial_content.txt"));
     expectedRouteInfo25.add(new Public());
-    expectedResult.put("/templates/parameters.html", expectedRouteInfo25);
+    expectedResult.put("/partial_content.txt", expectedRouteInfo25);
     ArrayList expectedRouteInfo26 = new ArrayList();
-    expectedRouteInfo26.add(new File(publicDirectoryFullPath, "/partial_content.txt"));
+    expectedRouteInfo26.add(new File(publicDirectoryFullPath, "/templates/file_directory.html"));
     expectedRouteInfo26.add(new Public());
-    expectedResult.put("/partial_content.txt", expectedRouteInfo26);
+    expectedResult.put("/templates/file_directory.html", expectedRouteInfo26);
     ArrayList expectedRouteInfo27 = new ArrayList();
-    expectedRouteInfo27.add(new File(publicDirectoryFullPath, "/templates/file_directory.html"));
+    expectedRouteInfo27.add(new File(publicDirectoryFullPath, "/images/another_404.png"));
     expectedRouteInfo27.add(new Public());
-    expectedResult.put("/", expectedRouteInfo27);
+    expectedResult.put("/images/another_404.png", expectedRouteInfo27);
     ArrayList expectedRouteInfo28 = new ArrayList();
-    expectedRouteInfo28.add(new File(publicDirectoryFullPath, "/images/another_404.png"));
-    expectedRouteInfo28.add(new Public());
-    expectedResult.put("/images/another_404.png", expectedRouteInfo28);
-    ArrayList expectedRouteInfo29 = new ArrayList();
-    expectedRouteInfo29.add(new File(publicDirectoryFullPath, "/templates/file_directory.html"));
-    expectedRouteInfo29.add(new Directory(publicDirectoryFullPath));
-    expectedResult.put("/", expectedRouteInfo29);
+    expectedRouteInfo28.add(new File(publicDirectoryFullPath, "/templates/file_directory.html"));
+    expectedRouteInfo28.add(new Directory(publicDirectoryFullPath));
+    expectedResult.put("/", expectedRouteInfo28);
 
     assertEquals(expectedRouteInfo1.get(0), actualRouteInfo1.get(0));
     assertThat(actualRouteInfo1.get(1), instanceOf(Directory.class));
@@ -241,9 +232,7 @@ public class PublicDirectoryMapBuilderTest {
     assertEquals(expectedRouteInfo27.get(0), actualRouteInfo27.get(0));
     assertThat(actualRouteInfo27.get(1), instanceOf(Public.class));
     assertEquals(expectedRouteInfo28.get(0), actualRouteInfo28.get(0));
-    assertThat(actualRouteInfo28.get(1), instanceOf(Public.class));
-    assertEquals(expectedRouteInfo29.get(0), actualRouteInfo29.get(0));
-    assertThat(actualRouteInfo29.get(1), instanceOf(Directory.class));
+    assertThat(actualRouteInfo28.get(1), instanceOf(Directory.class));
   }
 
   private void deleteDirectory(File directory) {

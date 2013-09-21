@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
@@ -23,12 +24,12 @@ public class RouterMapBuilderTest {
   private File publicDirectoryFullPath;
 
   @Before
-  public void setUp() throws IOException {
+  public void setUp() throws IOException, URISyntaxException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    deleteDirectory(new File(publicDirectoryFullPath, "/templates"));
+    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
     RouterMapBuilder routerMapBuilder = new RouterMapBuilder();
-    actualResult = routerMapBuilder.buildFrom(workingDirectory, "test/public/", "routes.csv", ".htaccess");
+    actualResult = routerMapBuilder.buildFrom(workingDirectory, "test/public/", "test/routes.csv", "test/.htaccess");
   }
 
   @After
@@ -39,7 +40,7 @@ public class RouterMapBuilderTest {
   @Test
   public void one() {
     String route = "/images";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "templates/file_directory.html"));
     assertThat(actualArrayList.get(1), instanceOf(Directory.class));
   }
@@ -47,7 +48,7 @@ public class RouterMapBuilderTest {
   @Test
   public void two() {
     String route = "/stylesheets";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "templates/file_directory.html"));
     assertThat(actualArrayList.get(1), instanceOf(Directory.class));
   }
@@ -55,7 +56,7 @@ public class RouterMapBuilderTest {
   @Test
   public void three() {
     String route = "/templates";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "templates/file_directory.html"));
     assertThat(actualArrayList.get(1), instanceOf(Directory.class));
   }
@@ -63,7 +64,7 @@ public class RouterMapBuilderTest {
   @Test
   public void four() {
     String route = "/test_directory";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "templates/file_directory.html"));
     assertThat(actualArrayList.get(1), instanceOf(Directory.class));
   }
@@ -71,7 +72,7 @@ public class RouterMapBuilderTest {
   @Test
   public void five() {
     String route = "/celebrate.gif";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -79,7 +80,7 @@ public class RouterMapBuilderTest {
   @Test
   public void six() {
     String route = "/color_picker.html";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -87,7 +88,7 @@ public class RouterMapBuilderTest {
   @Test
   public void seven() {
     String route = "/color_picker_post.html";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -95,7 +96,7 @@ public class RouterMapBuilderTest {
   @Test
   public void eight() {
     String route = "/color_picker_result.html";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -103,7 +104,7 @@ public class RouterMapBuilderTest {
   @Test
   public void nine() {
     String route = "/favicon.ico";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -111,7 +112,7 @@ public class RouterMapBuilderTest {
   @Test
   public void ten() {
     String route = "/favicon1.ico";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -119,7 +120,7 @@ public class RouterMapBuilderTest {
   @Test
   public void eleven() {
     String route = "/hi_everyone.html";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -127,7 +128,7 @@ public class RouterMapBuilderTest {
   @Test
   public void twelve() {
     String route = "/index.html";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -135,7 +136,7 @@ public class RouterMapBuilderTest {
   @Test
   public void thirteen() {
     String route = "/my_little_pony.png";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -143,15 +144,15 @@ public class RouterMapBuilderTest {
   @Test
   public void fourteen() {
     String route = "/.DS_Store";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
 
   @Test
   public void fifteen() {
-    String route = "/templates/parameters.html";
-    ArrayList actualArrayList = getActualValues(route);
+    String route = "/partial_content.txt";
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -159,7 +160,7 @@ public class RouterMapBuilderTest {
   @Test
   public void sixteen() {
     String route = "/punky_brewster.jpg";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -167,7 +168,7 @@ public class RouterMapBuilderTest {
   @Test
   public void seventeen() {
     String route = "/rainbow_brite.jpeg";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -175,7 +176,7 @@ public class RouterMapBuilderTest {
   @Test
   public void eighteen() {
     String route = "/the_goal.html";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -183,7 +184,7 @@ public class RouterMapBuilderTest {
   @Test
   public void nineteen() {
     String route = "/the_goal.txt";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -191,7 +192,7 @@ public class RouterMapBuilderTest {
   @Test
   public void twenty() {
     String route = "/celebrate";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/celebrate.gif"));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
@@ -199,65 +200,137 @@ public class RouterMapBuilderTest {
   @Test
   public void twentyOne() {
     String route = "/my_little_pony";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/my_little_pony.png"));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
 
   @Test
   public void twentyTwo() {
-    String route = "/rainbow";
-    ArrayList actualArrayList = getActualValues(route);
-    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/rainbow_brite.jpeg"));
+    String route = "/punky";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/punky_brewster.jpg"));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
 
   @Test
   public void twentyThree() {
-    String route = "/punky";
-    ArrayList actualArrayList = getActualValues(route);
-    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/punky_brewster.jpg"));
+    String route = "/rainbow";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/rainbow_brite.jpeg"));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
 
   @Test
   public void twentyFour() {
     String route = "/parameters";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/templates/parameters.html"));
     assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
 
   @Test
   public void twentyFive() {
+    String route = "/form";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/templates/form.html"));
+    assertThat(actualArrayList.get(1), instanceOf(Public.class));
+  }
+
+  @Test
+  public void twentySix() {
     String route = "/redirect";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/"));
     assertThat(actualArrayList.get(1), instanceOf(Redirect.class));
   }
 
   @Test
-  public void twentySix() {
+  public void twentySeven() {
     String route = "/another_redirect";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/hi_everyone.html"));
     assertThat(actualArrayList.get(1), instanceOf(Redirect.class));
   }
-//  TODO:  Add more tests at very end of project for other public files.
+
   @Test
-  public void twentySeven() {
-    assertEquals(36, actualResult.size());
+  public void twentyEight() {
+    String route = "/images/404.png";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
+    assertThat(actualArrayList.get(1), instanceOf(Public.class));
   }
 
   @Test
-  public void valid404Path() throws IOException {
+  public void twentyNine() {
+    String route = "/images/another_404.png";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
+    assertThat(actualArrayList.get(1), instanceOf(Public.class));
+  }
+
+  @Test
+  public void thirty() {
+    String route = "/stylesheets/stylesheet.css";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
+    assertThat(actualArrayList.get(1), instanceOf(Public.class));
+  }
+
+  @Test
+  public void thirtyOne() {
+    String route = "/templates/404.html";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
+    assertThat(actualArrayList.get(1), instanceOf(Public.class));
+  }
+
+  @Test
+  public void thirtyTwo() {
+    String route = "/templates/file_directory.html";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
+    assertThat(actualArrayList.get(1), instanceOf(Public.class));
+  }
+
+  @Test
+  public void thirtyThree() {
+    String route = "/templates/form.html";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
+    assertThat(actualArrayList.get(1), instanceOf(Public.class));
+  }
+
+  @Test
+  public void thirtyFour() {
+    String route = "/templates/parameters.html";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, route));
+    assertThat(actualArrayList.get(1), instanceOf(Public.class));
+  }
+
+  @Test
+  public void thirtyFive() {
+    String route = "/";
+    ArrayList actualArrayList = getRouterMapValue(route);
+    assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "templates/file_directory.html"));
+    assertThat(actualArrayList.get(1), instanceOf(Directory.class));
+  }
+
+  @Test
+  public void thirtySeven() {
+    assertEquals(35, actualResult.size());
+  }
+
+  @Test
+  public void returnsFourOhFourRoute() throws IOException {
     String route = "/this_url_does_not_exist";
-    ArrayList actualArrayList = getActualValues(route);
+    ArrayList actualArrayList = getRouterMapValue(route);
     assertEquals(actualArrayList.get(0), new File(publicDirectoryFullPath, "/templates/404.html"));
     assertThat(actualArrayList.get(1), instanceOf(FileNotFound.class));
   }
 
-  private ArrayList getActualValues(String route) {
+  private ArrayList getRouterMapValue(String route) {
     return (ArrayList)actualResult.get(route);
   }
 
