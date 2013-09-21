@@ -20,7 +20,7 @@ public class Server {
   private static String DEFAULT_WORKING_DIRECTORY_PATH = new File(System.getProperty("user.dir")).toString();
   private static String COBSPEC_PUBLIC_DIRECTORY_PATH = "public/";
   private static String COBSPEC_WORKING_DIRECTORY_PATH = new File(new File(System.getProperty("user.dir")).getParent(), "cob_spec").toString();
-  public ServerThread serverThread;
+  public ServerRunnable serverRunnable;
   private Map serverConfig;
 
   public void initialize() throws Exception {
@@ -57,18 +57,18 @@ public class Server {
   }
 
   private void serverStatus() throws IOException {
-    if (serverThread == null || serverThread.httpServerSocket.isClosed())
+    if (serverRunnable == null || serverRunnable.httpServerSocket.isClosed())
       System.out.println("Ninja Server is not running.");
     else
       System.out.println("Ninja Server is running on port " + serverConfig.get("port") + ".");
   }
 
-  private void startServerThread() throws IOException {
+  private void startServerThread() throws IOException, URISyntaxException {
     if (validateServerConfig(serverConfig) == true) {
       int cores = Runtime.getRuntime().availableProcessors();
       ExecutorService serverThreadPool = Executors.newFixedThreadPool(cores);
-      serverThread = new ServerThread(serverConfig);
-      serverThreadPool.submit(serverThread);
+      serverRunnable = new ServerRunnable(serverConfig);
+      serverThreadPool.submit(serverRunnable);
     }
   }
 
@@ -153,9 +153,9 @@ public class Server {
   }
 
   private void closeServerSocket() throws IOException {
-    if (serverThread != null && serverThread.httpServerSocket.isClosed() == false) {
+    if (serverRunnable != null && serverRunnable.httpServerSocket.isClosed() == false) {
       System.out.println("Ninja Server has been shut down.");
-      serverThread.closeServerSocket();
+      serverRunnable.closeServerSocket();
     }
     else
     System.out.println("Ninja Server is not currently running.");

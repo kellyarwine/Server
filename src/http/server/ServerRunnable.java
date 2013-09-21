@@ -1,25 +1,31 @@
 package http.server;
 
 import http.request.QueryStringRepository;
-import http.server.logger.SystemLogger;
-import http.server.logger.SystemLoggerFactory;
+import http.router.Templater;
+import http.server.logger.Logger;
+import http.server.logger.LoggerFactory;
 import http.server.serverSocket.HttpServerSocket;
 import http.server.serverSocket.SystemHttpServerSocket;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ServerThread implements Runnable {
+public class ServerRunnable implements Runnable {
   private Map<String, String> serverConfig;
-  private SystemLogger logger;
+  private Logger logger;
+  private QueryStringRepository queryStringRepository;
   public HttpServerSocket httpServerSocket;
   private volatile boolean closeRequested;
 
-  public ServerThread(Map<String, String> serverConfig) throws IOException {
+  public ServerRunnable(Map<String, String> serverConfig) throws IOException, URISyntaxException {
     this.serverConfig = serverConfig;
-    this.logger = new SystemLoggerFactory().build(serverConfig.get("port"));
+    this.logger = new LoggerFactory().build(serverConfig.get("port"));
+    queryStringRepository = new QueryStringRepository();
+    copyTemplatesToDisk();
     closeRequested = false;
   }
 
@@ -34,8 +40,6 @@ public class ServerThread implements Runnable {
       logger.logMessage("Routes Filename: " + serverConfig.get("routesFilePath"));
       logger.logMessage(".htaccess Filename: " + serverConfig.get("htAccessFilePath") + "\n");
 
-      QueryStringRepository queryStringRepository = new QueryStringRepository();
-
       int cores = Runtime.getRuntime().availableProcessors();
       ExecutorService serverRequestThreadPool = Executors.newFixedThreadPool(cores);
 
@@ -45,6 +49,11 @@ public class ServerThread implements Runnable {
       }
     } catch (IOException e) {
     }
+  }
+
+  private void copyTemplatesToDisk() throws IOException, URISyntaxException {
+    File publicDirectoryFullPath = new File(serverConfig.get("publicDirectoryPath"));
+    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
   }
 
   public void closeServerSocket() throws IOException {
