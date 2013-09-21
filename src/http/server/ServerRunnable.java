@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 
 public class ServerRunnable implements Runnable {
   private Map<String, String> serverConfig;
+  private File publicDirectoryFullPath;
   private Logger logger;
   private QueryStringRepository queryStringRepository;
   public HttpServerSocket httpServerSocket;
@@ -23,6 +24,7 @@ public class ServerRunnable implements Runnable {
 
   public ServerRunnable(Map<String, String> serverConfig) throws IOException, URISyntaxException {
     this.serverConfig = serverConfig;
+    this.publicDirectoryFullPath = new File(serverConfig.get("workingDirectoryPath"), serverConfig.get("publicDirectoryPath"));
     this.logger = new LoggerFactory().build(serverConfig.get("port"));
     queryStringRepository = new QueryStringRepository();
     copyTemplatesToDisk();
@@ -52,12 +54,23 @@ public class ServerRunnable implements Runnable {
   }
 
   private void copyTemplatesToDisk() throws IOException, URISyntaxException {
-    File publicDirectoryFullPath = new File(serverConfig.get("publicDirectoryPath"));
     new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
   }
 
   public void closeServerSocket() throws IOException {
     closeRequested = true;
     httpServerSocket.close();
+    deleteDirectory(new File(publicDirectoryFullPath, "/templates"));
+  }
+
+  public void deleteDirectory(File directory)
+  {
+    if (directory.isDirectory()) {
+      String[] children = directory.list();
+      for (int i=0; i<children.length; i++) {
+        deleteDirectory(new File(directory, children[i]));
+      }
+    }
+    directory.delete();
   }
 }
