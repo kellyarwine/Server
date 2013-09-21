@@ -16,7 +16,6 @@ public class MockHttpServerSocket implements HttpServerSocket {
   public WebSocket accept() throws IOException {
     if (!requests.isEmpty()) {
       String request = requests.remove(0);
-      System.out.println(request);
       return new MockSocket(request);
     }
     else {
