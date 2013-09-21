@@ -4,7 +4,7 @@ import http.request.QueryStringRepository;
 import http.request.Request;
 import http.response.Response;
 import http.router.Router;
-import http.server.logger.SystemLogger;
+import http.server.logger.Logger;
 import http.server.socket.WebSocket;
 
 import java.io.File;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class ServerRequestThread implements Runnable {
   public WebSocket webSocket;
-  private SystemLogger logger;
+  private Logger logger;
   private String publicDirectoryPath;
   private String routesFilePath;
   private String htAccessFilePath;
@@ -38,7 +38,6 @@ public class ServerRequestThread implements Runnable {
       Request request = new Request(queryStringRepository);
       Router router = new Router(workingDirectory, publicDirectoryPath, routesFilePath, htAccessFilePath);
       Response response = new Response();
-
       HashMap receivedRequest = request.get(webSocket);
       logger.logMessage(" REQUEST: http://" + receivedRequest.get("Host") + receivedRequest.get("url"));
 
