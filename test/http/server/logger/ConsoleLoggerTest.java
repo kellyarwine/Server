@@ -22,7 +22,7 @@ public class ConsoleLoggerTest {
 
   @Test
   public void printMultipleMessagesToConsole() throws IOException {
-    SystemLogger logger = new ConsoleLogger();
+    Logger logger = new ConsoleLogger();
     System.setOut(new PrintStream(consoleFile));
     logger.logMessage("This message should be printed to the console.");
     logger.logMessage("This message should also be printed to the console.");
