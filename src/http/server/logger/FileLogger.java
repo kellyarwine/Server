@@ -2,7 +2,7 @@ package http.server.logger;
 
 import java.io.*;
 
-public class FileLogger extends SystemLogger {
+public class FileLogger extends Logger {
   private File workingDirectory;
   private String SERVER_LOG = "server.log";
 
