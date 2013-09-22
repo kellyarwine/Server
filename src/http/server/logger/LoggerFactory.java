@@ -8,9 +8,7 @@ public class LoggerFactory {
     if (env.equals("production"))
         return new ConsoleLogger();
     else {
-      File logFile = new File(workingDirectoryFullPath, "server.log");
-      return new FileLogger(logFile);
+      return new FileLogger(workingDirectoryFullPath);
     }
   }
-
 }
