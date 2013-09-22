@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 
 public class ServerTest {
+  private String NEW_LINE = "\r\n";
   private File workingDirectoryFullPath;
   private File publicDirectoryFullPath;
   private File logFile;
@@ -60,6 +61,8 @@ public class ServerTest {
         + "                 the relative path to the public directory (denoted by the \"-d\" flag)\n"
         + "                 the Routes filename; file must exist in the root working directory (denoted by the \"-r\" flag)\n"
         + "                 the .htaccess filename; file must exist in the root working directory (denoted by the \"-h\" flag)\n"
+        + "                 a mock request file path holding one or more mock requests; this is for unit-testing purposes\n"
+        + "                 if more than one mock request, each request should be separated by 10 hyphens (----------)\n"
         + "Default Server Configurations:\n"
         + " start           [=<-e test>]\n"
         + "                 [=<-p 5000>]\n"
@@ -67,6 +70,7 @@ public class ServerTest {
         + "                 [=<-d test/public/>]\n"
         + "                 [=<-r test/routes.csv>]\n"
         + "                 [=<-h test/.htaccess>]\n"
+        + "                 [=<-m >]\n"
         + "Ninja Server is not currently running.\n";
     assertEquals(expectedResult, readLog());
   }
@@ -101,6 +105,8 @@ public class ServerTest {
             + "                 the relative path to the public directory (denoted by the \"-d\" flag)\n"
             + "                 the Routes filename; file must exist in the root working directory (denoted by the \"-r\" flag)\n"
             + "                 the .htaccess filename; file must exist in the root working directory (denoted by the \"-h\" flag)\n"
+            + "                 a mock request file path holding one or more mock requests; this is for unit-testing purposes\n"
+            + "                 if more than one mock request, each request should be separated by 10 hyphens (----------)\n"
             + "Default Server Configurations:\n"
             + " start           [=<-e test>]\n"
             + "                 [=<-p 5000>]\n"
@@ -108,6 +114,7 @@ public class ServerTest {
             + "                 [=<-d test/public/>]\n"
             + "                 [=<-r test/routes.csv>]\n"
             + "                 [=<-h test/.htaccess>]\n"
+            + "                 [=<-m >]\n"
             + "Ninja Server is not currently running.\n";
     assertEquals(expectedResult, readLog());
   }
@@ -284,6 +291,23 @@ public class ServerTest {
   }
 
   @Test
+  public void displayStatus() throws Exception {
+    ArrayList commands = new ArrayList();
+    commands.add("status");
+    commands.add("stop");
+    MockIo mockIo = new MockIo(commands);
+    Server server = new Server(mockIo);
+    server.initialize();
+    String expectedResult =
+        "Ninja Server Menu\n"
+            + "----------------------\n"
+            + "Type \"help\" to see a list of available commands.\n"
+            + "Ninja Server is not running.\n"
+            + "Ninja Server is not currently running.\n";
+    assertEquals(expectedResult, readLog());
+  }
+
+  @Test
   public void startServerWithDefaultConfigurations() throws Exception {
     ArrayList commands = new ArrayList();
     commands.add("start");
@@ -298,23 +322,6 @@ public class ServerTest {
             + "Type \"help\" to see a list of available commands.\n"
             + "Ninja Server is running on port 5000.\n"
             + "Ninja Server has been shut down.\n";
-    assertEquals(expectedResult, readLog());
-  }
-
-  @Test
-  public void displayStatus() throws Exception {
-    ArrayList commands = new ArrayList();
-    commands.add("status");
-    commands.add("stop");
-    MockIo mockIo = new MockIo(commands);
-    Server server = new Server(mockIo);
-    server.initialize();
-    String expectedResult =
-        "Ninja Server Menu\n"
-            + "----------------------\n"
-            + "Type \"help\" to see a list of available commands.\n"
-            + "Ninja Server is not running.\n"
-            + "Ninja Server is not currently running.\n";
     assertEquals(expectedResult, readLog());
   }
 
@@ -348,5 +355,22 @@ public class ServerTest {
       outputStream.write(chr);
 
     return outputStream.toString();
+  }
+
+  public String simpleRootRequest() {
+    String requestHeader =
+        "GET / HTTP/1.1\r\n"
+            + "Host: localhost:5000\r\n"
+            + "Connection: keep-alive\r\n"
+            + "Content-Length: 15\r\n"
+            + "Cache-Control: max-age=0\r\n"
+            + "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+            + "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36\r\n"
+            + "Accept-Encoding: gzip,deflate,sdch\r\n"
+            + "Accept-Language: en-US,en;q=0.8\r\n"
+            + "Cookie: textwrapon=false; wysiwyg=textarea\r\n";
+    String requestBody =
+        "";
+    return requestHeader + NEW_LINE + requestBody;
   }
 }

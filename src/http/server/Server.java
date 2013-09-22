@@ -19,6 +19,7 @@ public class Server {
   private static String DEFAULT_ROUTES_FILE_PATH = "test/routes.csv";
   private static String DEFAULT_HTACCESS_FILE_PATH = "test/.htaccess";
   private static String DEFAULT_WORKING_DIRECTORY_PATH = new File(System.getProperty("user.dir")).toString();
+  private static String DEFAULT_MOCK_REQUESTS_FILE_PATH = "";
   private static String COBSPEC_PUBLIC_DIRECTORY_PATH = "public/";
   private static String COBSPEC_WORKING_DIRECTORY_PATH = new File(new File(System.getProperty("user.dir")).getParent(), "cob_spec").toString();
   private static String COBSPEC_ROUTES_FILE_PATH = "routes.csv";
@@ -93,6 +94,7 @@ public class Server {
     setRoutesFile(serverConfigArray);
     setHtAccessFile(serverConfigArray);
     setWorkingDirectory(serverConfigArray);
+    setMockRequestsFile(serverConfigArray);
   }
 
   public void setPort(String[] serverConfigArray) {
@@ -131,6 +133,12 @@ public class Server {
     serverConfig.put("workingDirectoryPath", workingDirectoryPath);
   }
 
+  private void setMockRequestsFile(String[] serverConfigArray) {
+    int mockRequestsFileIndex = Arrays.asList(serverConfigArray).indexOf("-m");
+    String mockRequestsFilePath = (mockRequestsFileIndex == -1) ? DEFAULT_MOCK_REQUESTS_FILE_PATH : serverConfigArray[mockRequestsFileIndex + 1];
+    serverConfig.put("mockRequestsFilePath", mockRequestsFilePath);
+  }
+
   private void getCobSpecServerConfig(String serverConfigString) {
     serverConfig = new HashMap<String, String>();
     String[] serverConfigArray = serverConfigString.split(" ");
@@ -140,6 +148,7 @@ public class Server {
     serverConfig.put("workingDirectoryPath", COBSPEC_WORKING_DIRECTORY_PATH);
     setPort(serverConfigArray);
     setEnv(serverConfigArray);
+    setMockRequestsFile(serverConfigArray);
   }
 
   private boolean validateServerConfig(Map<String, String> serverConfig) throws IOException {
@@ -171,13 +180,16 @@ public class Server {
     io.out("                 the relative path to the public directory (denoted by the \"-d\" flag)");
     io.out("                 the Routes filename; file must exist in the root working directory (denoted by the \"-r\" flag)");
     io.out("                 the .htaccess filename; file must exist in the root working directory (denoted by the \"-h\" flag)");
+    io.out("                 a mock request file path holding one or more mock requests; this is for unit-testing purposes");
+    io.out("                 if more than one mock request, each request should be separated by 10 hyphens (----------)");
     io.out("Default Server Configurations:");
     io.out(" start           [=<-e " + DEFAULT_ENV + ">]\n" +
         "                 [=<-p " + DEFAULT_PORT + ">]\n" +
         "                 [=<-w " + DEFAULT_WORKING_DIRECTORY_PATH + ">]\n" +
         "                 [=<-d " + DEFAULT_PUBLIC_DIRECTORY_PATH + ">]\n" +
         "                 [=<-r " + DEFAULT_ROUTES_FILE_PATH + ">]\n" +
-        "                 [=<-h " + DEFAULT_HTACCESS_FILE_PATH + ">]");
+        "                 [=<-h " + DEFAULT_HTACCESS_FILE_PATH + ">]\n" +
+        "                 [=<-m " + DEFAULT_MOCK_REQUESTS_FILE_PATH + ">]");
   }
 
   private boolean validatePortAndCheckAvailability() throws IOException {
