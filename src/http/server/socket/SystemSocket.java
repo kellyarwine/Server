@@ -7,11 +7,13 @@ public class SystemSocket implements WebSocket {
   private Socket socket;
   private BufferedReader in;
   private OutputStream out;
+  private boolean isClosed;
 
   public SystemSocket(Socket socket) throws IOException {
     this.socket = socket;
     in = new BufferedReader(new InputStreamReader((socket.getInputStream())));
     out = new BufferedOutputStream(socket.getOutputStream());
+    isClosed = false;
   }
 
   public BufferedReader in() throws IOException {
@@ -26,5 +28,10 @@ public class SystemSocket implements WebSocket {
     in.close();
     out.close();
     socket.close();
+    isClosed = true;
+  }
+
+  public boolean getIsClosed() {
+    return isClosed;
   }
 }

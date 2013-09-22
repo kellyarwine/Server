@@ -8,9 +8,11 @@ import java.util.List;
 
 public class MockHttpServerSocket implements HttpServerSocket {
   List<String> requests;
+  private boolean isClosed;
 
   public MockHttpServerSocket(List<String> requests) throws IOException {
     this.requests = requests;
+    isClosed = false;
   }
 
   public WebSocket accept() throws IOException {
@@ -25,11 +27,11 @@ public class MockHttpServerSocket implements HttpServerSocket {
   }
 
   public void close() {
-
+    isClosed = true;
   }
 
   public boolean isClosed() {
-    return false;
+    return isClosed;
   }
 
   public boolean isBound() {

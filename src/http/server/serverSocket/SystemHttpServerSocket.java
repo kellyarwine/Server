@@ -12,6 +12,7 @@ public class SystemHttpServerSocket implements HttpServerSocket {
   public SystemHttpServerSocket(int port) throws IOException {
     serverSocket = new ServerSocket(port);
   }
+
   public WebSocket accept() throws IOException {
     return new SystemSocket(serverSocket.accept());
   }

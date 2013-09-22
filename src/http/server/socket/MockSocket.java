@@ -5,11 +5,13 @@ import java.io.*;
 public class MockSocket implements WebSocket {
   private BufferedReader in;
   private OutputStream out;
+  public boolean isClosed;
 
-  public MockSocket(String requestString) {
+  public MockSocket(String requestString) throws IOException {
     byte[] request = requestString.getBytes();
     in = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(request)));
     out = new ByteArrayOutputStream();
+    isClosed = false;
   }
 
   public BufferedReader in() {
@@ -21,7 +23,10 @@ public class MockSocket implements WebSocket {
   }
 
   public void close() throws IOException {
-    in.close();
-    out.close();
+    isClosed = true;
+  }
+
+  public boolean getIsClosed() {
+    return isClosed;
   }
 }
