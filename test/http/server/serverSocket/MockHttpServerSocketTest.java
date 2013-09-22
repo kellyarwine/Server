@@ -1,5 +1,6 @@
 package http.server.serverSocket;
 
+import http.server.socket.WebSocket;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,6 +9,9 @@ import java.util.ArrayList;
 
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertFalse;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class MockHttpServerSocketTest {
   private String NEW_LINE = "\r\n";
@@ -15,7 +19,7 @@ public class MockHttpServerSocketTest {
 
   @Before
   public void setUp() throws IOException {
-    ArrayList requests = new ArrayList();
+    ArrayList<String> requests = new ArrayList<String>();
     requests.add(simpleRootRequest());
     httpServerSocket = new MockHttpServerSocket(requests);
   }
@@ -29,6 +33,14 @@ public class MockHttpServerSocketTest {
   @Test
   public void bound() throws IOException {
     assertFalse(httpServerSocket.isBound());
+  }
+
+  @Test
+  public void accept() throws IOException {
+    WebSocket webSocket = httpServerSocket.accept();
+    assertThat(webSocket, instanceOf(WebSocket.class));
+    String actualResult = read(webSocket);
+    assertEquals(simpleRootRequest(), actualResult);
   }
 
   private String simpleRootRequest() {
@@ -46,5 +58,17 @@ public class MockHttpServerSocketTest {
     String requestBody =
         "";
     return requestHeader + NEW_LINE + requestBody;
+  }
+
+  private String read(WebSocket webSocket) throws IOException {
+    int chr;
+    StringBuffer buffer = new StringBuffer();
+
+    while ( (chr = webSocket.in().read()) != -1 ) {
+      buffer.append((char) chr);
+      if ( !webSocket.in().ready())
+        break;
+    }
+    return buffer.toString();
   }
 }
