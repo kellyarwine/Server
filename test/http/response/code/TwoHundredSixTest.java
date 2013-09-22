@@ -16,7 +16,7 @@ public class TwoHundredSixTest {
 
   @Test
   public void build() throws IOException, ParseException {
-    HashMap request = new HashMap();
+    HashMap<String, String> request = new HashMap<String, String>();
     request.put("httpMethod", "POST");
     request.put("url", "/the_goal.html");
     request.put("httpProtocol", "HTTP/1.1");
@@ -29,20 +29,20 @@ public class TwoHundredSixTest {
     request.put("Accept-Encoding", "gzip,deflate,sdch");
     request.put("Accept-Language", "en-US,en;q=0.8");
     request.put("Cookie", "textwrapon=false; wysiwyg=textarea");
-    request.put("Range", "bytes=500-999");
+    request.put("Range", "bytes=500-599");
     request.put("queryString", "text_color=blue");
     String expectedHeader = "HTTP/1.1 206 Partial Content\r\n"
         + "Date: " + currentDateTime() + "\r\n"
         + "Server: NinjaServer 1.0" + "\r\n"
         + "Content-type: text/html; charset=UTF-8" + "\r\n"
-        + "Content-length: 499\r\n"
-        + "Content-Range: bytes 500-999/21552\r\n";
+        + "Content-length: 99\r\n"
+        + "Content-Range: bytes 500-599/21552\r\n";
     String workingDirectory = System.getProperty("user.dir");
     File publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     File routeFile = new File(publicDirectoryFullPath, (String)request.get("url"));
     byte[] fullExpectedBodyInBytes = toBytes(routeFile);
-    byte[] expectedBodyInBytes = new byte[499];
-    System.arraycopy(fullExpectedBodyInBytes, 500, expectedBodyInBytes, 0, 499);
+    byte[] expectedBodyInBytes = new byte[99];
+    System.arraycopy(fullExpectedBodyInBytes, 500, expectedBodyInBytes, 0, 99);
     String expectedBody   = new String(expectedBodyInBytes);
     String expectedResult = expectedHeader + NEW_LINE + expectedBody;
 
@@ -55,7 +55,7 @@ public class TwoHundredSixTest {
 
   @Test
   public void cobSpecTest() throws IOException, ParseException {
-    HashMap request = new HashMap();
+    HashMap<String, String> request = new HashMap<String, String>();
     request.put("httpMethod", "GET");
     request.put("url", "/partial_content.txt");
     request.put("httpProtocol", "HTTP/1.1");
