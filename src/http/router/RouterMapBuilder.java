@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-//TODO:  I'm not handling deleting the templates once I'm done.
+
 public class RouterMapBuilder {
   private File publicDirectoryFullPath;
   private DefaultHashMap routerMap;
