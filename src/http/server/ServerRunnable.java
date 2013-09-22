@@ -24,8 +24,9 @@ public class ServerRunnable implements Runnable {
 
   public ServerRunnable(Map<String, String> serverConfig) throws IOException, URISyntaxException {
     this.serverConfig = serverConfig;
-    this.publicDirectoryFullPath = new File(serverConfig.get("workingDirectoryPath"), serverConfig.get("publicDirectoryPath"));
-    this.logger = new LoggerFactory().build(serverConfig.get("port"));
+    File workingDirectoryPath = new File(serverConfig.get("workingDirectoryPath"));
+    this.publicDirectoryFullPath = new File(workingDirectoryPath, serverConfig.get("publicDirectoryPath"));
+    this.logger = new LoggerFactory().build(serverConfig.get("env"), workingDirectoryPath);
     queryStringRepository = new QueryStringRepository();
     copyTemplatesToDisk();
     closeRequested = false;
@@ -49,7 +50,8 @@ public class ServerRunnable implements Runnable {
         ServerRequestThread serverRequestThread = new ServerRequestThread(serverConfig, logger, httpServerSocket.accept() , queryStringRepository);
         serverRequestThreadPool.submit(serverRequestThread);
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
     }
   }
 
