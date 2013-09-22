@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 public class Server {
   private static String DEFAULT_PORT = "5000";
   private static String DEFAULT_PUBLIC_DIRECTORY_PATH = "test/public/";
-  private static String DEFAULT_ENV = "production";
+  private static String DEFAULT_ENV = "test";
   private static String DEFAULT_ROUTES_FILE_PATH = "test/routes.csv";
   private static String DEFAULT_HTACCESS_FILE_PATH = "test/.htaccess";
   private static String DEFAULT_WORKING_DIRECTORY_PATH = new File(System.getProperty("user.dir")).toString();
@@ -25,7 +25,7 @@ public class Server {
   private static String COBSPEC_HTACCESS_FILE_PATH = ".htaccess";
   private Io io;
   public ServerRunnable serverRunnable;
-  public Map serverConfig;
+  public Map<String, String> serverConfig;
 
   public Server(Io io) {
     this.io = io;
@@ -38,19 +38,19 @@ public class Server {
 
     while (true) {
         String command = io.in();
-        if (command.contains("start server")) {
+        if (command.startsWith("start")) {
           getServerConfig(command);
           startServerRunnable();
         }
-        else if (command.contains("start cob_spec")) {
+        else if (command.startsWith("cob_spec")) {
           getCobSpecServerConfig(command);
           startServerRunnable();
         }
-        else if (command.contains("status"))
+        else if (command.startsWith("status"))
           serverStatus();
-        else if (command.contains("help"))
+        else if (command.startsWith("help"))
           helpText();
-        else if (command.contains("stop server")) {
+        else if (command.startsWith("stop")) {
           stopServerRunnable();
           break;
         }
@@ -132,7 +132,7 @@ public class Server {
   }
 
   private void getCobSpecServerConfig(String serverConfigString) {
-    serverConfig = new HashMap();
+    serverConfig = new HashMap<String, String>();
     String[] serverConfigArray = serverConfigString.split(" ");
     serverConfig.put("publicDirectoryPath", COBSPEC_PUBLIC_DIRECTORY_PATH);
     serverConfig.put("routesFilePath", COBSPEC_ROUTES_FILE_PATH);
@@ -157,14 +157,14 @@ public class Server {
     io.out("Ninja Server Help Menu");
     io.out("-------------------------");
     io.out("Available Commands:");
-    io.out(" start cob_spec  Starts the server with cob_spec configurations.");
+    io.out(" cob_spec        Starts the server with cob_spec configurations.");
     io.out(" status          Lists the status of the server.");
-    io.out(" stop server     Stops the server.");
+    io.out(" stop            Stops the server.");
     io.out(" exit            Exits the application.");
     io.out(" help            Provides instructions and detailed information for each command.");
     io.out("");
     io.out("Starting the Server:");
-    io.out(" start server    Starts the server.  The application takes six optional parameters:");
+    io.out(" start           Starts the server.  The application takes six optional parameters:");
     io.out("                 an environment setting; \"test\" or \"production\" (denoted by the \"-e\" flag)");
     io.out("                 a port number (denoted by the \"-p\" flag)");
     io.out("                 the absolute path to the working directory (denoted by the \"-w\" flag)");
@@ -172,7 +172,7 @@ public class Server {
     io.out("                 the Routes filename; file must exist in the root working directory (denoted by the \"-r\" flag)");
     io.out("                 the .htaccess filename; file must exist in the root working directory (denoted by the \"-h\" flag)");
     io.out("Default Server Configurations:");
-    io.out(" start server    [=<-e " + DEFAULT_ENV + ">]\n" +
+    io.out(" start           [=<-e " + DEFAULT_ENV + ">]\n" +
         "                 [=<-p " + DEFAULT_PORT + ">]\n" +
         "                 [=<-w " + DEFAULT_WORKING_DIRECTORY_PATH + ">]\n" +
         "                 [=<-d " + DEFAULT_PUBLIC_DIRECTORY_PATH + ">]\n" +
