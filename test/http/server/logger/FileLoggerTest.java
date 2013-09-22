@@ -20,6 +20,7 @@ public class FileLoggerTest {
     File workingDirectory = new File(System.getProperty("user.dir"));
     logger = new FileLogger(workingDirectory);
     logFile = new File(workingDirectory, "server.log");
+    logFile.delete();
   }
 
   @After
