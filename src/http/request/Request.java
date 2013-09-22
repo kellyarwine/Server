@@ -26,12 +26,9 @@ public class Request {
     StringBuffer buffer = new StringBuffer();
 
     while ( (chr = webSocket.in().read()) != -1 ) {
-      try {
         buffer.append((char) chr);
-          if ( !webSocket.in().ready()) break;
-      } catch (java.net.SocketException e) {
-       break;
-      }
+          if ( !webSocket.in().ready())
+            break;
     }
     return buffer.toString();
   }
