@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 public class SystemHttpServerSocket implements HttpServerSocket {
-  ServerSocket serverSocket;
+  private ServerSocket serverSocket;
 
   public SystemHttpServerSocket(int port) throws IOException {
     serverSocket = new ServerSocket(port);
