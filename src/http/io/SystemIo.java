@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class SystemIo implements Io {
   public String in() {
     Scanner scan = new Scanner(System.in);
-    return scan.next();
+    return scan.nextLine();
   }
 
   public void out(String message) {
