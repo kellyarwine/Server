@@ -1,17 +1,23 @@
 package http.response.code;
 
 import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
+
 import static junit.framework.Assert.assertEquals;
 
 public class ThreeHundredOneTest {
   private String NEW_LINE = "\r\n";
 
   @Test
-  public void build() throws IOException {
+  public void build() throws IOException, ParseException {
     HashMap request = new HashMap();
     request.put("httpMethod", "POST");
     request.put("url", "/the_goal.html");
@@ -28,7 +34,7 @@ public class ThreeHundredOneTest {
     request.put("queryString", "text_color=blue");
 
     String expectedHeader = "HTTP/1.1 301 Moved Permanently\r\n"
-                          + new Date() + "\r\n"
+                          + "Date: " + currentDateTime() + "\r\n"
                           + "Server: NinjaServer 1.0" + "\r\n"
                           + "Content-type: text/html; charset=UTF-8" + "\r\n"
                           + "Content-length: 0\r\n"
@@ -44,5 +50,12 @@ public class ThreeHundredOneTest {
     String actualResult = new String(actualResultInBytes);
 
     assertEquals(expectedResult, actualResult);
+  }
+
+  private String currentDateTime() throws ParseException {
+    Date unformattedDateTime = Calendar.getInstance().getTime();
+    SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    return sdf.format(unformattedDateTime);
   }
 }

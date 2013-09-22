@@ -1,12 +1,16 @@
 package http.response.code;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class ResponseHeader {
-  public byte[] build(File routeFile, String responseCodeMessage, int bodyContentLength) {
+  public byte[] build(File routeFile, String responseCodeMessage, int bodyContentLength) throws ParseException {
     String header = httpProtocolVersion() + " " + responseCodeMessage + "\r\n"
-                        + currentDate()+ "\r\n"
+                        + currentDateTime()+ "\r\n"
                         + serverInfo()+ "\r\n"
                         + contentType(routeFile)+ "\r\n"
                         + contentLength(bodyContentLength)+ "\r\n";
@@ -17,8 +21,11 @@ public class ResponseHeader {
     return "HTTP/1.1";
   }
 
-  private Date currentDate() {
-    return new Date();
+  private String currentDateTime() throws ParseException {
+    Date unformattedDateTime = Calendar.getInstance().getTime();
+    SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    return "Date: " + sdf.format(unformattedDateTime);
   }
 
   private String serverInfo() {

@@ -1,13 +1,14 @@
 package http.response.code;
 
 import java.io.*;
+import java.text.ParseException;
 import java.util.HashMap;
 
 public class Code {
   public String NEW_LINE = "\r\n";
   public HashMap request;
 
-  public byte[] build(File routeFile, HashMap request) throws IOException {
+  public byte[] build(File routeFile, HashMap request) throws IOException, ParseException {
     this.request = request;
     byte[] responseBody = buildBody(routeFile);
     byte[] responseHeader = buildHeader(routeFile, responseCodeMessage(), buildBody(routeFile).length);
@@ -21,7 +22,7 @@ public class Code {
     return updatedResponseBody;
   }
 
-  public byte[] buildHeader(File routeFile, String responseCodeMessage, int bodyContentLength) throws IOException {
+  public byte[] buildHeader(File routeFile, String responseCodeMessage, int bodyContentLength) throws IOException, ParseException {
     return new ResponseHeader().build(routeFile, responseCodeMessage, bodyContentLength);
   }
 

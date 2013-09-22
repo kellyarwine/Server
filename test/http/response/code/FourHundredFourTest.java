@@ -7,8 +7,12 @@ import org.junit.Test;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -29,7 +33,7 @@ public class FourHundredFourTest {
   }
 
   @Test
-  public void build() throws IOException {
+  public void build() throws IOException, ParseException {
     String workingDirectory = System.getProperty("user.dir");
     File publicDirectoryFullPath = new File(workingDirectory, "test/public/");
 
@@ -54,7 +58,7 @@ public class FourHundredFourTest {
     String actualResult = new String(actualResultInBytes);
 
     String expectedHeader = "HTTP/1.1 404 File Not Found\r\n"
-        + new Date() + "\r\n"
+        + "Date: " + currentDateTime() + "\r\n"
         + "Server: NinjaServer 1.0" + "\r\n"
         + "Content-type: text/html; charset=UTF-8" + "\r\n"
         + "Content-length: 127\r\n";
@@ -83,5 +87,12 @@ public class FourHundredFourTest {
       }
     }
     directory.delete();
+  }
+
+  private String currentDateTime() throws ParseException {
+    Date unformattedDateTime = Calendar.getInstance().getTime();
+    SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    return sdf.format(unformattedDateTime);
   }
 }

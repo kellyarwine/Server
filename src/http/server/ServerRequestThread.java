@@ -10,6 +10,7 @@ import http.server.socket.WebSocket;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +55,9 @@ public class ServerRequestThread implements Runnable {
       e.printStackTrace();
     }
     catch (URISyntaxException e) {
+      e.printStackTrace();
+    }
+    catch (ParseException e) {
       e.printStackTrace();
     }
   }

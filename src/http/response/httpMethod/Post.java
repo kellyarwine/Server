@@ -3,6 +3,7 @@ package http.response.httpMethod;
 import http.response.code.Code;
 
 import java.io.*;
+import java.text.ParseException;
 import java.util.HashMap;
 
 public class Post implements HttpMethod {
@@ -12,7 +13,7 @@ public class Post implements HttpMethod {
     templateMap = new TemplateMapBuilder().build();
   }
 
-  public byte[] get(File routeFile, HashMap request) throws IOException {
+  public byte[] get(File routeFile, HashMap request) throws IOException, ParseException {
     Code code = (Code) templateMap.get(isTemplate(routeFile));
     return code.build(routeFile, request);
   }

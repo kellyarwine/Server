@@ -3,8 +3,12 @@ package http.response.httpMethod;
 import org.junit.Test;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
@@ -13,7 +17,7 @@ public class GetTest {
   private String NEW_LINE = "\r\n";
 
   @Test
-  public void getRequestToTemplate() throws IOException {
+  public void getRequestToTemplate() throws IOException, ParseException {
     HashMap request = new HashMap();
     request.put("httpMethod", "GET");
     request.put("url", "/hi_everyone.html");
@@ -41,7 +45,7 @@ public class GetTest {
   }
 
   @Test
-  public void getRequestToNonTemplate() throws IOException {
+  public void getRequestToNonTemplate() throws IOException, ParseException {
     HashMap request = new HashMap();
     request.put("httpMethod", "GET");
     request.put("url", "/the_goal.html");
@@ -63,7 +67,7 @@ public class GetTest {
     byte[] actualResult = get.get(routeFile, request);
 
     String expectedHeaderString = "HTTP/1.1 200 OK\r\n"
-                                + new Date() + "\r\n"
+                                + "Date: " + currentDateTime() + "\r\n"
                                 +"Server: NinjaServer 1.0\r\n"
                                 +"Content-type: text/html; charset=UTF-8\r\n"
                                 +"Content-length: 21552\r\n";
@@ -75,7 +79,7 @@ public class GetTest {
   }
 
   @Test
-  public void getRequestForPartialContent() throws IOException {
+  public void getRequestForPartialContent() throws IOException, ParseException {
     HashMap request = new HashMap();
     request.put("httpMethod", "GET");
     request.put("url", "/the_goal.html");
@@ -98,7 +102,7 @@ public class GetTest {
     byte[] actualResult = get.get(routeFile, request);
 
     String expectedHeaderString = "HTTP/1.1 206 Partial Content\r\n"
-        + new Date() + "\r\n"
+        + "Date: " + currentDateTime() + "\r\n"
         + "Server: NinjaServer 1.0" + "\r\n"
         + "Content-type: text/html; charset=UTF-8" + "\r\n"
         + "Content-length: 499\r\n"
@@ -129,5 +133,12 @@ public class GetTest {
       bOutput.write(byteArray[i]);
     }
     return bOutput.toByteArray();
+  }
+
+  private String currentDateTime() throws ParseException {
+    Date unformattedDateTime = Calendar.getInstance().getTime();
+    SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    return sdf.format(unformattedDateTime);
   }
 }

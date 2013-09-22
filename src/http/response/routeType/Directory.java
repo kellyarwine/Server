@@ -4,6 +4,7 @@ import http.response.code.TwoHundred;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 
 public class Directory implements RouteType {
@@ -13,7 +14,7 @@ public class Directory implements RouteType {
     this.publicDirectoryFullPath = publicDirectoryFullPath;
   }
 
-  public byte[] get(File routeFile, HashMap request) throws IOException {
+  public byte[] get(File routeFile, HashMap request) throws IOException, ParseException {
     HashMap modifiedRequest = addDirectoryToQueryString(request);
     TwoHundred twoHundred = new TwoHundred();
     return twoHundred.build(routeFile, modifiedRequest);

@@ -4,8 +4,12 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -14,7 +18,7 @@ public class PutTest {
   private String NEW_LINE = "\r\n";
 
   @Test
-  public void postRequestToTemplate() throws IOException {
+  public void postRequestToTemplate() throws IOException, ParseException {
     HashMap request = new HashMap();
     request.put("httpMethod", "POST");
     request.put("url", "/form");
@@ -46,7 +50,7 @@ public class PutTest {
   }
 
   @Test
-  public void postRequestToNonTemplate() throws IOException {
+  public void postRequestToNonTemplate() throws IOException, ParseException {
     HashMap request = new HashMap();
     request.put("httpMethod", "POST");
     request.put("url", "/punky_brewster.jpg");
@@ -69,7 +73,7 @@ public class PutTest {
     String actualResult = new String(actualResultInBytes);
 
     String expectedResult = "HTTP/1.1 405 Method Not Allowed\r\n"
-        + new Date() + "\r\n"
+        + "Date: " + currentDateTime() + "\r\n"
         +"Server: NinjaServer 1.0\r\n"
         +"Content-type: image/jpeg\r\n"
         +"Content-length: 0\r\n"
@@ -77,5 +81,12 @@ public class PutTest {
         + NEW_LINE;
 
     assertEquals(expectedResult, actualResult);
+  }
+
+  private String currentDateTime() throws ParseException {
+    Date unformattedDateTime = Calendar.getInstance().getTime();
+    SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    return sdf.format(unformattedDateTime);
   }
 }

@@ -4,13 +4,14 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 
 import static junit.framework.Assert.assertTrue;
 
 public class PublicTest {
   @Test
-  public void get() throws IOException {
+  public void get() throws IOException, ParseException {
     HashMap request = new HashMap();
     request.put("httpMethod", "GET");
     request.put("url", "/hi_everyone.html");
@@ -38,7 +39,7 @@ public class PublicTest {
   }
 
   @Test
-  public void post() throws IOException {
+  public void post() throws IOException, ParseException {
     HashMap request = new HashMap();
     request.put("httpMethod", "POST");
     request.put("url", "/hi_everyone.html");
@@ -66,7 +67,7 @@ public class PublicTest {
   }
 
   @Test
-  public void put() throws IOException {
+  public void put() throws IOException, ParseException {
     HashMap request = new HashMap();
     request.put("httpMethod", "PUT");
     request.put("url", "/hi_everyone.html");

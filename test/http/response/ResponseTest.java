@@ -18,9 +18,9 @@ import org.junit.runners.JUnit4;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
@@ -48,7 +48,7 @@ public class ResponseTest {
   }
 
   @Test
-  public void publicRoute() throws IOException {
+  public void publicRoute() throws IOException, ParseException {
     String requestHeader  = "GET /the_goal.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n";
     String requestString  = requestHeader + NEW_LINE;
@@ -63,7 +63,7 @@ public class ResponseTest {
     byte[] actualResult = webSocket.out().toString().getBytes();
 
     String expectedHeaderString = "HTTP/1.1 200 OK\r\n"
-                                + new Date() + "\r\n"
+                                + "Date: " + currentDateTime() + "\r\n"
                                 + "Server: NinjaServer 1.0" + "\r\n"
                                 + "Content-type: text/html; charset=UTF-8" + "\r\n"
                                 + "Content-length: 21552\r\n";
@@ -76,7 +76,7 @@ public class ResponseTest {
 
 
   @Test
-  public void redirectRoute() throws IOException {
+  public void redirectRoute() throws IOException, ParseException {
     String requestHeader  = "GET /redirect HTTP/1.1\r\n"
         + "Host: localhost:5000\r\n";
     String requestString  = requestHeader + NEW_LINE;
@@ -91,7 +91,7 @@ public class ResponseTest {
     byte[] actualResult = webSocket.out().toString().getBytes();
 
     String expectedHeaderString = "HTTP/1.1 301 Moved Permanently\r\n"
-                                + new Date() + "\r\n"
+                                + "Date: " + currentDateTime() + "\r\n"
                                 + "Server: NinjaServer 1.0" + "\r\n"
                                 + "Content-type: text/html; charset=UTF-8" + "\r\n"
                                 + "Content-length: 0\r\n"
@@ -104,7 +104,7 @@ public class ResponseTest {
   }
 
   @Test
-  public void fileNotFoundRoute() throws IOException {
+  public void fileNotFoundRoute() throws IOException, ParseException {
     String requestHeader  = "GET /this_url_does_not_exist HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n";
     String requestBody    = "text_color=blue";
@@ -120,7 +120,7 @@ public class ResponseTest {
     byte[] actualResult = webSocket.out().toString().getBytes();
 
     String expectedHeaderString = "HTTP/1.1 404 File Not Found\r\n"
-        + new Date() + "\r\n"
+        + "Date: " + currentDateTime() + "\r\n"
         + "Server: NinjaServer 1.0" + "\r\n"
         + "Content-type: text/html; charset=UTF-8" + "\r\n"
         + "Content-length: 127\r\n";
@@ -132,7 +132,7 @@ public class ResponseTest {
   }
 
   @Test
-  public void directoryRoute() throws IOException {
+  public void directoryRoute() throws IOException, ParseException {
     String requestHeader  = "GET /images HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n";
     String requestString  = requestHeader + NEW_LINE;
@@ -147,7 +147,7 @@ public class ResponseTest {
     byte[] actualResult = webSocket.out().toString().getBytes();
 
     String expectedHeader      = "HTTP/1.1 200 OK\r\n"
-                               + new Date() + "\r\n"
+                               + "Date: " + currentDateTime() + "\r\n"
                                + "Server: NinjaServer 1.0" + "\r\n"
                                + "Content-type: text/html; charset=UTF-8" + "\r\n"
                                + "Content-length: 229\r\n";
@@ -201,5 +201,12 @@ public class ResponseTest {
     requests.add(request);
     HttpServerSocket httpServerSocket = new MockHttpServerSocket(requests);
     return httpServerSocket.accept();
+  }
+
+  private String currentDateTime() throws ParseException {
+    Date unformattedDateTime = Calendar.getInstance().getTime();
+    SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    return sdf.format(unformattedDateTime);
   }
 }

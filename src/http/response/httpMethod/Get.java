@@ -4,6 +4,7 @@ import http.response.code.Code;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 
 public class Get implements HttpMethod {
@@ -13,7 +14,7 @@ public class Get implements HttpMethod {
     partialContentMap = new PartialContentMapBuilder().build();
   }
 
-  public byte[] get(File routeFile, HashMap request) throws IOException {
+  public byte[] get(File routeFile, HashMap request) throws IOException, ParseException {
     boolean answer = rangeRequestHeaderExists(request);
     Code code = (Code) partialContentMap.get(answer);
     return code.build(routeFile, request);

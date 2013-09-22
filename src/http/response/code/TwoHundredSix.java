@@ -2,6 +2,7 @@ package http.response.code;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 
 public class TwoHundredSix extends Code {
@@ -10,7 +11,7 @@ public class TwoHundredSix extends Code {
   private int endRange;
   private int fileSize;
 
-  public byte[] build(File routeFile, HashMap request) throws IOException {
+  public byte[] build(File routeFile, HashMap request) throws IOException, ParseException {
     this.routeFile = routeFile;
     this.request = request;
     assignRangeParts((String)request.get("Range"));
@@ -20,7 +21,7 @@ public class TwoHundredSix extends Code {
     return concatenate(new byte[][] {responseHeader, newLineInBytes, responseBody});
   }
 
-  public byte[] buildHeader(File routeFile, String responseCodeMessage, int bodyContentLength) throws IOException {
+  public byte[] buildHeader(File routeFile, String responseCodeMessage, int bodyContentLength) throws IOException, ParseException {
     byte[] contentRange = ("Content-Range: bytes " + startRange + "-" + endRange + "/" + fileSize + "\r\n").getBytes();
     byte[] originalHeader = new ResponseHeader().build(routeFile, responseCodeMessage(), bodyContentLength);
     return concatenate(new byte[][] {originalHeader, contentRange});
