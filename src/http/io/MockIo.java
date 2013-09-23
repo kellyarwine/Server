@@ -7,7 +7,7 @@ public class MockIo implements Io {
   public List<String> commands;
   private int commandsIndex;
   private File workingDirectory;
-  private String LOG_FILE = "output.log";
+  private String LOG_FILE = "server.log";
 
   public MockIo(List<String> commands) {
     this.commands = commands;

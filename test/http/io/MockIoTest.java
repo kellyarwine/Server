@@ -18,7 +18,7 @@ public class MockIoTest {
     ArrayList commands = new ArrayList();
     commands.add("Go forward.");
     mockIo = new MockIo(commands);
-    logFile = new File(System.getProperty("user.dir"), "output.log");
+    logFile = new File(System.getProperty("user.dir"), "server.log");
   }
 
   @After
