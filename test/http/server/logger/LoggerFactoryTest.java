@@ -27,5 +27,4 @@ public class LoggerFactoryTest {
   public void testMockLogger() throws IOException {
     assertTrue(loggerFactory.build("test", workingDirectoryFullPath) instanceof FileLogger);
   }
-
 }

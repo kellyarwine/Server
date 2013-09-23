@@ -20,7 +20,6 @@ public class FileLoggerTest {
     File workingDirectory = new File(System.getProperty("user.dir"));
     logger = new FileLogger(workingDirectory);
     logFile = new File(workingDirectory, "server.log");
-    logFile.delete();
   }
 
   @After
@@ -29,13 +28,20 @@ public class FileLoggerTest {
   }
 
   @Test
-  public void printMessageToFileTest() throws IOException {
+  public void printMessageToFile() throws IOException {
     logger.out("Hi");
     assertEquals("Hi\n", readServerLog());
   }
 
   @Test
-  public void printMultiLineRequestToFileTest() throws IOException {
+  public void printMultipleMessagesToFile() throws IOException {
+    logger.out("Hi");
+    logger.out("Hi");
+    assertEquals("Hi\nHi\n", readServerLog());
+  }
+
+  @Test
+  public void printMultiLineRequestToFile() throws IOException {
     String requestHeader =  "POST /color_picker_post.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n"
                           + "Connection: keep-alive\r\n"
