@@ -8,7 +8,6 @@ import static junit.framework.Assert.assertEquals;
 
 public class ConsoleLoggerTest {
   private File consoleFile;
-  private PrintStream originalSystemOut;
 
   @Before
   public void setUp() throws IOException {
@@ -16,7 +15,6 @@ public class ConsoleLoggerTest {
     consoleFile = new File(workingDirectory + "/console.txt");
 
     System.setOut(new PrintStream(consoleFile));
-    originalSystemOut = new PrintStream(System.out);
   }
 
   @After
