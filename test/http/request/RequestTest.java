@@ -99,7 +99,7 @@ public class RequestTest {
     HashMap actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
-
+    mockRequestsFile.delete();
            requestString  = "GET /color_picker_post.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n"
                           + NEW_LINE;
@@ -122,7 +122,7 @@ public class RequestTest {
     HashMap actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
-
+    mockRequestsFile.delete();
            requestString  = "GET /color_picker_post.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n"
                           + NEW_LINE;
@@ -145,7 +145,6 @@ public class RequestTest {
     HashMap actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
-
            requestHeader  = "POST /color_picker_post.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n"
                           + "Content-Length: 19\r\n";
