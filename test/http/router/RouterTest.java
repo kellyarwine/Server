@@ -13,7 +13,6 @@ import org.junit.runners.JUnit4;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -31,7 +30,7 @@ public class RouterTest {
   private Router router;
 
   @Before
-  public void setUp() throws IOException, URISyntaxException {
+  public void setUp() throws IOException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     router = new Router(workingDirectory, "test/public/", "test/routes.csv", "test/.htaccess");

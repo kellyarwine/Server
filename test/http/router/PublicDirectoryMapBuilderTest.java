@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,7 +20,7 @@ public class PublicDirectoryMapBuilderTest {
   File publicDirectoryFullPath;
 
   @Before
-  public void setUp() throws IOException, URISyntaxException {
+  public void setUp() throws IOException {
     String workingDirectory = System.getProperty("user.dir");
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);  }

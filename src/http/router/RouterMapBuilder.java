@@ -6,7 +6,6 @@ import http.router.csvMapBuilder.RouteMapBuilder;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,7 +15,7 @@ public class RouterMapBuilder {
   private File publicDirectoryFullPath;
   private DefaultHashMap routerMap;
 
-  public DefaultHashMap buildFrom(File workingDirectory, String publicDirectory, String routesFilePath, String htAccessFilePath) throws IOException, URISyntaxException {
+  public DefaultHashMap buildFrom(File workingDirectory, String publicDirectory, String routesFilePath, String htAccessFilePath) throws IOException {
     publicDirectoryFullPath = new File(workingDirectory, publicDirectory);
     File routesFile = new File(workingDirectory, routesFilePath);
     File htAccessFile = new File(workingDirectory, htAccessFilePath);
@@ -27,9 +26,8 @@ public class RouterMapBuilder {
     return routerMap;
   }
 
-
   private DefaultHashMap getDefaultHashMap() throws IOException {
-    ArrayList arrayList = new ArrayList();
+    ArrayList<Object> arrayList = new ArrayList<Object>();
     arrayList.add(new File(publicDirectoryFullPath, "/templates/404.html"));
     arrayList.add(new FileNotFound());
     return new DefaultHashMap(arrayList);

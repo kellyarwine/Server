@@ -4,8 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
-import java.net.URISyntaxException;
+import java.io.File;
+import java.io.IOException;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -15,7 +15,7 @@ public class TemplaterTest {
   Templater templater;
 
   @Before
-  public void setUp() throws IOException, URISyntaxException {
+  public void setUp() throws IOException {
     workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
@@ -27,7 +27,7 @@ public class TemplaterTest {
   }
 
   @Test
-  public void FourHundredFourTemplate() throws IOException, URISyntaxException {
+  public void FourHundredFourTemplate() throws IOException {
     assertTrue(new File(publicDirectoryFullPath, "templates/404.html").exists());
   }
 

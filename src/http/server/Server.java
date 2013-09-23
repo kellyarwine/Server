@@ -5,7 +5,6 @@ import http.io.Io;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +62,7 @@ public class Server {
     }
   }
 
-  public void startServerRunnable() throws IOException, URISyntaxException {
+  public void startServerRunnable() throws IOException {
     if (validateServerConfig(serverConfig) == true) {
       int cores = Runtime.getRuntime().availableProcessors();
       ExecutorService serverThreadPool = Executors.newFixedThreadPool(cores);

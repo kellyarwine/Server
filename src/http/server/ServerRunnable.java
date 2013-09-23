@@ -8,7 +8,6 @@ import http.server.serverSocket.ServerSocketFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,7 +21,7 @@ public class ServerRunnable implements Runnable {
   public volatile boolean closeRequested;
   public volatile boolean exceptionThrown;
 
-  public ServerRunnable(HashMap<String, String> serverConfig) throws IOException, URISyntaxException {
+  public ServerRunnable(HashMap<String, String> serverConfig) throws IOException {
     this.serverConfig = serverConfig;
     File workingDirectoryPath = new File(serverConfig.get("workingDirectoryPath"));
     this.publicDirectoryFullPath = new File(workingDirectoryPath, serverConfig.get("publicDirectoryPath"));
@@ -54,7 +53,7 @@ public class ServerRunnable implements Runnable {
       exceptionThrown = true; }
   }
 
-  private void copyTemplatesToDisk() throws IOException, URISyntaxException {
+  private void copyTemplatesToDisk() throws IOException {
     new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
   }
 

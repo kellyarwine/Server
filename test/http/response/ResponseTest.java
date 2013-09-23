@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -36,7 +35,7 @@ public class ResponseTest {
   private Response response;
 
   @Before
-  public void setUp() throws IOException, URISyntaxException {
+  public void setUp() throws IOException {
     workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     mockRequestsFile = new File(workingDirectory, "test/mock_requests.tsv");

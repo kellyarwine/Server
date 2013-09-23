@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
@@ -25,7 +24,7 @@ public class RouterMapBuilderTest {
   private File publicDirectoryFullPath;
 
   @Before
-  public void setUp() throws IOException, URISyntaxException {
+  public void setUp() throws IOException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);

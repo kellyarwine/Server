@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,7 +20,7 @@ public class FourHundredFourTest {
   private File publicDirectoryFullPath;
 
   @Before
-  public void setUp() throws IOException, URISyntaxException {
+  public void setUp() throws IOException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);

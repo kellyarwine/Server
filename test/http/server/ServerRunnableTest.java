@@ -4,8 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
-import java.net.URISyntaxException;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import static junit.framework.Assert.assertFalse;
@@ -16,7 +16,7 @@ public class ServerRunnableTest {
   private File mockRequestsFile;
 
   @Before
-  public void setUp() throws IOException, URISyntaxException {
+  public void setUp() throws IOException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     mockRequestsFile = new File(workingDirectory, "test/mock_requests.tsv");
@@ -29,7 +29,7 @@ public class ServerRunnableTest {
   }
 
   @Test
-  public void initialize() throws IOException, URISyntaxException {
+  public void initialize() throws IOException {
     HashMap<String, String> serverConfig = new HashMap<String, String>();
     serverConfig.put("port", "5000");
     serverConfig.put("publicDirectoryPath", "test/public/");
@@ -43,7 +43,7 @@ public class ServerRunnableTest {
   }
 
   @Test
-  public void throwsIoException() throws IOException, URISyntaxException {
+  public void throwsIoException() throws IOException {
     HashMap<String, String> serverConfig = new HashMap<String, String>();
     serverConfig.put("port", "5000");
     serverConfig.put("publicDirectoryPath", "test/public/");
