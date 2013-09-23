@@ -21,6 +21,7 @@ public class ServerRunnable implements Runnable {
   private QueryStringRepository queryStringRepository;
   public HttpServerSocket httpServerSocket;
   public volatile boolean closeRequested;
+  public volatile boolean exceptionThrown;
 
   public ServerRunnable(HashMap<String, String> serverConfig) throws IOException, URISyntaxException {
     this.serverConfig = serverConfig;
@@ -30,6 +31,7 @@ public class ServerRunnable implements Runnable {
     queryStringRepository = new QueryStringRepository();
     copyTemplatesToDisk();
     closeRequested = false;
+    exceptionThrown = false;
   }
 
   public void run() {
@@ -49,9 +51,8 @@ public class ServerRunnable implements Runnable {
         ServerRequestThread serverRequestThread = new ServerRequestThread(serverConfig, logger, httpServerSocket.accept() , queryStringRepository);
         serverRequestThreadPool.submit(serverRequestThread);
       }
-    }
-    catch (IOException e) {
-    }
+    } catch (Exception e) {
+      exceptionThrown = true; }
   }
 
   private void copyTemplatesToDisk() throws IOException, URISyntaxException {
