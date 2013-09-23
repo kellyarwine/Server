@@ -16,24 +16,27 @@ public class ServerTest {
   private File workingDirectoryFullPath;
   private File publicDirectoryFullPath;
   private File logFile;
+  private File mockRequestsFile;
 
   @Before
   public void setUp() {
     workingDirectoryFullPath = new File(System.getProperty("user.dir"));
     String publicDirectory = "test/public/";
     publicDirectoryFullPath = new File(workingDirectoryFullPath, publicDirectory);
-    logFile = new File(workingDirectoryFullPath, "output.log");
+    logFile = new File(workingDirectoryFullPath, "server.log");
+    mockRequestsFile = new File(workingDirectoryFullPath, "test/mock_requests.tsv");
   }
 
   @After
   public void tearDown() {
     logFile.delete();
     deleteDirectory(new File(publicDirectoryFullPath, "/templates"));
+    mockRequestsFile.delete();
   }
 
   @Test
   public void startServerWithInvalidStartCommand() throws Exception {
-    ArrayList commands = new ArrayList();
+    ArrayList<String> commands = new ArrayList<String>();
     commands.add("this is not how one should start the server");
     commands.add("stop");
     MockIo mockIo = new MockIo(commands);
@@ -64,7 +67,7 @@ public class ServerTest {
         + "                 the mock request .tsv filename; file must exist in the root working directory (denoted by the \"-m\" flag)\n"
         + "                 can hold one or more mock requests; used for unit-testing purposes\n"
         + "Default Server Configurations:\n"
-        + " start           [=<-e test>]\n"
+        + " start           [=<-e production>]\n"
         + "                 [=<-p 5000>]\n"
         + "                 [=<-w " + workingDirectoryFullPath + ">]\n"
         + "                 [=<-d test/public/>]\n"
@@ -77,7 +80,7 @@ public class ServerTest {
 
   @Test
   public void displayHelpMenu() throws Exception {
-    ArrayList commands = new ArrayList();
+    ArrayList<String> commands = new ArrayList<String>();
     commands.add("help");
     commands.add("stop server");
     MockIo mockIo = new MockIo(commands);
@@ -108,7 +111,7 @@ public class ServerTest {
             + "                 the mock request .tsv filename; file must exist in the root working directory (denoted by the \"-m\" flag)\n"
             + "                 can hold one or more mock requests; used for unit-testing purposes\n"
             + "Default Server Configurations:\n"
-            + " start           [=<-e test>]\n"
+            + " start           [=<-e production>]\n"
             + "                 [=<-p 5000>]\n"
             + "                 [=<-w " + workingDirectoryFullPath + ">]\n"
             + "                 [=<-d test/public/>]\n"
@@ -122,7 +125,7 @@ public class ServerTest {
   @Test
   public void startServerWithUnavailablePort() throws Exception {
     ServerSocket serverSocket = new ServerSocket(5001);
-    ArrayList commands = new ArrayList();
+    ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -p 5001");
     commands.add("stop");
     MockIo mockIo = new MockIo(commands);
@@ -140,7 +143,7 @@ public class ServerTest {
 
   @Test
   public void startServerWithInvalidPortNumber() throws Exception {
-    ArrayList commands = new ArrayList();
+    ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -p this_is_not_a_number");
     commands.add("stop");
     MockIo mockIo = new MockIo(commands);
@@ -157,7 +160,7 @@ public class ServerTest {
 
   @Test
   public void startServerWithInvalidEnv() throws Exception {
-    ArrayList commands = new ArrayList();
+    ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -e not_production_and_not_test");
     commands.add("stop");
     MockIo mockIo = new MockIo(commands);
@@ -174,7 +177,7 @@ public class ServerTest {
 
   @Test
   public void startServerWithInvalidWorkingDirectory() throws Exception {
-    ArrayList commands = new ArrayList();
+    ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -w not_a_valid_working_directory");
     commands.add("stop");
     MockIo mockIo = new MockIo(commands);
@@ -191,7 +194,7 @@ public class ServerTest {
 
   @Test
   public void startServerWithInvalidPublicDirectory() throws Exception {
-    ArrayList commands = new ArrayList();
+    ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -d not_a_valid_public_directory");
     commands.add("stop");
     MockIo mockIo = new MockIo(commands);
@@ -208,7 +211,7 @@ public class ServerTest {
 
   @Test
   public void startServerWithInvalidRoutesFile() throws Exception {
-    ArrayList commands = new ArrayList();
+    ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -r not_a_valid_routes_file");
     commands.add("stop");
     MockIo mockIo = new MockIo(commands);
@@ -225,7 +228,7 @@ public class ServerTest {
 
   @Test
   public void startServerWithInvalidHtAccessFile() throws Exception {
-    ArrayList commands = new ArrayList();
+    ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -h not_a_valid_htaccess_file");
     commands.add("stop");
     MockIo mockIo = new MockIo(commands);
@@ -240,41 +243,78 @@ public class ServerTest {
     assertEquals(expectedResult, readLog());
   }
 
-//  @Test
-//  public void startServerWithValidConfigs() throws Exception {
-//    ArrayList commands = new ArrayList();
-//    commands.add("start -p 4999");
-//    commands.add("stop");
-//    MockIo mockIo = new MockIo(commands);
-//    Server server = new Server(mockIo);
-//    server.initialize();
-//    String expectedResult =
-//        "Ninja Server Menu\n"
-//            + "----------------------\n"
-//            + "Type \"help\" to see a list of available commands.\n"
-//            + "Ninja Server has been shut down.\n";
-//    assertEquals(expectedResult, readLog());
-//  }
-//
-//  @Test
-//  public void startServerWithValidCobSpecConfigs() throws Exception {
-//    ArrayList commands = new ArrayList();
-//    commands.add("cob_spec -p 5001");
-//    commands.add("stop");
-//    MockIo mockIo = new MockIo(commands);
-//    Server server = new Server(mockIo);
-//    server.initialize();
-//    String expectedResult =
-//        "Ninja Server Menu\n"
-//            + "----------------------\n"
-//            + "Type \"help\" to see a list of available commands.\n"
-//            + "Ninja Server has been shut down.\n";
-//    assertEquals(expectedResult, readLog());
-//  }
-//
+  @Test
+  public void startServerWithInvalidMockRequestsFile() throws Exception {
+    ArrayList<String> commands = new ArrayList<String>();
+    commands.add("start -m not_a_valid_mock_requests_file");
+    commands.add("stop");
+    MockIo mockIo = new MockIo(commands);
+    Server server = new Server(mockIo);
+    server.initialize();
+    String expectedResult =
+        "Ninja Server Menu\n"
+            + "----------------------\n"
+            + "Type \"help\" to see a list of available commands.\n"
+            + "The mock requests file does not exist.  Please try again.\n"
+            + "Ninja Server is not currently running.\n";
+    assertEquals(expectedResult, readLog());
+  }
+
+  @Test
+  public void startServerWithAnotherInvalidMockRequestsFile() throws Exception {
+    ArrayList<String> commands = new ArrayList<String>();
+    commands.add("start -e test");
+    commands.add("stop");
+    MockIo mockIo = new MockIo(commands);
+    Server server = new Server(mockIo);
+    server.initialize();
+    String expectedResult =
+        "Ninja Server Menu\n"
+            + "----------------------\n"
+            + "Type \"help\" to see a list of available commands.\n"
+            + "The mock requests file does not exist.  Please try again.\n"
+            + "Ninja Server is not currently running.\n";
+    assertEquals(expectedResult, readLog());
+  }
+
+  @Test
+  public void startServerWithCustomConfigs() throws Exception {
+    ArrayList<String> commands = new ArrayList<String>();
+      commands.add("start -p 4999 -e test -d test/public/images -r test/routes_copy.csv -h test/.htaccess_copy -m test/mock_requests.tsv -w /Users/Kelly/Desktop/Java_HTTP_Server");
+    commands.add("status");
+    commands.add("stop");
+    MockIo mockIo = new MockIo(commands);
+    Server server = new Server(mockIo);
+    createMockRequestsTsv();
+    server.initialize();
+    String expectedResult =
+        "Ninja Server Menu\n"
+            + "----------------------\n"
+            + "Type \"help\" to see a list of available commands.\n"
+            + "Ninja Server is running on port 4999.\n"
+            + "Ninja Server has been shut down.\n";
+    assertEquals(expectedResult, readLog());
+  }
+
+  @Test
+  public void startServerWithValidCobSpecConfigs() throws Exception {
+    ArrayList<String> commands = new ArrayList<String>();
+    commands.add("cob_spec -p 5001");
+    commands.add("stop");
+    MockIo mockIo = new MockIo(commands);
+    Server server = new Server(mockIo);
+    server.initialize();
+    String expectedResult =
+        "Ninja Server Menu\n"
+            + "----------------------\n"
+            + "Type \"help\" to see a list of available commands.\n"
+            + "Ninja Server has been shut down.\n";
+    assertEquals(expectedResult, readLog());
+  }
+
 //  @Test
 //  public void startServerDisplayStatus() throws Exception {
-//    ArrayList commands = new ArrayList();
+//    ArrayList<String> commands = new ArrayList<String>();
 //    commands.add("start -p 5002");
 //    commands.add("status");
 //    commands.add("stop");
@@ -292,7 +332,7 @@ public class ServerTest {
 //
 //  @Test
 //  public void displayStatus() throws Exception {
-//    ArrayList commands = new ArrayList();
+//    ArrayList<String> commands = new ArrayList<String>();
 //    commands.add("status");
 //    commands.add("stop");
 //    MockIo mockIo = new MockIo(commands);
@@ -309,7 +349,7 @@ public class ServerTest {
 //
 //  @Test
 //  public void startServerWithDefaultConfigurations() throws Exception {
-//    ArrayList commands = new ArrayList();
+//    ArrayList<String> commands = new ArrayList<String>();
 //    commands.add("start");
 //    commands.add("status");
 //    commands.add("stop");
@@ -355,6 +395,29 @@ public class ServerTest {
       outputStream.write(chr);
 
     return outputStream.toString();
+  }
+
+  private void createMockRequestsTsv() throws IOException {
+    createMockRequestsFile();
+    String requestString = createMockRequestsString();
+    FileOutputStream fos = new FileOutputStream(mockRequestsFile, true);
+    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos, "utf-8");
+    Writer writer = new BufferedWriter(outputStreamWriter);
+    writer.append(requestString);
+    writer.close();
+  }
+
+  private String createMockRequestsString() {
+    String mockRequests = "";
+    mockRequests += simpleRootRequest();
+    mockRequests += "\t";
+    mockRequests += simpleRootRequest();
+
+    return mockRequests;
+  }
+
+  private void createMockRequestsFile() throws IOException {
+    mockRequestsFile.createNewFile();
   }
 
   public String simpleRootRequest() {

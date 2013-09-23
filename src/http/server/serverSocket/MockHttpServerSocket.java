@@ -13,8 +13,7 @@ public class MockHttpServerSocket implements HttpServerSocket {
 
   public MockHttpServerSocket(String mockRequestsFullPathString) throws IOException {
     isClosed = false;
-    if (!mockRequestsFullPathString.equals(""))
-      getMockRequests(new File(mockRequestsFullPathString));
+    getMockRequests(new File(mockRequestsFullPathString));
   }
 
   public void getMockRequests(File tsvFile) throws IOException {

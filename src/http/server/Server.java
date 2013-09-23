@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 public class Server {
   private static String DEFAULT_PORT = "5000";
   private static String DEFAULT_PUBLIC_DIRECTORY_PATH = "test/public/";
-  private static String DEFAULT_ENV = "test";
+  private static String DEFAULT_ENV = "production";
   private static String DEFAULT_ROUTES_FILE_PATH = "test/routes.csv";
   private static String DEFAULT_HTACCESS_FILE_PATH = "test/.htaccess";
   private static String DEFAULT_WORKING_DIRECTORY_PATH = new File(System.getProperty("user.dir")).toString();
@@ -158,7 +158,8 @@ public class Server {
       validateWorkingDirectoryPath() &&
       validatePublicDirectoryPath() &&
       validateRoutesFilePath() &&
-      validateHtAccessFilePath();
+      validateHtAccessFilePath() &&
+      validateMockRequestsFilePath();
   }
 
   private void helpText() throws IOException {
@@ -194,7 +195,7 @@ public class Server {
 
   private boolean validatePortAndCheckAvailability() throws IOException {
     try {
-      int port = Integer.parseInt((String)serverConfig.get("port"));
+      int port = Integer.parseInt(serverConfig.get("port"));
       ServerSocket serverSocket = new ServerSocket(port);
       serverSocket.close();
       return true;
@@ -210,7 +211,7 @@ public class Server {
   }
 
   private boolean validateEnv() throws IOException {
-    String env = (String)serverConfig.get("env");
+    String env = serverConfig.get("env");
     if (env.equals("production") || env.equals("test"))
       return true;
     else {
@@ -220,7 +221,7 @@ public class Server {
   }
 
   private boolean validateWorkingDirectoryPath() throws IOException {
-    String workingDirectoryPath = (String)serverConfig.get("workingDirectoryPath");
+    String workingDirectoryPath = serverConfig.get("workingDirectoryPath");
     if (new File(workingDirectoryPath).exists())
       return true;
     else {
@@ -230,8 +231,8 @@ public class Server {
   }
 
   private boolean validatePublicDirectoryPath() throws IOException {
-    String workingDirectoryPath = (String)serverConfig.get("workingDirectoryPath");
-    String publicDirectoryPath = (String)serverConfig.get("publicDirectoryPath");
+    String workingDirectoryPath = serverConfig.get("workingDirectoryPath");
+    String publicDirectoryPath = serverConfig.get("publicDirectoryPath");
     if (new File(workingDirectoryPath, publicDirectoryPath).exists())
       return true;
     else {
@@ -241,8 +242,8 @@ public class Server {
   }
 
   private boolean validateRoutesFilePath() throws IOException {
-    String workingDirectoryPath = (String)serverConfig.get("workingDirectoryPath");
-    String routesFilePath = (String)serverConfig.get("routesFilePath");
+    String workingDirectoryPath = serverConfig.get("workingDirectoryPath");
+    String routesFilePath = serverConfig.get("routesFilePath");
     if (new File(workingDirectoryPath, routesFilePath).exists())
       return true;
     else {
@@ -252,8 +253,8 @@ public class Server {
   }
 
   private boolean validateHtAccessFilePath() throws IOException {
-    String workingDirectoryPath = (String)serverConfig.get("workingDirectoryPath");
-    String htAccessFilePath = (String)serverConfig.get("htAccessFilePath");
+    String workingDirectoryPath = serverConfig.get("workingDirectoryPath");
+    String htAccessFilePath = serverConfig.get("htAccessFilePath");
     if (new File(workingDirectoryPath, htAccessFilePath).exists())
       return true;
     else {
@@ -261,4 +262,19 @@ public class Server {
       return false;
     }
   }
+
+  private boolean validateMockRequestsFilePath() throws IOException {
+    String workingDirectoryPath = serverConfig.get("workingDirectoryPath");
+    String mockRequestsFilePath = serverConfig.get("mockRequestsFilePath");
+    String env = serverConfig.get("env");
+    if (new File(workingDirectoryPath, mockRequestsFilePath).exists() && !mockRequestsFilePath.equals(""))
+      return true;
+    else if (mockRequestsFilePath.equals("") && env.equals("production"))
+      return true;
+    else {
+      io.out("The mock requests file does not exist.  Please try again.");
+      return false;
+    }
+  }
+
 }

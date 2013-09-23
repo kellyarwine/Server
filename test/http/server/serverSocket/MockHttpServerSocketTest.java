@@ -18,7 +18,7 @@ public class MockHttpServerSocketTest {
   private File mockRequestsFile;
 
   @Before
-  public void setUp() {
+  public void setUp() throws IOException {
     File workingDirectoryFullPath = new File(System.getProperty("user.dir"));
     mockRequestsFile = new File(workingDirectoryFullPath, "test/mock_requests.tsv");
   }
@@ -30,14 +30,16 @@ public class MockHttpServerSocketTest {
 
   @Test
   public void close() throws IOException {
-    HttpServerSocket httpServerSocket = new MockHttpServerSocket("");
+    createMockRequestsTsv("");
+    HttpServerSocket httpServerSocket = new MockHttpServerSocket(mockRequestsFile.toString());
     httpServerSocket.close();
     assertTrue(httpServerSocket.isClosed());
   }
 
   @Test
   public void bound() throws IOException {
-    HttpServerSocket httpServerSocket = new MockHttpServerSocket("");
+    createMockRequestsTsv("");
+    HttpServerSocket httpServerSocket = new MockHttpServerSocket(mockRequestsFile.toString());
     assertFalse(httpServerSocket.isBound());
   }
 
