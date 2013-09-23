@@ -38,7 +38,7 @@ public class PutTest {
 
   @Test
   public void postRequestToTemplate() throws IOException, ParseException {
-    HashMap request = new HashMap();
+    HashMap<String, String> request = new HashMap<String, String>();
     request.put("httpMethod", "POST");
     request.put("url", "/form");
     request.put("httpProtocol", "HTTP/1.1");
@@ -68,7 +68,7 @@ public class PutTest {
 
   @Test
   public void postRequestToNonTemplate() throws IOException, ParseException {
-    HashMap request = new HashMap();
+    HashMap<String, String> request = new HashMap<String, String>();
     request.put("httpMethod", "POST");
     request.put("url", "/punky_brewster.jpg");
     request.put("httpProtocol", "HTTP/1.1");
