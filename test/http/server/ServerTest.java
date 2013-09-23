@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 public class ServerTest {
@@ -38,7 +39,7 @@ public class ServerTest {
   public void startServerWithInvalidStartCommand() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("this is not how one should start the server");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -75,14 +76,14 @@ public class ServerTest {
         + "                 [=<-h test/.htaccess>]\n"
         + "                 [=<-m >]\n"
         + "Ninja Server is not currently running.\n";
-    assertEquals(expectedResult, readLog());
+    assertTrue(readLog().contains(expectedResult));
   }
 
   @Test
   public void displayHelpMenu() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("help");
-    commands.add("stop server");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -127,7 +128,7 @@ public class ServerTest {
     ServerSocket serverSocket = new ServerSocket(5001);
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -p 5001");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -145,7 +146,7 @@ public class ServerTest {
   public void startServerWithInvalidPortNumber() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -p this_is_not_a_number");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -162,7 +163,7 @@ public class ServerTest {
   public void startServerWithInvalidEnv() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -e not_production_and_not_test");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -179,7 +180,7 @@ public class ServerTest {
   public void startServerWithInvalidWorkingDirectory() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -w not_a_valid_working_directory");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -196,7 +197,7 @@ public class ServerTest {
   public void startServerWithInvalidPublicDirectory() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -d not_a_valid_public_directory");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -213,7 +214,7 @@ public class ServerTest {
   public void startServerWithInvalidRoutesFile() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -r not_a_valid_routes_file");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -230,7 +231,7 @@ public class ServerTest {
   public void startServerWithInvalidHtAccessFile() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -h not_a_valid_htaccess_file");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -247,7 +248,7 @@ public class ServerTest {
   public void startServerWithInvalidMockRequestsFile() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -m not_a_valid_mock_requests_file");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -264,7 +265,7 @@ public class ServerTest {
   public void startServerWithAnotherInvalidMockRequestsFile() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("start -e test");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -282,25 +283,23 @@ public class ServerTest {
     ArrayList<String> commands = new ArrayList<String>();
       commands.add("start -p 4999 -e test -d test/public/images -r test/routes_copy.csv -h test/.htaccess_copy -m test/mock_requests.tsv -w /Users/Kelly/Desktop/Java_HTTP_Server");
     commands.add("status");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     createMockRequestsTsv();
     server.initialize();
-    String expectedResult =
-        "Ninja Server Menu\n"
-            + "----------------------\n"
-            + "Type \"help\" to see a list of available commands.\n"
-            + "Ninja Server is running on port 4999.\n"
-            + "Ninja Server has been shut down.\n";
-    assertEquals(expectedResult, readLog());
+    assertTrue(readLog().contains("Ninja Server Menu\n"));
+    assertTrue(readLog().contains("----------------------\n"));
+    assertTrue(readLog().contains("Type \"help\" to see a list of available commands.\n"));
+    assertTrue(readLog().contains("Ninja Server is running on port 4999.\n"));
+    assertTrue(readLog().contains("Ninja Server has been shut down.\n"));
   }
 
   @Test
   public void startServerWithValidCobSpecConfigs() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
     commands.add("cob_spec -p 5001");
-    commands.add("stop");
+    commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     server.initialize();
@@ -312,58 +311,77 @@ public class ServerTest {
     assertEquals(expectedResult, readLog());
   }
 
-//  @Test
-//  public void startServerDisplayStatus() throws Exception {
-//    ArrayList<String> commands = new ArrayList<String>();
-//    commands.add("start -p 5002");
-//    commands.add("status");
-//    commands.add("stop");
-//    MockIo mockIo = new MockIo(commands);
-//    Server server = new Server(mockIo);
-//    server.initialize();
-//    String expectedResult =
-//        "Ninja Server Menu\n"
-//            + "----------------------\n"
-//            + "Type \"help\" to see a list of available commands.\n"
-//            + "Ninja Server is running on port 5002.\n"
-//            + "Ninja Server has been shut down.\n";
-//    assertEquals(expectedResult, readLog());
-//  }
-//
-//  @Test
-//  public void displayStatus() throws Exception {
-//    ArrayList<String> commands = new ArrayList<String>();
-//    commands.add("status");
-//    commands.add("stop");
-//    MockIo mockIo = new MockIo(commands);
-//    Server server = new Server(mockIo);
-//    server.initialize();
-//    String expectedResult =
-//        "Ninja Server Menu\n"
-//            + "----------------------\n"
-//            + "Type \"help\" to see a list of available commands.\n"
-//            + "Ninja Server is not running.\n"
-//            + "Ninja Server is not currently running.\n";
-//    assertEquals(expectedResult, readLog());
-//  }
-//
-//  @Test
-//  public void startServerWithDefaultConfigurations() throws Exception {
-//    ArrayList<String> commands = new ArrayList<String>();
-//    commands.add("start");
-//    commands.add("status");
-//    commands.add("stop");
-//    MockIo mockIo = new MockIo(commands);
-//    Server server = new Server(mockIo);
-//    server.initialize();
-//    String expectedResult =
-//        "Ninja Server Menu\n"
-//            + "----------------------\n"
-//            + "Type \"help\" to see a list of available commands.\n"
-//            + "Ninja Server is running on port 5000.\n"
-//            + "Ninja Server has been shut down.\n";
-//    assertEquals(expectedResult, readLog());
-//  }
+  @Test
+  public void stopServer() throws Exception {
+    ArrayList<String> commands = new ArrayList<String>();
+    commands.add("start");
+    commands.add("stop");
+    commands.add("cob_spec");
+    commands.add("exit");
+    MockIo mockIo = new MockIo(commands);
+    Server server = new Server(mockIo);
+    server.initialize();
+    String expectedResult =
+        "Ninja Server Menu\n"
+            + "----------------------\n"
+            + "Type \"help\" to see a list of available commands.\n"
+            + "Ninja Server has been shut down.\n"
+            + "Ninja Server has been shut down.\n";
+    assertEquals(expectedResult, readLog());
+  }
+
+  @Test
+  public void startServerDisplayStatus() throws Exception {
+    ArrayList<String> commands = new ArrayList<String>();
+    commands.add("start -p 5002");
+    commands.add("status");
+    commands.add("exit");
+    MockIo mockIo = new MockIo(commands);
+    Server server = new Server(mockIo);
+    server.initialize();
+    String expectedResult =
+        "Ninja Server Menu\n"
+            + "----------------------\n"
+            + "Type \"help\" to see a list of available commands.\n"
+            + "Ninja Server is running on port 5002.\n"
+            + "Ninja Server has been shut down.\n";
+    assertEquals(expectedResult, readLog());
+  }
+
+  @Test
+  public void displayStatus() throws Exception {
+    ArrayList<String> commands = new ArrayList<String>();
+    commands.add("status");
+    commands.add("exit");
+    MockIo mockIo = new MockIo(commands);
+    Server server = new Server(mockIo);
+    server.initialize();
+    String expectedResult =
+        "Ninja Server Menu\n"
+            + "----------------------\n"
+            + "Type \"help\" to see a list of available commands.\n"
+            + "Ninja Server is not running.\n"
+            + "Ninja Server is not currently running.\n";
+    assertEquals(expectedResult, readLog());
+  }
+
+  @Test
+  public void startServerWithDefaultConfigurations() throws Exception {
+    ArrayList<String> commands = new ArrayList<String>();
+    commands.add("start");
+    commands.add("status");
+    commands.add("exit");
+    MockIo mockIo = new MockIo(commands);
+    Server server = new Server(mockIo);
+    server.initialize();
+    String expectedResult =
+        "Ninja Server Menu\n"
+            + "----------------------\n"
+            + "Type \"help\" to see a list of available commands.\n"
+            + "Ninja Server is running on port 5000.\n"
+            + "Ninja Server has been shut down.\n";
+    assertEquals(expectedResult, readLog());
+  }
 
   public byte[] toBytes(File routeFile) throws IOException {
     InputStream inputStream = new FileInputStream(routeFile);

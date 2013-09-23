@@ -53,6 +53,9 @@ public class Server {
           helpText();
         else if (command.startsWith("stop")) {
           stopServerRunnable();
+        }
+        else if (command.startsWith("exit")) {
+          stopServerRunnable();
           break;
         }
         else
