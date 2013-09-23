@@ -5,24 +5,24 @@ import http.router.Templater;
 import http.server.logger.Logger;
 import http.server.logger.LoggerFactory;
 import http.server.serverSocket.HttpServerSocket;
-import http.server.serverSocket.SystemHttpServerSocket;
+import http.server.serverSocket.ServerSocketFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerRunnable implements Runnable {
-  private Map<String, String> serverConfig;
+  private HashMap<String, String> serverConfig;
   private File publicDirectoryFullPath;
   private Logger logger;
   private QueryStringRepository queryStringRepository;
   public HttpServerSocket httpServerSocket;
-  private volatile boolean closeRequested;
+  public volatile boolean closeRequested;
 
-  public ServerRunnable(Map<String, String> serverConfig) throws IOException, URISyntaxException {
+  public ServerRunnable(HashMap<String, String> serverConfig) throws IOException, URISyntaxException {
     this.serverConfig = serverConfig;
     File workingDirectoryPath = new File(serverConfig.get("workingDirectoryPath"));
     this.publicDirectoryFullPath = new File(workingDirectoryPath, serverConfig.get("publicDirectoryPath"));
@@ -34,8 +34,7 @@ public class ServerRunnable implements Runnable {
 
   public void run() {
     try {
-      int port = Integer.parseInt(serverConfig.get("port"));
-      httpServerSocket = new SystemHttpServerSocket(port);
+      httpServerSocket = new ServerSocketFactory().build(serverConfig);
 
       logger.logMessage("Ninja Server is running in " + serverConfig.get("env").toString() + " mode on port " + serverConfig.get("port") + ".  WOOT!");
       logger.logMessage("Now serving files from: " + serverConfig.get("publicDirectoryPath"));
