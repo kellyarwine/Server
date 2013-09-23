@@ -1,33 +1,33 @@
 package http.server;
 
-import http.router.DefaultHashMap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 public class ServerRunnableTest {
-  private DefaultHashMap actualResult;
   private File publicDirectoryFullPath;
+  private ServerRunnable serverRunnable;
+  HashMap<String, String> serverConfig;
 
   @Before
   public void setUp() throws IOException, URISyntaxException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    HashMap serverConfig = new HashMap();
+    serverConfig = new HashMap<String, String>();
     serverConfig.put("port", "5000");
     serverConfig.put("publicDirectoryPath", "test/public/");
-    serverConfig.put("env", "production");
+    serverConfig.put("env", "test");
     serverConfig.put("routesFilePath", "test/routes.csv");
-    serverConfig.put("htAccessFilePath", "test/.htacess");
+    serverConfig.put("htAccessFilePath", "test/.htaccess");
     serverConfig.put("workingDirectoryPath", new File(System.getProperty("user.dir")).toString());
-    ServerRunnable serverRunnable = new ServerRunnable(serverConfig);
+    serverRunnable = new ServerRunnable(serverConfig);
   }
 
   @After
@@ -36,9 +36,9 @@ public class ServerRunnableTest {
   }
 
   @Test
-  public void fileDirectoryTemplateExists() {
-    String route = "/templates/404.html";
+  public void initialize() throws IOException, URISyntaxException {
     assertTrue(new File(publicDirectoryFullPath, "templates/file_directory.html").exists());
+    assertFalse(serverRunnable.closeRequested);
   }
 
   public void deleteDirectory(File directory)
