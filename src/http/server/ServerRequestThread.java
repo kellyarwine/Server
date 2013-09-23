@@ -8,9 +8,6 @@ import http.server.logger.Logger;
 import http.server.socket.WebSocket;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,13 +48,7 @@ public class ServerRequestThread implements Runnable {
 
       webSocket.close();
     }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-    catch (URISyntaxException e) {
-      e.printStackTrace();
-    }
-    catch (ParseException e) {
+    catch (Exception e) {
       e.printStackTrace();
     }
   }
