@@ -26,7 +26,7 @@ public class Server {
   private static String COBSPEC_HTACCESS_FILE_PATH = ".htaccess";
   private Io io;
   public ServerRunnable serverRunnable;
-  public Map<String, String> serverConfig;
+  public HashMap<String, String> serverConfig;
 
   public Server(Io io) {
     this.io = io;
@@ -178,10 +178,10 @@ public class Server {
     io.out("                 a port number (denoted by the \"-p\" flag)");
     io.out("                 the absolute path to the working directory (denoted by the \"-w\" flag)");
     io.out("                 the relative path to the public directory (denoted by the \"-d\" flag)");
-    io.out("                 the Routes filename; file must exist in the root working directory (denoted by the \"-r\" flag)");
-    io.out("                 the .htaccess filename; file must exist in the root working directory (denoted by the \"-h\" flag)");
-    io.out("                 a mock request file path holding one or more mock requests; this is for unit-testing purposes");
-    io.out("                 if more than one mock request, each request should be separated by 10 hyphens (----------)");
+    io.out("                 the Routes .csv filename; file must exist in the root working directory (denoted by the \"-r\" flag)");
+    io.out("                 the .htaccess .csv filename; file must exist in the root working directory (denoted by the \"-h\" flag)");
+    io.out("                 the mock request .tsv filename; file must exist in the root working directory (denoted by the \"-m\" flag)");
+    io.out("                 can hold one or more mock requests; used for unit-testing purposes");
     io.out("Default Server Configurations:");
     io.out(" start           [=<-e " + DEFAULT_ENV + ">]\n" +
         "                 [=<-p " + DEFAULT_PORT + ">]\n" +
