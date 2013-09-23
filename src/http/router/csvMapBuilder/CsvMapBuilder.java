@@ -11,12 +11,12 @@ public abstract class CsvMapBuilder {
   }
 
   public HashMap get(File csvFile) throws IOException {
-    String csvText = toBytes(csvFile);
+    String csvText = toString(csvFile);
     String[] csvLines = parseLines(csvText);
     return createMap(csvLines);
   }
 
-  private String toBytes(File csvFileName) throws IOException {
+  private String toString(File csvFileName) throws IOException {
     InputStream inputStream = new FileInputStream(csvFileName);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     int chr;
