@@ -31,19 +31,22 @@ public class ResponseTest {
   private String NEW_LINE = "\r\n";
   private File workingDirectory;
   private File publicDirectoryFullPath;
-  private WebSocket theServerSocket;
+  private File mockRequestsFile;
+  private WebSocket webSocket;
   private Response response;
 
   @Before
   public void setUp() throws IOException, URISyntaxException {
     workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
+    mockRequestsFile = new File(workingDirectory, "test/mock_requests.tsv");
     response = new Response();
     new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
   }
 
   @After
   public void tearDown() {
+    mockRequestsFile.delete();
     deleteDirectory(new File(publicDirectoryFullPath, "/templates"));
   }
 
@@ -52,11 +55,11 @@ public class ResponseTest {
     String requestHeader  = "GET /the_goal.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n";
     String requestString  = requestHeader + NEW_LINE;
-    WebSocket webSocket   = getWebSocket(requestString);
+    WebSocket webSocket   = setWebSocketWithMockRequests(requestString);
     Request request       = new Request(new QueryStringRepository());
     HashMap requestMap    = request.get(webSocket);
 
-    ArrayList routeInfo = new ArrayList();
+    ArrayList<Object> routeInfo = new ArrayList<Object>();
     routeInfo.add(new File(publicDirectoryFullPath, (String) requestMap.get("url")));
     routeInfo.add(new Public());
     response.send(webSocket.out(), requestMap, routeInfo);
@@ -80,11 +83,11 @@ public class ResponseTest {
     String requestHeader  = "GET /redirect HTTP/1.1\r\n"
         + "Host: localhost:5000\r\n";
     String requestString  = requestHeader + NEW_LINE;
-    WebSocket webSocket   = getWebSocket(requestString);
+    WebSocket webSocket   = setWebSocketWithMockRequests(requestString);
     Request request       = new Request(new QueryStringRepository());
     HashMap requestMap    = request.get(webSocket);
 
-    ArrayList routeInfo = new ArrayList();
+    ArrayList<Object> routeInfo = new ArrayList<Object>();
     routeInfo.add(new File(publicDirectoryFullPath, "hi_everyone.html"));
     routeInfo.add(new Redirect());
     response.send(webSocket.out(), requestMap, routeInfo);
@@ -109,11 +112,11 @@ public class ResponseTest {
                           + "Host: localhost:5000\r\n";
     String requestBody    = "text_color=blue";
     String requestString  = requestHeader + NEW_LINE + requestBody;
-    WebSocket webSocket   = getWebSocket(requestString);
+    WebSocket webSocket   = setWebSocketWithMockRequests(requestString);
     Request request       = new Request(new QueryStringRepository());
     HashMap requestMap    = request.get(webSocket);
 
-    ArrayList routeInfo = new ArrayList();
+    ArrayList<Object> routeInfo = new ArrayList<Object>();
     routeInfo.add(new File(publicDirectoryFullPath, "/templates/404.html"));
     routeInfo.add(new FileNotFound());
     response.send(webSocket.out(), requestMap, routeInfo);
@@ -136,11 +139,11 @@ public class ResponseTest {
     String requestHeader  = "GET /images HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n";
     String requestString  = requestHeader + NEW_LINE;
-    WebSocket webSocket   = getWebSocket(requestString);
+    WebSocket webSocket   = setWebSocketWithMockRequests(requestString);
     Request request       = new Request(new QueryStringRepository());
     HashMap requestMap    = request.get(webSocket);
 
-    ArrayList routeInfo = new ArrayList();
+    ArrayList<Object> routeInfo = new ArrayList<Object>();
     routeInfo.add(new File(publicDirectoryFullPath, "/templates/file_directory.html"));
     routeInfo.add(new Directory(publicDirectoryFullPath));
     response.send(webSocket.out(), requestMap, routeInfo);
@@ -196,11 +199,23 @@ public class ResponseTest {
     directory.delete();
   }
 
-  public WebSocket getWebSocket(String request) throws IOException {
-    ArrayList requests = new ArrayList();
-    requests.add(request);
-    HttpServerSocket httpServerSocket = new MockHttpServerSocket(requests);
+  public WebSocket setWebSocketWithMockRequests(String request) throws IOException {
+    createMockRequestsTsv(request);
+    HttpServerSocket httpServerSocket = new MockHttpServerSocket(mockRequestsFile.toString());
     return httpServerSocket.accept();
+  }
+
+  private void createMockRequestsTsv(String requestString) throws IOException {
+    createMockRequestsFile();
+    FileOutputStream fos = new FileOutputStream(mockRequestsFile, true);
+    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos, "utf-8");
+    Writer writer = new BufferedWriter(outputStreamWriter);
+    writer.write(requestString + "\t");
+    writer.close();
+  }
+
+  private void createMockRequestsFile() throws IOException {
+    mockRequestsFile.createNewFile();
   }
 
   private String currentDateTime() throws ParseException {

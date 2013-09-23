@@ -2,14 +2,13 @@ package http.request;
 
 import http.server.serverSocket.HttpServerSocket;
 import http.server.serverSocket.MockHttpServerSocket;
-import http.server.socket.WebSocket;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -17,11 +16,20 @@ import static org.junit.Assert.assertEquals;
 @RunWith(JUnit4.class)
 public class RequestTest {
   private String NEW_LINE = "\r\n";
+  private File mockRequestsFile;
+  private HttpServerSocket httpServerSocket;
   private Request request;
 
   @Before
   public void setUp() {
+    File workingDirectoryFullPath = new File(System.getProperty("user.dir"));
+    mockRequestsFile = new File(workingDirectoryFullPath, "test/mock_requests.tsv");
     request = new Request(new QueryStringRepository());
+  }
+
+  @After
+  public void tearDown() {
+    mockRequestsFile.delete();
   }
 
   @Test
@@ -37,10 +45,8 @@ public class RequestTest {
         + "Accept-Language: en-US,en;q=0.8\r\n"
         + "Cookie: textwrapon=false; wysiwyg=textarea\r\n"
         + NEW_LINE;
-    ArrayList requests = new ArrayList();
-    requests.add(requestString);
-    WebSocket webSocket = getWebSocket(requests);
-    HashMap actualResult = request.get(webSocket);
+    setWebSocketWithMockRequests(requestString + "\t");
+    HashMap actualResult = request.get(httpServerSocket.accept());
     assertEquals("GET", actualResult.get("httpMethod"));
     assertEquals("/color_picker_result.html", actualResult.get("url"));
     assertEquals("HTTP/1.1", actualResult.get("httpProtocol"));
@@ -64,17 +70,17 @@ public class RequestTest {
     String requestString2  = "GET /color_picker_post.html HTTP/1.1\r\n"
         + "Host: localhost:5000\r\n"
         + NEW_LINE;
-    ArrayList requests = new ArrayList();
-    requests.add(requestString1);
-    requests.add(requestString2);
-    WebSocket webSocket = getWebSocket(requests);
-    HashMap actualResult = request.get(webSocket);
+    String requests = "";
+    requests += requestString1;
+    requests += "\t";
+    requests += requestString2;
+    setWebSocketWithMockRequests(requests);
+    HashMap actualResult = request.get(httpServerSocket.accept());
     assertEquals("GET", actualResult.get("httpMethod"));
     assertEquals("/color_picker_result.html", actualResult.get("url"));
     assertEquals("HTTP/1.1", actualResult.get("httpProtocol"));
     assertEquals("localhost:5000", actualResult.get("Host"));
-              webSocket = getWebSocket(requests);
-            actualResult = request.get(webSocket);
+            actualResult = request.get(httpServerSocket.accept());
     assertEquals("GET", actualResult.get("httpMethod"));
     assertEquals("/color_picker_post.html", actualResult.get("url"));
     assertEquals("HTTP/1.1", actualResult.get("httpProtocol"));
@@ -88,20 +94,18 @@ public class RequestTest {
                           + "Content-Length: 51\r\n";
     String requestBody    = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString  = requestHeader + NEW_LINE + requestBody;
-    ArrayList requests = new ArrayList();
-    requests.add(requestString);
-    WebSocket webSocket = getWebSocket(requests);
-    HashMap actualResult  = request.get(webSocket);
+    String requests = requestString + "\t";
+    setWebSocketWithMockRequests(requests);
+    HashMap actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
 
            requestString  = "GET /color_picker_post.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n"
                           + NEW_LINE;
-              requests = new ArrayList();
-    requests.add(requestString);
-              webSocket = getWebSocket(requests);
-    actualResult  = request.get(webSocket);
+           requests = requestString + "\t";
+    setWebSocketWithMockRequests(requests);
+    actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
   }
@@ -113,20 +117,18 @@ public class RequestTest {
                           + "Content-Length: 51\r\n";
     String requestBody    = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString  = requestHeader + NEW_LINE + requestBody;
-    ArrayList requests = new ArrayList();
-    requests.add(requestString);
-    WebSocket webSocket   = getWebSocket(requests);
-    HashMap actualResult  = request.get(webSocket);
+    String requests = requestString + "\t";
+    setWebSocketWithMockRequests(requests);
+    HashMap actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
 
            requestString  = "GET /color_picker_post.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n"
                           + NEW_LINE;
-              requests = new ArrayList();
-    requests.add(requestString);
-              webSocket = getWebSocket(requests);
-            actualResult  = request.get(webSocket);
+           requests = requestString + "\t";
+    setWebSocketWithMockRequests(requests);
+            actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
   }
@@ -138,10 +140,9 @@ public class RequestTest {
                           + "Content-Length: 51\r\n";
     String requestBody    = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString  = requestHeader + NEW_LINE + requestBody;
-    ArrayList requests = new ArrayList();
-    requests.add(requestString);
-    WebSocket webSocket = getWebSocket(requests);
-    HashMap actualResult  = request.get(webSocket);
+    String requests = requestString + "\t";
+    setWebSocketWithMockRequests(requests);
+    HashMap actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
 
@@ -150,10 +151,10 @@ public class RequestTest {
                           + "Content-Length: 19\r\n";
            requestBody    = "text_color4=magenta";
            requestString  = requestHeader + NEW_LINE + requestBody;
-              requests = new ArrayList();
-    requests.add(requestString);
-              webSocket = getWebSocket(requests);
-            actualResult  = request.get(webSocket);
+           requests = requestString + "\t";
+    mockRequestsFile.delete();
+    setWebSocketWithMockRequests(requests);
+            actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
   }
@@ -165,11 +166,9 @@ public class RequestTest {
                          + "Content-Length: 51\r\n";
     String requestBody   = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString = requestHeader + NEW_LINE + requestBody;
-    ArrayList requests = new ArrayList();
-    requests.add(requestString);
-    WebSocket webSocket = getWebSocket(requests);
-
-    HashMap actualResult = request.get(webSocket);
+    String requests = requestString + "\t";
+    setWebSocketWithMockRequests(requests);
+    HashMap actualResult = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
 
@@ -178,10 +177,10 @@ public class RequestTest {
                          + "Content-Length: 19\r\n";
            requestBody   = "text_color4=magenta";
            requestString = requestHeader + NEW_LINE + requestBody;
-              requests = new ArrayList();
-    requests.add(requestString);
-              webSocket = getWebSocket(requests);
-            actualResult = request.get(webSocket);
+           requests = requestString + "\t";
+    mockRequestsFile.delete();
+    setWebSocketWithMockRequests(requests);
+            actualResult = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
   }
@@ -193,20 +192,19 @@ public class RequestTest {
                           + "Content-Length: 51\r\n";
     String requestBody    = "text_color1=blue&text_color2=red&text_color3=yellow";
     String requestString  = requestHeader + NEW_LINE + requestBody;
-    ArrayList requests = new ArrayList();
-    requests.add(requestString);
-    WebSocket webSocket = getWebSocket(requests);
-    HashMap actualResult  = request.get(webSocket);
+    String requests = requestString + "\t";
+    setWebSocketWithMockRequests(requests);
+    HashMap actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(requestBody, actualResult.get("queryString"));
 
            requestString  = "GET /color_picker.html HTTP/1.1\r\n"
                           + "Host: localhost:5000\r\n"
                           + NEW_LINE;
-              requests = new ArrayList();
-    requests.add(requestString);
-              webSocket = getWebSocket(requests);
-            actualResult  = request.get(webSocket);
+           requests = requestString + "\t";
+    mockRequestsFile.delete();
+    setWebSocketWithMockRequests(requests);
+            actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(null, actualResult.get("queryString"));
   }
@@ -216,17 +214,28 @@ public class RequestTest {
     String requestHeader  = "PUT /color_picker_post.html HTTP/1.1\r\n"
         + "Host: localhost:5000\r\n";
     String requestString  = requestHeader + NEW_LINE;
-    ArrayList requests = new ArrayList();
-    requests.add(requestString);
-    WebSocket webSocket = getWebSocket(requests);
-    HashMap actualResult  = request.get(webSocket);
+    String requests = requestString + "\t";
+    setWebSocketWithMockRequests(requests);
+    HashMap actualResult  = request.get(httpServerSocket.accept());
 
     assertEquals(null, actualResult.get("queryString"));
   }
 
+  public void setWebSocketWithMockRequests(String requestString) throws IOException {
+    createMockRequestsTsv(requestString);
+    httpServerSocket = new MockHttpServerSocket(mockRequestsFile.toString());
+  }
 
-  public WebSocket getWebSocket(ArrayList requests) throws IOException {
-    HttpServerSocket httpServerSocket = new MockHttpServerSocket(requests);
-    return httpServerSocket.accept();
+  private void createMockRequestsTsv(String requestString) throws IOException {
+    createMockRequestsFile();
+    FileOutputStream fos = new FileOutputStream(mockRequestsFile, true);
+    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos, "utf-8");
+    Writer writer = new BufferedWriter(outputStreamWriter);
+    writer.write(requestString + "\t");
+    writer.close();
+  }
+
+  private void createMockRequestsFile() throws IOException {
+    mockRequestsFile.createNewFile();
   }
 }

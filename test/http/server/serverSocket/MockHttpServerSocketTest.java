@@ -1,11 +1,11 @@
 package http.server.serverSocket;
 
 import http.server.socket.WebSocket;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
 
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertFalse;
@@ -14,29 +14,47 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class MockHttpServerSocketTest {
-  private String NEW_LINE = "\r\n";
-  private HttpServerSocket httpServerSocket;
+  private String NEW_LINE = "\n";
+  private File mockRequestsFile;
 
   @Before
-  public void setUp() throws IOException {
-    ArrayList<String> requests = new ArrayList<String>();
-    requests.add(simpleRootRequest());
-    httpServerSocket = new MockHttpServerSocket(requests);
+  public void setUp() {
+    File workingDirectoryFullPath = new File(System.getProperty("user.dir"));
+    mockRequestsFile = new File(workingDirectoryFullPath, "test/mock_requests.tsv");
+  }
+
+  @After
+  public void tearDown() {
+    mockRequestsFile.delete();
   }
 
   @Test
   public void close() throws IOException {
+    HttpServerSocket httpServerSocket = new MockHttpServerSocket("");
     httpServerSocket.close();
     assertTrue(httpServerSocket.isClosed());
   }
 
   @Test
   public void bound() throws IOException {
+    HttpServerSocket httpServerSocket = new MockHttpServerSocket("");
     assertFalse(httpServerSocket.isBound());
   }
 
   @Test
   public void accept() throws IOException {
+    createMockRequestsTsv(simpleRootRequest());
+    HttpServerSocket httpServerSocket = new MockHttpServerSocket(mockRequestsFile.toString());
+    WebSocket webSocket = httpServerSocket.accept();
+    assertThat(webSocket, instanceOf(WebSocket.class));
+    String actualResult = read(webSocket);
+    assertEquals(simpleRootRequest(), actualResult);
+  }
+
+  @Test
+  public void acceptMultipleRequests() throws IOException {
+    createMockRequestsTsv(simpleRootRequestTimesTwo());
+    HttpServerSocket httpServerSocket = new MockHttpServerSocket(mockRequestsFile.toString());
     WebSocket webSocket = httpServerSocket.accept();
     assertThat(webSocket, instanceOf(WebSocket.class));
     String actualResult = read(webSocket);
@@ -45,19 +63,32 @@ public class MockHttpServerSocketTest {
 
   private String simpleRootRequest() {
     String requestHeader =
-        "GET / HTTP/1.1\r\n"
-            + "Host: localhost:5000\r\n"
-            + "Connection: keep-alive\r\n"
-            + "Content-Length: 15\r\n"
-            + "Cache-Control: max-age=0\r\n"
-            + "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
-            + "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36\r\n"
-            + "Accept-Encoding: gzip,deflate,sdch\r\n"
-            + "Accept-Language: en-US,en;q=0.8\r\n"
-            + "Cookie: textwrapon=false; wysiwyg=textarea\r\n";
-    String requestBody =
-        "";
-    return requestHeader + NEW_LINE + requestBody;
+        "GET / HTTP/1.1\n"
+            + "Host: localhost:5000\n"
+            + "Connection: keep-alive\n"
+            + "Content-Length: 15\n"
+            + "Cache-Control: max-age=0\n"
+            + "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\n"
+            + "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36\n"
+            + "Accept-Encoding: gzip,deflate,sdch\n"
+            + "Accept-Language: en-US,en;q=0.8\n"
+            + "Cookie: textwrapon=false; wysiwyg=textarea\n";
+    return requestHeader + NEW_LINE;
+  }
+
+  private String simpleRootRequestTimesTwo() {
+    String requestHeader =
+        "GET / HTTP/1.1\n"
+            + "Host: localhost:5000\n"
+            + "Connection: keep-alive\n"
+            + "Content-Length: 15\n"
+            + "Cache-Control: max-age=0\n"
+            + "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\n"
+            + "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36\n"
+            + "Accept-Encoding: gzip,deflate,sdch\n"
+            + "Accept-Language: en-US,en;q=0.8\n"
+            + "Cookie: textwrapon=false; wysiwyg=textarea\n";
+    return requestHeader + NEW_LINE + "\t" + requestHeader + NEW_LINE;
   }
 
   private String read(WebSocket webSocket) throws IOException {
@@ -70,5 +101,18 @@ public class MockHttpServerSocketTest {
         break;
     }
     return buffer.toString();
+  }
+
+  private void createMockRequestsTsv(String requestString) throws IOException {
+    createMockRequestsFile();
+    FileOutputStream fos = new FileOutputStream(mockRequestsFile, true);
+    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos, "utf-8");
+    Writer writer = new BufferedWriter(outputStreamWriter);
+    writer.append(requestString + "\t");
+    writer.close();
+  }
+
+  private void createMockRequestsFile() throws IOException {
+    mockRequestsFile.createNewFile();
   }
 }
