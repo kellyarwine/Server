@@ -1,5 +1,8 @@
 package http.response.routeType;
 
+import http.server.Templater;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
@@ -14,6 +17,19 @@ import static junit.framework.Assert.assertEquals;
 
 public class DirectoryTest {
   private String NEW_LINE = "\r\n";
+  private File publicDirectoryFullPath;
+
+  @Before
+  public void setUp() throws IOException {
+    File workingDirectory = new File(System.getProperty("user.dir"));
+    publicDirectoryFullPath = new File(workingDirectory, "test/public/");
+    new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
+  }
+
+  @After
+  public void tearDown() {
+    deleteDirectory(new File(publicDirectoryFullPath, "/templates"));
+  }
 
   @Test
   public void buildRootDirectory() throws IOException, ParseException {
@@ -34,7 +50,7 @@ public class DirectoryTest {
     request.put("Accept-Language", "en-US,en;q=0.8");
     request.put("Cookie", "textwrapon=false; wysiwyg=textarea");
 
-    File routeFile = new File(workingDirectory, "src/http/templates/file_directory.html");
+    File routeFile = new File(publicDirectoryFullPath, "templates/file_directory.html");
     Directory directory = new Directory(publicDirectoryFullPath);
     byte[] actualResultInBytes = directory.get(routeFile, request);
     String actualResult = new String(actualResultInBytes);
@@ -43,7 +59,7 @@ public class DirectoryTest {
         + "Date: " + currentDateTime() + "\r\n"
         + "Server: NinjaServer 1.0" + "\r\n"
         + "Content-type: text/html; charset=UTF-8" + "\r\n"
-        + "Content-length: 1011\r\n";
+        + "Content-length: 1049\r\n";
     String expectedBody   = "<HTML>\n"
         + "  <HEAD>\n"
         + "    <TITLE>\n"
@@ -67,6 +83,7 @@ public class DirectoryTest {
         + "<a href=\"/punky_brewster.jpg\">punky_brewster.jpg</a><br>"
         + "<a href=\"/rainbow_brite.jpeg\">rainbow_brite.jpeg</a><br>"
         + "<a href=\"/stylesheets\">stylesheets</a><br>"
+        + "<a href=\"/templates\">templates</a><br>"
         + "<a href=\"/test_directory\">test_directory</a><br>"
         + "<a href=\"/the_goal.html\">the_goal.html</a><br>"
         + "<a href=\"/the_goal.txt\">the_goal.txt</a><br>\n"
@@ -96,7 +113,7 @@ public class DirectoryTest {
     request.put("Accept-Language", "en-US,en;q=0.8");
     request.put("Cookie", "textwrapon=false; wysiwyg=textarea");
 
-    File routeFile = new File(workingDirectory, "src/http/templates/file_directory.html");
+    File routeFile = new File(publicDirectoryFullPath, "templates/file_directory.html");
     Directory directory = new Directory(publicDirectoryFullPath);
     byte[] actualResultInBytes = directory.get(routeFile, request);
     String actualResult = new String(actualResultInBytes);
@@ -138,5 +155,15 @@ public class DirectoryTest {
     SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
     sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     return sdf.format(unformattedDateTime);
+  }
+
+  private void deleteDirectory(File directory) {
+    if (directory.isDirectory()) {
+      String[] children = directory.list();
+      for (int i=0; i<children.length; i++) {
+        deleteDirectory(new File(directory, children[i]));
+      }
+    }
+    directory.delete();
   }
 }

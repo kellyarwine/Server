@@ -1,9 +1,13 @@
 package http.response.httpMethod;
 
+import http.server.Templater;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -16,6 +20,21 @@ import static junit.framework.Assert.assertTrue;
 
 public class PutTest {
   private String NEW_LINE = "\r\n";
+  File workingDirectory;
+  File publicDirectoryFullPath;
+  Templater templater;
+
+  @Before
+  public void setUp() throws IOException, URISyntaxException {
+    workingDirectory = new File(System.getProperty("user.dir"));
+    publicDirectoryFullPath = new File(workingDirectory, "test/public/");
+    new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
+  }
+
+  @After
+  public void tearDown() {
+    deleteDirectory(new File(publicDirectoryFullPath, "/templates"));
+  }
 
   @Test
   public void postRequestToTemplate() throws IOException, ParseException {
@@ -33,9 +52,7 @@ public class PutTest {
     request.put("Accept-Language", "en-US,en;q=0.8");
     request.put("Cookie", "textwrapon=false; wysiwyg=textarea");
     request.put("queryString", "data=1&data_2=2&data_3=3");
-    String workingDirectory = System.getProperty("user.dir");
-    File publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    File routeFile = new File(workingDirectory, "/src/http/templates/form.html");
+    File routeFile = new File(publicDirectoryFullPath, "templates/form.html");
     Put put = new Put();
     byte[] actualResultInBytes = put.get(routeFile, request);
     String actualResult = new String(actualResultInBytes);
@@ -88,5 +105,15 @@ public class PutTest {
     SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
     sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     return sdf.format(unformattedDateTime);
+  }
+
+  private void deleteDirectory(File directory) {
+    if (directory.isDirectory()) {
+      String[] children = directory.list();
+      for (int i=0; i<children.length; i++) {
+        deleteDirectory(new File(directory, children[i]));
+      }
+    }
+    directory.delete();
   }
 }

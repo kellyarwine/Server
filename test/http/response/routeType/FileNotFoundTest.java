@@ -1,5 +1,8 @@
 package http.response.routeType;
 
+import http.server.Templater;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
@@ -14,11 +17,26 @@ import static junit.framework.Assert.assertEquals;
 
 public class FileNotFoundTest {
   private String NEW_LINE = "\r\n";
+  private File publicDirectoryFullPath;
+
+  @Before
+  public void setUp() throws IOException {
+    File workingDirectory = new File(System.getProperty("user.dir"));
+    publicDirectoryFullPath = new File(workingDirectory, "test/public/");
+    new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
+  }
+
+  @After
+  public void tearDown() {
+    deleteDirectory(new File(publicDirectoryFullPath, "/templates"));
+  }
+
 
   @Test
-  public void build() throws IOException, IOException, ParseException {
+  public void build() throws IOException, ParseException {
     String workingDirectory = System.getProperty("user.dir");
     File publicDirectoryFullPath = new File(workingDirectory, "test/public/");
+    new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
 
     HashMap request = new HashMap();
     request.put("httpMethod", "POST");
@@ -35,7 +53,7 @@ public class FileNotFoundTest {
     request.put("Cookie", "textwrapon=false; wysiwyg=textarea");
     request.put("queryString", "text_color=blue");
 
-    File routeFile = new File(workingDirectory, "src/http/templates/404.html");
+    File routeFile = new File(publicDirectoryFullPath, "templates/404.html");
     FileNotFound fileNotFound = new FileNotFound();
     byte[] actualResultInBytes = fileNotFound.get(routeFile, request);
     String actualResult = new String(actualResultInBytes);
@@ -45,7 +63,7 @@ public class FileNotFoundTest {
         + "Server: NinjaServer 1.0" + "\r\n"
         + "Content-type: text/html; charset=UTF-8" + "\r\n"
         + "Content-length: 127\r\n";
-    String expectedBody   = new String(toBytes(new File(workingDirectory, "src/http/templates/404.html")));
+    String expectedBody   = new String(toBytes(new File(publicDirectoryFullPath, "templates/404.html")));
     String expectedResult = expectedHeader + NEW_LINE + expectedBody;
 
     assertEquals(expectedResult, actualResult);
@@ -67,5 +85,15 @@ public class FileNotFoundTest {
     SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
     sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     return sdf.format(unformattedDateTime);
+  }
+
+  private void deleteDirectory(File directory) {
+    if (directory.isDirectory()) {
+      String[] children = directory.list();
+      for (int i=0; i<children.length; i++) {
+        deleteDirectory(new File(directory, children[i]));
+      }
+    }
+    directory.delete();
   }
 }

@@ -1,7 +1,6 @@
 package http.server;
 
 import http.request.QueryStringRepository;
-import http.router.Templater;
 import http.server.logger.Logger;
 import http.server.logger.LoggerFactory;
 import http.server.serverSocket.HttpServerSocket;
@@ -56,7 +55,7 @@ public class ServerRunnable implements Runnable {
   }
 
   private void copyTemplatesToDisk() throws IOException, URISyntaxException {
-    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
+    new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
   }
 
   public void closeServerSocket() throws IOException {

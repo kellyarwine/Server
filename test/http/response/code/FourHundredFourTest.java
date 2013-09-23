@@ -1,6 +1,6 @@
 package http.response.code;
 
-import http.router.Templater;
+import http.server.Templater;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class FourHundredFourTest {
   public void setUp() throws IOException, URISyntaxException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
+    new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
   }
 
   @After
@@ -34,9 +34,6 @@ public class FourHundredFourTest {
 
   @Test
   public void build() throws IOException, ParseException {
-    String workingDirectory = System.getProperty("user.dir");
-    File publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-
     HashMap request = new HashMap();
     request.put("httpMethod", "POST");
     request.put("url", "/templates/404.html");
@@ -62,7 +59,14 @@ public class FourHundredFourTest {
         + "Server: NinjaServer 1.0" + "\r\n"
         + "Content-type: text/html; charset=UTF-8" + "\r\n"
         + "Content-length: 127\r\n";
-    String expectedBody   = new String(toBytes(new File(workingDirectory, "src/http/templates/404.html")));
+    String expectedBody   = "<html>\n" +
+                            "<head>\n" +
+                            "    <title>Page not found</title>\n" +
+                            "</head>\n" +
+                            "<body>\n" +
+                            "  Your page cannot be found.  Please try again.\n" +
+                            "</body>\n" +
+                            "</html>\n";
     String expectedResult = expectedHeader + NEW_LINE + expectedBody;
 
     assertEquals(expectedResult, actualResult);

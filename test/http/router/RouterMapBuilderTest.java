@@ -4,6 +4,7 @@ import http.response.routeType.Directory;
 import http.response.routeType.FileNotFound;
 import http.response.routeType.Public;
 import http.response.routeType.Redirect;
+import http.server.Templater;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +28,7 @@ public class RouterMapBuilderTest {
   public void setUp() throws IOException, URISyntaxException {
     File workingDirectory = new File(System.getProperty("user.dir"));
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
+    new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
     RouterMapBuilder routerMapBuilder = new RouterMapBuilder();
     actualResult = routerMapBuilder.buildFrom(workingDirectory, "test/public/", "test/routes.csv", "test/.htaccess");
   }

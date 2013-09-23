@@ -2,6 +2,7 @@ package http.router;
 
 import http.response.routeType.Directory;
 import http.response.routeType.Public;
+import http.server.Templater;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class PublicDirectoryMapBuilderTest {
   public void setUp() throws IOException, URISyntaxException {
     String workingDirectory = System.getProperty("user.dir");
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
-    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);  }
+    new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);  }
 
   @After
   public void tearDown() {

@@ -6,7 +6,7 @@ import http.response.routeType.Directory;
 import http.response.routeType.FileNotFound;
 import http.response.routeType.Public;
 import http.response.routeType.Redirect;
-import http.router.Templater;
+import http.server.Templater;
 import http.server.serverSocket.HttpServerSocket;
 import http.server.serverSocket.MockHttpServerSocket;
 import http.server.socket.WebSocket;
@@ -41,7 +41,7 @@ public class ResponseTest {
     publicDirectoryFullPath = new File(workingDirectory, "test/public/");
     mockRequestsFile = new File(workingDirectory, "test/mock_requests.tsv");
     response = new Response();
-    new Templater().copyTemplatesToDisk("/http/templates/", publicDirectoryFullPath);
+    new Templater().copyTemplatesToDisk("/http/templates/templates.zip", publicDirectoryFullPath);
   }
 
   @After
@@ -128,7 +128,14 @@ public class ResponseTest {
         + "Content-type: text/html; charset=UTF-8" + "\r\n"
         + "Content-length: 127\r\n";
     byte[] expectedHeader       = expectedHeaderString.getBytes();
-    byte[] expectedBody         = toBytes(new File(workingDirectory, "src/http/templates/404.html"));
+    byte[] expectedBody         = ("<html>\n" +
+                                   "<head>\n" +
+                                   "    <title>Page not found</title>\n" +
+                                   "</head>\n" +
+                                   "<body>\n" +
+                                   "  Your page cannot be found.  Please try again.\n" +
+                                   "</body>\n" +
+                                   "</html>\n").getBytes();
     byte[] expectedResult       = concatenate(new byte[][]{ expectedHeader, NEW_LINE.getBytes(), expectedBody });
     assertEquals(new String(expectedResult), new String(actualResult));
     assertArrayEquals(expectedResult, actualResult);
