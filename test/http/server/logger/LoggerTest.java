@@ -16,8 +16,8 @@ public class LoggerTest {
   @Before
   public void setUp() throws IOException {
     workingDirectory = new File(System.getProperty("user.dir"));
-    logFile = new File(workingDirectory + "/server.log");
-    consoleFile = new File(workingDirectory + "/console.txt");
+    logFile = new File(workingDirectory, "server.log");
+    consoleFile = new File(workingDirectory, "console.txt");
   }
 
   @After
