@@ -3,12 +3,12 @@ package http.server;
 import http.request.QueryStringRepository;
 import http.request.Request;
 import http.response.Response;
-import http.router.Router;
 import http.server.logger.Logger;
 import http.server.socket.WebSocket;
+import router.Router;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,15 +36,12 @@ public class ServerRequestThread implements Runnable {
       Request request = new Request(queryStringRepository);
       Router router = new Router(workingDirectory, publicDirectoryPath, routesFilePath, htAccessFilePath);
       Response response = new Response();
+
       HashMap receivedRequest = request.get(webSocket);
-      logger.logMessage(" REQUEST: http://" + receivedRequest.get("Host") + receivedRequest.get("url"));
-
-      ArrayList routeInfo = router.getRouteInfo(receivedRequest);
-
-      response.send(webSocket.out(), receivedRequest, routeInfo);
-      File routeFile = (File)routeInfo.get(0);
-      String routeFilePath = routeFile.getAbsolutePath();
-      logger.logMessage("RENDERED: http://" + receivedRequest.get("Host") + subtractPath(routeFilePath, new File(workingDirectory, publicDirectoryPath)));
+      byte[] builtResponse = router.getResponse(receivedRequest);
+      String route = router.getRoute(receivedRequest);
+      generateLogMessages(receivedRequest, route);
+      response.send(webSocket.out(), builtResponse);
 
       webSocket.close();
     }
@@ -53,7 +50,15 @@ public class ServerRequestThread implements Runnable {
     }
   }
 
-  private String subtractPath(String routeFilePath, File publicDirectoryFullPath) {
-    return routeFilePath.replace(publicDirectoryFullPath.toString(), "");
+  private void generateLogMessages(HashMap receivedRequest, String route) throws IOException {
+    String host = (String)receivedRequest.get("Host");
+    String url = (String)receivedRequest.get("url");
+    logger.logMessage(" REQUEST: http://" + host  + url);
+    logger.logMessage("RENDERED: http://" + host + getRelativeRoute(route));
+  }
+
+  private String getRelativeRoute(String route) {
+    String publicDirectoryFullPath = new File(workingDirectory, publicDirectoryPath).toString();
+    return route.replace(publicDirectoryFullPath, "");
   }
 }

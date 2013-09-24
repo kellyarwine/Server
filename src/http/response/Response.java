@@ -1,24 +1,12 @@
 package http.response;
 
-import http.response.routeType.RouteType;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Response {
-  public void send(OutputStream out, HashMap request, ArrayList routeInfo) throws IOException, ParseException {
-    byte[] response = build(request, routeInfo);
-    out.write(response);
+  public void send(OutputStream out, byte[] builtResponse) throws IOException, ParseException {
+    out.write(builtResponse);
     out.flush();
-  }
-
-  public byte[] build(HashMap request, ArrayList routeInfo) throws IOException, ParseException {
-    File routeFile = (File)routeInfo.get(0);
-    RouteType routeType = (RouteType)routeInfo.get(1);
-    return routeType.get(routeFile, request);
   }
 }
