@@ -6,7 +6,7 @@ public class QueryStringRepository {
   private HashMap<String, String> queryStringHash;
 
   public QueryStringRepository() {
-    queryStringHash = new HashMap();
+    queryStringHash = new HashMap<String, String>();
   }
 
   public void save(String url, String queryString) {
