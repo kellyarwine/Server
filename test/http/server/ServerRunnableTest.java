@@ -58,7 +58,6 @@ public class ServerRunnableTest {
     assertFalse(serverRunnable.exceptionThrown);
     serverRunnable.run();
     assertTrue(serverRunnable.exceptionThrown);
-
   }
 
   public void deleteDirectory(File directory)
