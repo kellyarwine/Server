@@ -281,13 +281,14 @@ public class ServerTest {
   @Test
   public void startServerWithCustomConfigs() throws Exception {
     ArrayList<String> commands = new ArrayList<String>();
-      commands.add("start -p 4999 -e test -d test/public/images -r test/routes_copy.csv -h test/.htaccess_copy -m test/mock_requests.tsv -w /Users/Kelly/Desktop/Java_HTTP_Server");
+    commands.add("start -p 4999 -e test -d test/public/images -r test/routes_copy.csv -h test/.htaccess_copy -m test/mock_requests.tsv -w " + workingDirectoryFullPath);
     commands.add("status");
     commands.add("exit");
     MockIo mockIo = new MockIo(commands);
     Server server = new Server(mockIo);
     createMockRequestsTsv();
     server.initialize();
+    System.out.println(readLog());
     assertTrue(readLog().contains("Ninja Server Menu\n"));
     assertTrue(readLog().contains("----------------------\n"));
     assertTrue(readLog().contains("Type \"help\" to see a list of available commands.\n"));
