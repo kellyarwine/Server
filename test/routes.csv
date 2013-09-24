@@ -1,6 +1,6 @@
-/celebrate, /celebrate.gif
-/my_little_pony, /my_little_pony.png
-/punky, /punky_brewster.jpg
-/rainbow, /rainbow_brite.jpeg
-/parameters, /templates/parameters.html
-/form, /templates/form.html
+/celebrate,/celebrate.gif,public
+/my_little_pony,/my_little_pony.png,public
+/punky,/punky_brewster.jpg,public
+/rainbow,/rainbow_brite.jpeg,public
+/parameters,/templates/parameters.html,public
+/form,/templates/form.html,public
