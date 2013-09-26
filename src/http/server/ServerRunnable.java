@@ -1,5 +1,6 @@
 package http.server;
 
+import http.SystemRouter;
 import http.request.QueryStringRepository;
 import http.server.logger.Logger;
 import http.server.logger.LoggerFactory;
@@ -20,8 +21,9 @@ public class ServerRunnable implements Runnable {
   public HttpServerSocket httpServerSocket;
   public volatile boolean closeRequested;
   public volatile boolean exceptionThrown;
+  public SystemRouter router;
 
-  public ServerRunnable(HashMap<String, String> serverConfig) throws IOException {
+  public ServerRunnable(HashMap<String, String> serverConfig, SystemRouter router) throws IOException {
     this.serverConfig = serverConfig;
     File workingDirectoryPath = new File(serverConfig.get("workingDirectoryPath"));
     this.publicDirectoryFullPath = new File(workingDirectoryPath, serverConfig.get("publicDirectoryPath"));
@@ -30,6 +32,8 @@ public class ServerRunnable implements Runnable {
     copyTemplatesToDisk();
     closeRequested = false;
     exceptionThrown = false;
+    this.router = router;
+    router.getRouterMap(serverConfig);
   }
 
   public void run() {
@@ -46,10 +50,10 @@ public class ServerRunnable implements Runnable {
       ExecutorService serverRequestThreadPool = Executors.newFixedThreadPool(cores);
 
       while (!closeRequested) {
-        ServerRequestThread serverRequestThread = new ServerRequestThread(serverConfig, logger, httpServerSocket.accept() , queryStringRepository);
+        ServerRequestThread serverRequestThread = new ServerRequestThread(serverConfig, logger, httpServerSocket.accept() , queryStringRepository, router);
         serverRequestThreadPool.submit(serverRequestThread);
       }
-    } catch (Exception e) {
+    } catch (IOException e) {
       exceptionThrown = true; }
   }
 
