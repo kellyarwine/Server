@@ -62,7 +62,6 @@ public class ServerRunnable implements Runnable {
       while (!closeRequested) {
         ServerRequestThread serverRequestThread = new ServerRequestThread(serverConfig, logger, httpServerSocket.accept() , queryStringRepository, router);
         serverRequestThreadPool.submit(serverRequestThread);
-//        serverRequestThreadPool.shutdown();
       }
     }
     catch (IOException e) {
