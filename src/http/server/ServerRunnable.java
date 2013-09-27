@@ -20,6 +20,7 @@ public class ServerRunnable implements Runnable {
   private QueryStringRepository queryStringRepository;
   public HttpServerSocket httpServerSocket;
   public volatile boolean closeRequested;
+  public volatile boolean isReady;
   public volatile boolean exceptionThrown;
   public SystemRouter router;
 
@@ -31,12 +32,14 @@ public class ServerRunnable implements Runnable {
     queryStringRepository = new QueryStringRepository();
     copyTemplatesToDisk();
     closeRequested = false;
+    isReady = false;
     exceptionThrown = false;
     this.router = router;
     router.getRouterMap(serverConfig);
   }
 
   public void run() {
+    ExecutorService serverRequestThreadPool = null;
     try {
       httpServerSocket = new ServerSocketFactory().build(serverConfig);
 
@@ -47,14 +50,21 @@ public class ServerRunnable implements Runnable {
       logger.logMessage(".htaccess Filename: " + serverConfig.get("htAccessFilePath") + "\n");
 
       int cores = Runtime.getRuntime().availableProcessors();
-      ExecutorService serverRequestThreadPool = Executors.newFixedThreadPool(cores);
+      serverRequestThreadPool = Executors.newFixedThreadPool(cores);
 
+      isReady = true;
       while (!closeRequested) {
         ServerRequestThread serverRequestThread = new ServerRequestThread(serverConfig, logger, httpServerSocket.accept() , queryStringRepository, router);
         serverRequestThreadPool.submit(serverRequestThread);
+//        serverRequestThreadPool.shutdown();
       }
-    } catch (IOException e) {
-      exceptionThrown = true; }
+    }
+    catch (IOException e) {
+      exceptionThrown = true;
+    }
+    finally {
+      serverRequestThreadPool.shutdown();
+    }
   }
 
   private void copyTemplatesToDisk() throws IOException {
