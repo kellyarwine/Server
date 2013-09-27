@@ -13,6 +13,12 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+//TODO:  Commented out ServerRunnableTest and ServerTest...both need to be cleaned up;
+//TODO: do I have 100% test coverage?
+//TODO: I don't think I need the template class here anymore.  It is copying templates in the ServerRunnable class but does it need to?
+//TODO:  ServerRunnable tests are commented out.
+//TODO:  MockIo is hard-coded to working directory.  Does it have to be that way?
+
 public class ServerRunnable implements Runnable {
   private HashMap<String, String> serverConfig;
   private File publicDirectoryFullPath;

@@ -61,7 +61,3 @@ public class ServerRequestThread implements Runnable {
     return route.replace(publicDirectoryFullPath, "");
   }
 }
-
-//TODO:  Commented out ServerRunnableTest and ServerTest...both need to be cleaned up;
-//TODO: do I have 100% test coverage?
-//TODO: I don't think I need the template class here anymore.  It is copying templates in the ServerRunnable class but does it need to?
