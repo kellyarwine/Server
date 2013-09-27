@@ -4,19 +4,18 @@ import java.io.*;
 import java.util.List;
 
 public class MockIo implements Io {
-  public List<String> commands;
-  private int commandsIndex;
+  public List<String> input;
+  private int inputIndex;
   private File workingDirectory;
   private String LOG_FILE = "server.log";
 
-  public MockIo(List<String> commands) {
-    this.commands = commands;
+  public MockIo(List<String> input) {
+    this.input = input;
     workingDirectory = new File(System.getProperty("user.dir"));
   }
 
   public String in() throws InterruptedException {
-    Thread.sleep(300);
-    return commands.get(commandsIndex++);
+    return input.get(inputIndex++);
   }
 
   public void out(String message) throws IOException {
